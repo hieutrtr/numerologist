@@ -17,38 +17,42 @@ This unified approach combines backend systems, frontend implementation, and the
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
 | 2025-01-14 | 1.0 | Initial architecture document | Winston (Architect) |
+| 2025-01-14 | 1.1 | Updated to use Microsoft Azure infrastructure instead of GCP | Winston (Architect) |
+| 2025-01-14 | 1.2 | Replaced Firebase Auth with Azure AD B2C, upgraded to GPT-4o + o3-mini, added cost-effective OpenAI audio alternatives | Winston (Architect) |
 
 ## High Level Architecture
 
 ### Technical Summary
 
-Numeroly is built as a **voice-first mobile application** using a **monolithic backend with service-ready components** deployed on **Google Cloud Platform**. The frontend uses **React Native** for cross-platform mobile development with PWA capabilities, while the backend leverages **FastAPI (Python)** for high-performance API services. The architecture integrates **Google Speech-to-Text** for Vietnamese recognition, **ElevenLabs** for natural voice synthesis, and **GPT-4 Turbo** for intelligent conversation management. Data persistence uses **PostgreSQL** with encryption-at-rest for user profiles and conversation history, while **Redis** provides session caching for real-time conversation context. This architecture achieves the PRD goals of sub-3-second voice responses, 95%+ Vietnamese speech accuracy, and secure data handling while supporting the 6-week MVP timeline through simplified deployment and proven technology choices.
+Numeroly is built as a **voice-first mobile application** using a **monolithic backend with service-ready components** deployed on **Microsoft Azure**. The frontend uses **React Native** for cross-platform mobile development with PWA capabilities, while the backend leverages **FastAPI (Python)** for high-performance API services. The architecture integrates **Azure Speech Services** for Vietnamese recognition, **ElevenLabs** for natural voice synthesis, and **GPT-4o** for intelligent conversation management. Data persistence uses **Azure Database for PostgreSQL** with encryption-at-rest for user profiles and conversation history, while **Azure Cache for Redis** provides session caching for real-time conversation context. This architecture achieves the PRD goals of sub-3-second voice responses, 95%+ Vietnamese speech accuracy, and secure data handling while supporting the 6-week MVP timeline through simplified deployment and proven technology choices.
 
 ### Platform and Infrastructure Choice
 
-**Platform:** Google Cloud Platform (GCP)
+**Platform:** Microsoft Azure
 
 **Rationale:** 
-- Native integration with Google Speech-to-Text API for Vietnamese language support
+- Existing infrastructure already on Azure simplifies integration and deployment
+- Azure Cognitive Services provides excellent Vietnamese language support via Speech Services
 - Cost-effective for 6-week MVP prototype with pay-as-you-go pricing
-- Excellent auto-scaling capabilities for user testing periods
+- Excellent auto-scaling capabilities with Azure Container Apps
 - Strong security and compliance features for healthcare-adjacent wellness app
-- Cloud Run for containerized backend deployment with zero-config scaling
+- Enterprise-grade reliability with existing Azure investment
 
 **Key Services:**
-- **Cloud Run:** Containerized FastAPI backend with automatic scaling
-- **Cloud SQL (PostgreSQL):** Managed database with encryption-at-rest
-- **Cloud Storage:** User data backups and conversation audio storage
-- **Cloud Speech-to-Text:** Vietnamese speech recognition
-- **Cloud Memorystore (Redis):** Session caching and conversation context
-- **Cloud CDN:** Frontend asset delivery for PWA
-- **Cloud Load Balancing:** Distribution across regions
-- **Cloud Monitoring & Logging:** Application observability
+- **Azure Container Apps:** Containerized FastAPI backend with automatic scaling (serverless containers)
+- **Azure Database for PostgreSQL - Flexible Server:** Managed database with encryption-at-rest
+- **Azure Blob Storage:** User data backups and conversation audio storage
+- **Azure Speech Services (Cognitive Services):** Vietnamese speech recognition and synthesis
+- **Azure Cache for Redis:** Session caching and conversation context
+- **Azure CDN with Azure Front Door:** Frontend asset delivery and global distribution
+- **Azure Application Gateway:** Load balancing and WAF
+- **Azure Monitor & Application Insights:** Application observability and logging
+- **Azure Container Registry (ACR):** Docker image storage
 
 **Deployment Host and Regions:**
-- Primary: `asia-southeast1` (Singapore) for low latency to Vietnamese users
-- Secondary: `asia-east1` (Taiwan) for failover
-- Global CDN distribution for static assets
+- Primary: `Southeast Asia` (Singapore) for low latency to Vietnamese users
+- Secondary: `East Asia` (Hong Kong) for failover
+- Azure Front Door for global CDN distribution and automatic failover
 
 ### Repository Structure
 
@@ -85,20 +89,20 @@ graph TB
         M[Mobile Device - iOS/Android]
     end
     
-    subgraph "Frontend - GCP Cloud CDN"
+    subgraph "Frontend - Azure CDN + Front Door"
         RN[React Native PWA]
         UI[Voice UI Components]
     end
     
     subgraph "API Gateway"
-        LB[Cloud Load Balancer]
-        API[FastAPI Backend - Cloud Run]
+        AGW[Azure Application Gateway]
+        API[FastAPI Backend - Azure Container Apps]
     end
     
     subgraph "AI/ML Services"
-        STT[Google Speech-to-Text API]
+        STT[Azure Speech Services - STT]
         TTS[ElevenLabs TTS API]
-        GPT[OpenAI GPT-4 Turbo]
+        GPT[OpenAI GPT-4o]
     end
     
     subgraph "Core Services"
@@ -108,16 +112,16 @@ graph TB
     end
     
     subgraph "Data Layer"
-        DB[(Cloud SQL PostgreSQL)]
-        CACHE[(Cloud Memorystore Redis)]
-        STORAGE[Cloud Storage]
+        DB[(Azure Database for PostgreSQL)]
+        CACHE[(Azure Cache for Redis)]
+        STORAGE[Azure Blob Storage]
     end
     
     U -->|Voice Input| M
     M --> RN
     RN --> UI
-    UI -->|API Calls| LB
-    LB --> API
+    UI -->|API Calls| AGW
+    AGW --> API
     
     API -->|Vietnamese Audio| STT
     API -->|Generate Voice| TTS
@@ -168,18 +172,18 @@ graph TB
 | API Style | REST + WebSocket | - | Real-time voice and standard CRUD | REST for standard ops, WebSocket for streaming voice/conversation updates |
 | Database | PostgreSQL | 15+ | Relational data with JSONB | Strong data integrity, JSONB for flexible conversation storage, native encryption |
 | Cache | Redis | 7.2+ | Session state and rate limiting | In-memory speed for conversation context, pub/sub for real-time updates |
-| File Storage | Google Cloud Storage | - | Conversation audio archives | Scalable object storage, encryption-at-rest, CDN integration |
-| Authentication | Firebase Auth | - | User identity management | Google ecosystem integration, phone auth for Vietnamese users, JWT tokens |
+| File Storage | Azure Blob Storage | - | Conversation audio archives | Scalable object storage, encryption-at-rest, Azure CDN integration |
+| Authentication | Azure AD B2C | - | User identity management | Consumer identity platform, phone auth with SMS OTP for Vietnamese users, JWT tokens |
 | Frontend Testing | Jest + React Native Testing Library | - | Unit and component tests | Industry standard, snapshot testing, accessibility testing |
 | Backend Testing | Pytest + httpx | - | API and unit testing | Async test support, fixture-based, high code coverage tools |
 | E2E Testing | Detox | - | Mobile end-to-end flows | React Native native support, reliable gesture testing |
 | Monorepo Tool | Nx | 18+ | Enterprise monorepo orchestration | Smart builds with caching, dependency graph, code generation, task runners |
 | Build Tool | Expo | 50+ | React Native development platform | Simplified mobile builds, OTA updates, managed workflow for MVP speed |
 | Bundler | Metro | - | React Native JavaScript bundling | Default for React Native, optimized for mobile, supports PWA |
-| IaC Tool | Terraform | 1.7+ | Infrastructure as Code | GCP provider support, state management, reproducible deployments |
-| CI/CD | GitHub Actions | - | Automated testing and deployment | Free for open source, GCP integration, parallel job execution |
-| Monitoring | Google Cloud Monitoring + Sentry | - | Application observability | GCP native monitoring, Sentry for error tracking across frontend/backend |
-| Logging | Google Cloud Logging + Structured Logging | - | Centralized log aggregation | Query conversation flows, debug voice processing issues, compliance audit trails |
+| IaC Tool | Terraform | 1.7+ | Infrastructure as Code | Azure provider support, state management, reproducible deployments |
+| CI/CD | GitHub Actions | - | Automated testing and deployment | Free for open source, Azure integration, parallel job execution |
+| Monitoring | Azure Monitor + Application Insights + Sentry | - | Application observability | Azure native monitoring, AI-powered insights, Sentry for error tracking |
+| Logging | Azure Monitor Logs (Log Analytics) | - | Centralized log aggregation | KQL queries, conversation flow tracking, compliance audit trails |
 | CSS Framework | NativeWind | 4.0+ | Tailwind for React Native | Rapid UI development, consistent design system, small bundle size |
 
 ## Data Models
@@ -312,7 +316,7 @@ interface Conversation {
 - `role`: enum - 'user' | 'assistant'
 - `messageType`: enum - 'voice' | 'text' | 'system'
 - `textContent`: string - Transcribed or generated text
-- `audioUrl`: string (nullable) - Cloud Storage URL for audio file
+- `audioUrl`: string (nullable) - Azure Blob Storage URL for audio file
 - `timestamp`: Date - Message creation time
 - `emotionalTone`: string (nullable) - Detected emotion (for user) or intended tone (for assistant)
 - `metadata`: JSON - STT confidence, TTS latency, etc.
@@ -383,7 +387,7 @@ info:
 
 servers:
   - url: https://api.numeroly.app/v1
-    description: Production API (GCP Cloud Run)
+    description: Production API (Azure Container Apps)
   - url: http://localhost:8000/v1
     description: Local development
 
@@ -961,16 +965,16 @@ Real-time bidirectional communication for streaming voice conversations.
 
 ### Speech-to-Text Service (Backend)
 
-**Responsibility:** Convert Vietnamese audio streams to text using Google Speech-to-Text API
+**Responsibility:** Convert Vietnamese audio streams to text using Azure Speech Services
 
 **Key Interfaces:**
 - `transcribeAudio(audioBuffer, conversationId)`: Transcribe audio chunk
 - `finalizeTranscription(conversationId)`: Get final transcription
 - `getConfidenceScore(transcriptionId)`: STT confidence level
 
-**Dependencies:** Google Cloud Speech-to-Text API, Audio processing utilities
+**Dependencies:** Azure Speech Services SDK, Audio processing utilities
 
-**Technology Stack:** FastAPI endpoint, `google-cloud-speech` Python SDK, async audio streaming
+**Technology Stack:** FastAPI endpoint, `azure-cognitiveservices-speech` Python SDK, WebSocket streaming
 
 ### Text-to-Speech Service (Backend)
 
@@ -981,13 +985,13 @@ Real-time bidirectional communication for streaming voice conversations.
 - `streamAudio(text, emotionalTone)`: Stream audio chunks for real-time playback
 - `estimateLatency(text)`: Predict TTS processing time
 
-**Dependencies:** ElevenLabs API, Cloud Storage for audio caching
+**Dependencies:** ElevenLabs API, Azure Blob Storage for audio caching
 
 **Technology Stack:** FastAPI endpoint, `elevenlabs` Python SDK, audio format conversion (MP3 → PCM)
 
 ### Conversation AI Service (Backend)
 
-**Responsibility:** Manage conversation flow, context, and generate empathetic responses using GPT-4 Turbo
+**Responsibility:** Manage conversation flow, context, and generate empathetic responses using GPT-4o
 
 **Key Interfaces:**
 - `processUserInput(text, conversationId, userId)`: Generate assistant response
@@ -1043,9 +1047,9 @@ Real-time bidirectional communication for streaming voice conversations.
 - `updateConversation(conversationId, updates)`: Update status, rating
 - `archiveConversation(conversationId)`: Move to cold storage
 
-**Dependencies:** PostgreSQL database, Cloud Storage for audio files
+**Dependencies:** PostgreSQL database, Azure Blob Storage for audio files
 
-**Technology Stack:** SQLAlchemy ORM, PostgreSQL JSONB for flexible message metadata, Cloud Storage SDK
+**Technology Stack:** SQLAlchemy ORM, PostgreSQL JSONB for flexible message metadata, Azure Storage SDK for Python
 
 ### Authentication Middleware (Backend)
 
@@ -1057,33 +1061,37 @@ Real-time bidirectional communication for streaming voice conversations.
 - `refreshToken(refreshToken)`: Issue new access token
 - `revokeToken(token)`: Blacklist token on logout
 
-**Dependencies:** Firebase Auth SDK, Redis for token blacklist
+**Dependencies:** Azure AD B2C SDK (MSAL), Redis for token blacklist
 
-**Technology Stack:** FastAPI dependency injection, `firebase-admin` SDK, JWT library
+**Technology Stack:** FastAPI dependency injection, `msal` (Microsoft Authentication Library) Python SDK, JWT library
 
 ## External APIs
 
-### Google Cloud Speech-to-Text API
+### Azure Speech Services (Cognitive Services)
 
-- **Purpose:** Convert Vietnamese voice input to text with high accuracy
-- **Documentation:** https://cloud.google.com/speech-to-text/docs
+- **Purpose:** Convert Vietnamese voice input to text with high accuracy and optional synthesis
+- **Documentation:** https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/
 - **Base URL(s):** 
-  - REST: `https://speech.googleapis.com/v1`
-  - gRPC: Streaming recognition via gRPC
-- **Authentication:** Google Cloud Service Account with JSON key
-- **Rate Limits:** 1,000 minutes of audio per day (free tier), then pay-as-you-go
+  - REST: `https://<region>.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1`
+  - WebSocket: `wss://<region>.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1`
+- **Authentication:** Subscription key or Azure AD token in `Ocp-Apim-Subscription-Key` header
+- **Rate Limits:** 20 concurrent requests per subscription key (standard tier), adjustable with support
 
-**Key Endpoints Used:**
-- `POST /v1/speech:recognize` - Synchronous speech recognition
-- `POST /v1/speech:longrunningrecognize` - Async for longer audio
-- gRPC `StreamingRecognize` - Real-time streaming for live conversation
+**Key Features Used:**
+- **Real-time Speech-to-Text:** WebSocket streaming for live conversation
+- **Batch Transcription:** REST API for longer audio files
+- **Custom Speech Models:** Optional training for better Vietnamese accent recognition
+- **Speech Translation:** Built-in translation capabilities (future feature)
 
 **Integration Notes:**
-- Configure Vietnamese language code: `vi-VN`
-- Use enhanced model for better accuracy: `command_and_search`
-- Enable automatic punctuation for natural transcription
-- Set `single_utterance: false` for continuous conversation
-- Handle interim results for real-time UI feedback
+- Configure Vietnamese language: `vi-VN`
+- Use `Conversation` recognition mode for natural speech patterns
+- Enable automatic punctuation and capitalization
+- Set `speechRecognitionLanguage: "vi-VN"` in configuration
+- Handle interim and final results for real-time UI feedback
+- Use WebSocket streaming for sub-3-second latency requirement
+- Implement retry logic with exponential backoff for transient failures
+- Region recommendation: `southeastasia` for optimal Vietnamese user latency
 
 ### ElevenLabs Text-to-Speech API
 
@@ -1105,7 +1113,67 @@ Real-time bidirectional communication for streaming voice conversations.
 - Implement caching strategy for common phrases to reduce API costs
 - Monitor latency to stay under 3-second PRD requirement
 
-### OpenAI GPT-4 Turbo API
+### Cost-Effective Alternatives: OpenAI Audio Models
+
+For cost optimization, consider these OpenAI audio alternatives:
+
+#### **Speech-to-Text Alternative: gpt-4o-mini-transcribe**
+
+- **Released:** March 2025 (newer than Whisper)
+- **Pricing:** $0.003/minute = **$0.18/hour** vs Azure Speech $1-2/hour (10x cheaper)
+- **Vietnamese Support:** ✅ Excellent (86+ languages supported)
+- **Quality:** 54% better accuracy than Whisper, reduced WER
+- **Latency:** Comparable to Azure Speech Services
+- **Use Case:** Cost-effective for high-volume transcription
+
+**Integration:**
+```python
+from openai import OpenAI
+client = OpenAI()
+
+transcription = client.audio.transcriptions.create(
+    model="gpt-4o-mini-transcribe",
+    file=audio_file,
+    language="vi"  # Vietnamese
+)
+```
+
+**Cost Comparison (per 1000 hours audio):**
+- Azure Speech Services: ~$1,500
+- gpt-4o-mini-transcribe: ~$180 **(12x cheaper)**
+- gpt-4o-transcribe: ~$360 (6x cheaper, higher quality)
+
+#### **Text-to-Speech Alternative: OpenAI TTS-1**
+
+- **Pricing:** $0.015/1K characters = **$15/million** vs ElevenLabs $50-150/million
+- **Voices:** 11 English voices (Alloy, Echo, Fable, Onyx, Nova, Shimmer, etc.)
+- **⚠️ Limitation:** No Vietnamese-specific voices (English accent only)
+- **Quality:** Natural but not as expressive as ElevenLabs
+- **Latency:** ~200ms (fast)
+
+**Integration:**
+```python
+from openai import OpenAI
+client = OpenAI()
+
+response = client.audio.speech.create(
+    model="tts-1",
+    voice="nova",
+    input=vietnamese_text
+)
+```
+
+**Cost Comparison (per 1M characters):**
+- ElevenLabs Flash v2.5: $50
+- ElevenLabs Multilingual v2: $150
+- OpenAI TTS-1: **$15 (3-10x cheaper)**
+- OpenAI TTS-1-HD: $30 (still 2-5x cheaper)
+
+**Recommendation:**
+- **STT:** Switch to `gpt-4o-mini-transcribe` - 12x cost savings with better Vietnamese support
+- **TTS:** Keep ElevenLabs - OpenAI lacks Vietnamese voices, quality matters for voice-first app
+
+### OpenAI GPT-4o API
 
 - **Purpose:** Power intelligent conversation management and personalized numerology insights
 - **Documentation:** https://platform.openai.com/docs/api-reference
@@ -1117,8 +1185,24 @@ Real-time bidirectional communication for streaming voice conversations.
 - `POST /chat/completions` - Generate conversation responses with context
 - `POST /embeddings` - Convert conversation history to vectors for similarity search (future feature)
 
+**Model Selection:**
+- **Primary:** `gpt-4o` - Multimodal model with excellent Vietnamese language support (released May 2024)
+  - Best balance of performance, cost, and Vietnamese language quality
+  - Multimodal capabilities (text, audio, images)
+  - 128K context window
+  - Average response time: 320ms
+- **Fallback:** `gpt-4o-mini` - Cost-effective lightweight version for simpler interactions
+- **Alternative:** `o3-mini` - Latest reasoning model for complex numerology interpretations (released Jan 2025)
+  - Enhanced reasoning for STEM tasks (math, science, coding)
+  - Three effort levels: low/medium/high for performance tuning
+  - Better for complex numerological pattern analysis and deeper insights
+  - Higher latency but more accurate reasoning
+
 **Integration Notes:**
-- Use `gpt-4-turbo-preview` model for best Vietnamese language support
+- GPT-4o provides **significant improvement on non-English languages** including Vietnamese
+- For standard conversations: Use `gpt-4o` (fast, natural, excellent Vietnamese)
+- For deep numerological analysis: Consider `o3-mini` with medium effort setting
+- Supports multimodal inputs (text, audio, images) for future feature expansion
 - Implement custom system prompt with:
   - Pythagorean numerology knowledge base
   - Vietnamese cultural context and communication style
@@ -1130,27 +1214,31 @@ Real-time bidirectional communication for streaming voice conversations.
 - Use conversation history context (last 5-10 messages) for coherent multi-turn dialogs
 - Add safety guardrails to avoid inappropriate advice or medical claims
 
-### Firebase Authentication API
+### Azure Active Directory B2C (Azure AD B2C)
 
-- **Purpose:** Manage user authentication with phone number verification (SMS OTP)
-- **Documentation:** https://firebase.google.com/docs/auth
-- **Base URL(s):** Firebase Admin SDK (server-side), Firebase Auth REST API
-- **Authentication:** Service account credentials (server), Firebase config (client)
-- **Rate Limits:** 10 SMS per phone number per hour
+- **Purpose:** Consumer identity and access management with phone number authentication
+- **Documentation:** https://learn.microsoft.com/en-us/azure/active-directory-b2c/
+- **Base URL(s):** `https://{tenant-name}.b2clogin.com/{tenant-name}.onmicrosoft.com/`
+- **Authentication:** OAuth 2.0 / OpenID Connect with client credentials
+- **Rate Limits:** 100 requests per second per tenant, SMS throttling configurable
 
-**Key Operations:**
-- Phone number verification flow with SMS OTP
-- JWT token generation and validation
-- User session management
-- Security rules enforcement
+**Key Features:**
+- Phone number sign-up and sign-in with SMS OTP
+- Custom branding and user flows
+- JWT token issuance and validation
+- Multi-factor authentication support
+- Integration with Azure services
 
 **Integration Notes:**
-- Enable Phone Authentication provider in Firebase Console
-- Configure Vietnamese phone number format: `+84XXXXXXXXX`
-- Use reCAPTCHA for web to prevent SMS abuse
+- Create custom user flow for phone authentication in Azure Portal
+- Configure SMS provider (Twilio or Azure Communication Services) for OTP delivery
+- Set phone number format validation: `+84XXXXXXXXX` for Vietnamese users
+- Use Microsoft Authentication Library (MSAL) for token management
 - Implement exponential backoff for failed verification attempts
-- Store Firebase UID as `firebaseUid` in User table for linkage
-- Use Firebase Admin SDK server-side for secure token verification
+- Store Azure AD B2C object ID as `azureAdB2cId` in User table
+- Use MSAL Python SDK server-side for secure token verification
+- Configure custom policies for Vietnamese language UI
+- Set OTP validity to 5 minutes with configurable retry limits
 
 ## Core Workflows
 
@@ -1161,7 +1249,7 @@ sequenceDiagram
     participant U as User
     participant M as Mobile App
     participant API as FastAPI Backend
-    participant FB as Firebase Auth
+    participant ADB2C as Azure AD B2C
     participant DB as PostgreSQL
     participant NUM as Numerology Engine
 
@@ -1170,14 +1258,14 @@ sequenceDiagram
     U->>M: Tap "Start with Voice"
     M->>U: Request phone number
     U->>M: Enter phone number (+84...)
-    M->>FB: Request SMS OTP
-    FB->>U: Send SMS code
+    M->>ADB2C: Request SMS OTP
+    ADB2C->>U: Send SMS code
     U->>M: Enter OTP code
-    M->>FB: Verify OTP
-    FB->>M: Return Firebase token
+    M->>ADB2C: Verify OTP
+    ADB2C->>M: Return Azure AD B2C token (JWT)
     M->>API: POST /auth/register {token, phone}
-    API->>FB: Verify Firebase token
-    FB->>API: Token valid
+    API->>ADB2C: Verify JWT token
+    ADB2C->>API: Token valid
     API->>DB: Create User record
     DB->>API: User created (id)
     API->>M: Return JWT + User object
@@ -1209,8 +1297,8 @@ sequenceDiagram
     participant M as Mobile App
     participant WS as WebSocket
     participant API as FastAPI Backend
-    participant STT as Google Speech-to-Text
-    participant GPT as GPT-4 Turbo
+    participant STT as Azure Speech Services
+    participant GPT as GPT-4o
     participant TTS as ElevenLabs TTS
     participant REDIS as Redis Cache
     participant DB as PostgreSQL
@@ -1272,7 +1360,7 @@ sequenceDiagram
     participant API as FastAPI Backend
     participant DB as PostgreSQL
     participant NUM as Numerology Engine
-    participant GPT as GPT-4 Turbo
+    participant GPT as GPT-4o
 
     U->>M: Voice/text: "What career path suits me?"
     M->>API: POST /numerology/insight {question, context}
@@ -1306,7 +1394,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     phone_number VARCHAR(20) UNIQUE NOT NULL,
-    firebase_uid VARCHAR(128) UNIQUE NOT NULL,
+    azure_ad_b2c_id VARCHAR(128) UNIQUE NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     birth_date DATE NOT NULL,
     email VARCHAR(255),
@@ -1319,7 +1407,7 @@ CREATE TABLE users (
 );
 
 CREATE INDEX idx_users_phone ON users(phone_number);
-CREATE INDEX idx_users_firebase_uid ON users(firebase_uid);
+CREATE INDEX idx_users_azure_ad_b2c_id ON users(azure_ad_b2c_id);
 CREATE INDEX idx_users_created_at ON users(created_at);
 
 -- Numerology Profiles table
@@ -1903,7 +1991,7 @@ apps/api/src/
 │   ├── numerology.py              # Numerology calculation endpoints
 │   └── journal.py                 # Journal entry endpoints
 ├── services/
-│   ├── auth_service.py            # Firebase authentication logic
+│   ├── auth_service.py            # Azure AD B2C authentication logic
 │   ├── conversation_service.py    # Conversation orchestration
 │   ├── voice_service.py           # STT/TTS integration
 │   ├── ai_service.py              # GPT-4 conversation AI
@@ -2151,19 +2239,19 @@ class ConversationRepository:
 ```mermaid
 sequenceDiagram
     participant Client as Mobile App
-    participant FB as Firebase Auth
+    participant ADB2C as Azure AD B2C
     participant API as FastAPI Backend
     participant DB as PostgreSQL
 
-    Client->>FB: Request phone verification
-    FB->>Client: Send SMS OTP
-    Client->>FB: Verify OTP code
-    FB->>Client: Return Firebase ID token
+    Client->>ADB2C: Request phone verification
+    ADB2C->>Client: Send SMS OTP
+    Client->>ADB2C: Verify OTP code
+    ADB2C->>Client: Return Azure AD B2C token (JWT)
     
-    Client->>API: POST /auth/register {idToken, phoneNumber}
-    API->>FB: Verify ID token
-    FB->>API: Token valid + Firebase UID
-    API->>DB: Check if user exists by Firebase UID
+    Client->>API: POST /auth/register {token, phoneNumber}
+    API->>ADB2C: Verify JWT token
+    ADB2C->>API: Token valid + Azure AD B2C object ID
+    API->>DB: Check if user exists by Azure AD B2C ID
     
     alt User exists
         DB->>API: Return existing user
@@ -2276,7 +2364,7 @@ numerologist/
 ├── .github/                         # CI/CD workflows
 │   └── workflows/
 │       ├── ci.yaml                  # Automated testing on PR
-│       ├── deploy-api.yaml          # Deploy backend to GCP Cloud Run
+│       ├── deploy-api.yaml          # Deploy backend to Azure Container Apps
 │       └── deploy-mobile.yaml       # Build and deploy mobile app
 ├── apps/                            # Application packages
 │   ├── mobile/                      # React Native mobile app
@@ -2316,7 +2404,7 @@ numerologist/
 │       │   └── fixtures/            # Test fixtures
 │       ├── alembic/                 # Database migrations
 │       ├── requirements.txt         # Python dependencies
-│       ├── Dockerfile               # Container image for Cloud Run
+│       ├── Dockerfile               # Container image for Azure Container Apps
 │       ├── project.json             # Nx project configuration
 │       └── pyproject.toml           # Python project config
 ├── libs/                            # Shared libraries (Nx convention)
@@ -2351,13 +2439,13 @@ numerologist/
 │   └── generators/                  # Custom Nx generators
 ├── infrastructure/                  # Infrastructure as Code
 │   ├── terraform/
-│   │   ├── main.tf                  # GCP resource definitions
+│   │   ├── main.tf                  # Azure resource definitions
 │   │   ├── variables.tf             # Configuration variables
 │   │   ├── outputs.tf               # Output values
 │   │   └── backend.tf               # Terraform state config
 │   └── scripts/
 │       ├── deploy.sh                # Deployment script
-│       └── setup-gcp.sh             # GCP project setup
+│       └── setup-azure.sh           # Azure project setup
 ├── docs/                            # Documentation
 │   ├── prd.md                       # Product Requirements
 │   ├── architecture.md              # This document
@@ -2477,9 +2565,9 @@ alembic downgrade -1                             # Rollback one migration
 # Frontend (.env.local in apps/mobile)
 EXPO_PUBLIC_API_URL=http://localhost:8000/v1
 EXPO_PUBLIC_WS_URL=ws://localhost:8000/ws
-EXPO_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+EXPO_PUBLIC_AZURE_AD_B2C_TENANT_NAME=your_tenant_name
+EXPO_PUBLIC_AZURE_AD_B2C_CLIENT_ID=your_client_id
+EXPO_PUBLIC_AZURE_AD_B2C_POLICY_NAME=B2C_1_phone_signup_signin
 
 # Backend (.env in apps/api)
 DATABASE_URL=postgresql+asyncpg://numeroly:password@localhost:5432/numeroly
@@ -2489,19 +2577,27 @@ JWT_ALGORITHM=HS256
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES=15
 JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
 
-# Google Cloud
-GOOGLE_CLOUD_PROJECT=your_gcp_project_id
-GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account-key.json
+# Azure Configuration
+AZURE_SUBSCRIPTION_ID=your_azure_subscription_id
+AZURE_TENANT_ID=your_azure_tenant_id
+AZURE_RESOURCE_GROUP=numeroly-resources
+AZURE_REGION=southeastasia
+
+# Azure Services
+AZURE_SPEECH_KEY=your_azure_speech_services_key
+AZURE_SPEECH_REGION=southeastasia
+AZURE_STORAGE_CONNECTION_STRING=your_azure_storage_connection_string
+AZURE_STORAGE_CONTAINER_NAME=conversation-audio
 
 # External API Keys
 OPENAI_API_KEY=sk-...
 ELEVENLABS_API_KEY=your_elevenlabs_api_key
 
-# Firebase Admin SDK
-FIREBASE_ADMIN_CREDENTIALS=path/to/firebase-admin-key.json
-
-# Storage
-CLOUD_STORAGE_BUCKET=numeroly-audio-storage
+# Azure AD B2C
+AZURE_AD_B2C_TENANT_ID=your_tenant_id
+AZURE_AD_B2C_CLIENT_ID=your_client_id
+AZURE_AD_B2C_CLIENT_SECRET=your_client_secret
+AZURE_AD_B2C_POLICY_NAME=B2C_1_phone_signup_signin
 
 # Environment
 ENVIRONMENT=development  # development | staging | production
@@ -2516,21 +2612,21 @@ LOG_LEVEL=INFO
 - **Platform:** Expo EAS (Expo Application Services) for managed builds and OTA updates
 - **Build Command:** `eas build --platform all` (iOS + Android)
 - **Output Directory:** N/A (managed by Expo)
-- **CDN/Edge:** Expo CDN for OTA JavaScript updates, CloudFlare CDN for static assets
-- **Web Version:** `expo export:web` to generate static PWA, deployed to GCP Cloud Storage + CDN
+- **CDN/Edge:** Expo CDN for OTA JavaScript updates, Azure Front Door for static assets
+- **Web Version:** `expo export:web` to generate static PWA, deployed to Azure Blob Storage (static website) + Azure CDN
 
 **Backend Deployment:**
-- **Platform:** Google Cloud Run (containerized serverless)
-- **Build Command:** `docker build -t gcr.io/numeroly/api:latest .`
-- **Deployment Method:** Automated via GitHub Actions → Cloud Build → Cloud Run
-- **Scaling:** Auto-scale from 0 to 10 instances based on CPU/memory utilization
-- **Region:** asia-southeast1 (Singapore) with global load balancer
+- **Platform:** Azure Container Apps (serverless containers with Dapr integration)
+- **Build Command:** `docker build -t numeroly.azurecr.io/api:latest .`
+- **Deployment Method:** Automated via GitHub Actions → Azure Container Registry → Azure Container Apps
+- **Scaling:** Auto-scale from 0 to 10 instances based on HTTP requests and CPU utilization
+- **Region:** Southeast Asia (Singapore) with Azure Front Door for global distribution
 
 ### CI/CD Pipeline
 
 ```yaml
 # .github/workflows/deploy-api.yaml
-name: Deploy API to Cloud Run
+name: Deploy API to Azure Container Apps
 
 on:
   push:
@@ -2566,41 +2662,40 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
       
-      - name: Build Docker image
+      - name: Build and Push Docker image
         run: |
           cd apps/api
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:${{ github.sha }} .
-          docker tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:${{ github.sha }} \
-                     gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:${{ github.sha }} .
+          docker tag ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:${{ github.sha }} \
+                     ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:latest
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:latest
       
-      - name: Push to Container Registry
-        run: |
-          gcloud auth configure-docker
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:${{ github.sha }}
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:latest
-      
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy numeroly-api \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/numeroly-api:latest \
-            --platform managed \
-            --region asia-southeast1 \
-            --allow-unauthenticated \
-            --set-env-vars "ENVIRONMENT=production,LOG_LEVEL=INFO" \
-            --set-secrets="DATABASE_URL=DATABASE_URL:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest" \
-            --min-instances 1 \
-            --max-instances 10 \
-            --memory 1Gi \
-            --cpu 1 \
-            --timeout 60
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          containerAppName: numeroly-api
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          imageToDeploy: ${{ secrets.ACR_LOGIN_SERVER }}/numeroly-api:latest
+          environmentVariables: |
+            ENVIRONMENT=production
+            LOG_LEVEL=INFO
+          secrets: |
+            database-url=${{ secrets.DATABASE_URL }}
+            openai-api-key=${{ secrets.OPENAI_API_KEY }}
+            azure-speech-key=${{ secrets.AZURE_SPEECH_KEY }}
 ```
 
 ### Environments
@@ -2650,10 +2745,10 @@ jobs:
 **Authentication Security:**
 - **Token Storage:** Access tokens in memory (Zustand), refresh tokens in `expo-secure-store`
 - **Session Management:** Redis session store with 24-hour expiration, automatic cleanup of abandoned sessions
-- **Password Policy:** N/A (phone number authentication only), but Firebase enforces OTP validity for 5 minutes
+- **Password Policy:** N/A (phone number authentication only), Azure AD B2C OTP validity configured to 5 minutes
 
 **Data Protection:**
-- **Encryption at Rest:** PostgreSQL Transparent Data Encryption (TDE) for all user data, Cloud Storage server-side encryption (AES-256)
+- **Encryption at Rest:** Azure Database for PostgreSQL encryption for all user data, Azure Blob Storage server-side encryption (AES-256)
 - **Encryption in Transit:** TLS 1.3 for all API communication, HTTPS-only in production
 - **PII Handling:** Full names and birth dates marked as sensitive, audit logging for all access, GDPR-compliant data export and deletion
 
@@ -2677,7 +2772,7 @@ jobs:
   - Voice synthesis: < 1 second (p95)
   - Total conversation turn (STT → GPT → TTS): < 3 seconds (PRD requirement)
 - **Database Optimization:**
-  - Connection pooling: 10-20 connections per Cloud Run instance
+  - Connection pooling: 10-20 connections per Container Apps instance
   - Index on frequently queried columns (see Database Schema)
   - Read replicas for conversation history queries (if needed post-MVP)
   - JSONB columns for flexible metadata without schema migrations
@@ -3003,7 +3098,7 @@ sequenceDiagram
     participant ErrorTracker as Sentry
 
     Client->>API: POST /voice/transcribe {audio}
-    API->>ExtAPI: Google STT API call
+    API->>ExtAPI: Azure Speech Services API call
     
     alt External API Error
         ExtAPI-->>API: 500 Server Error
@@ -3073,7 +3168,7 @@ interface ApiError {
     "code": "VOICE_TRANSCRIPTION_FAILED",
     "message": "Không thể chuyển đổi giọng nói. Vui lòng thử lại.",
     "details": {
-      "reason": "Google STT API timeout after 5 seconds",
+      "reason": "Azure Speech Services timeout after 5 seconds",
       "retryAfter": 30
     },
     "timestamp": "2025-01-14T10:35:00Z",
@@ -3281,11 +3376,11 @@ app.add_exception_handler(Exception, api_error_handler)
 ### Monitoring Stack
 
 - **Frontend Monitoring:** Sentry for React Native (error tracking, performance monitoring, session replay)
-- **Backend Monitoring:** Google Cloud Monitoring (metrics, uptime), Cloud Logging (structured logs), Cloud Trace (distributed tracing)
+- **Backend Monitoring:** Azure Monitor (metrics, uptime, alerts), Azure Monitor Logs (structured logs), Application Insights (distributed tracing, APM)
 - **Error Tracking:** Sentry for both frontend and backend (unified error dashboard)
 - **Performance Monitoring:** 
   - Frontend: Sentry Performance + custom instrumentation for voice latency
-  - Backend: Cloud Trace for request tracing, custom metrics for STT/TTS/GPT-4 latency
+  - Backend: Application Insights for request tracing, custom metrics for Azure Speech/ElevenLabs/GPT-4 latency
 
 ### Key Metrics
 
@@ -3304,7 +3399,7 @@ app.add_exception_handler(Exception, api_error_handler)
   - `/voice/transcribe`: Target < 2s (P95)
   - `/voice/synthesize`: Target < 1s (P95)
   - `/numerology/insight`: Target < 500ms (P95)
-- **External API Latency:** Time spent in Google STT, ElevenLabs TTS, OpenAI GPT-4 calls
+- **External API Latency:** Time spent in Azure Speech Services, ElevenLabs TTS, OpenAI GPT-4 calls
 - **Database Query Performance:** Slow queries (> 100ms)
 - **Redis Hit Rate:** Cache effectiveness (target: > 80%)
 - **WebSocket Connections:** Active real-time conversation connections
@@ -3359,28 +3454,58 @@ await conversationService.transcribeAudio(audioBlob, conversationId);
 trackVoiceLatency('audio_transcription', startTime);
 ```
 
-**Backend (FastAPI + Cloud Monitoring):**
+**Backend (FastAPI + Application Insights):**
 
 ```python
 # utils/monitoring.py
-from google.cloud import monitoring_v3
-from google.cloud.monitoring_v3 import TimeInterval
-from google.protobuf.timestamp_pb2 import Timestamp
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure import metrics_exporter
+from opencensus.stats import aggregation as aggregation_module
+from opencensus.stats import measure as measure_module
+from opencensus.stats import stats as stats_module
+from opencensus.stats import view as view_module
+from opencensus.tags import tag_map as tag_map_module
 import time
 from functools import wraps
+from ..config import settings
 
-client = monitoring_v3.MetricServiceClient()
-project_name = f"projects/{settings.GCP_PROJECT_ID}"
+# Initialize Azure Monitor
+stats = stats_module.stats
+view_manager = stats.view_manager
+stats_recorder = stats.stats_recorder
+
+# Define metrics
+latency_measure = measure_module.MeasureFloat(
+    "numeroly/latency",
+    "Endpoint latency in milliseconds",
+    "ms"
+)
+
+# Create metrics exporter
+exporter = metrics_exporter.new_metrics_exporter(
+    connection_string=settings.APPLICATIONINSIGHTS_CONNECTION_STRING
+)
+
+# Register view
+latency_view = view_module.View(
+    "numeroly/latency_distribution",
+    "Distribution of endpoint latencies",
+    ["endpoint", "status"],
+    latency_measure,
+    aggregation_module.DistributionAggregation([50, 100, 200, 500, 1000, 2000, 5000])
+)
+view_manager.register_view(latency_view)
+view_manager.register_exporter(exporter)
 
 def track_latency(metric_name: str):
-    """Decorator to track endpoint latency to Cloud Monitoring."""
+    """Decorator to track endpoint latency to Application Insights."""
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             start_time = time.time()
+            status = "success"
             try:
                 result = await func(*args, **kwargs)
-                status = "success"
                 return result
             except Exception as e:
                 status = "error"
@@ -3388,25 +3513,14 @@ def track_latency(metric_name: str):
             finally:
                 latency_ms = (time.time() - start_time) * 1000
                 
-                # Send custom metric to Cloud Monitoring
-                series = monitoring_v3.TimeSeries()
-                series.metric.type = f"custom.googleapis.com/numeroly/{metric_name}"
-                series.resource.type = "global"
+                # Record metric with tags
+                mmap = stats_recorder.new_measurement_map()
+                tmap = tag_map_module.TagMap()
+                tmap.insert("endpoint", metric_name)
+                tmap.insert("status", status)
                 
-                now = time.time()
-                seconds = int(now)
-                nanos = int((now - seconds) * 10**9)
-                interval = TimeInterval(
-                    {"end_time": {"seconds": seconds, "nanos": nanos}}
-                )
-                
-                point = monitoring_v3.Point(
-                    {"interval": interval, "value": {"double_value": latency_ms}}
-                )
-                series.points = [point]
-                series.metric.labels["status"] = status
-                
-                client.create_time_series(name=project_name, time_series=[series])
+                mmap.measure_float_put(latency_measure, latency_ms)
+                mmap.record(tmap)
         
         return wrapper
     return decorator
@@ -3419,46 +3533,75 @@ async def transcribe_audio(...):
     pass
 ```
 
-**Alerting Configuration (Cloud Monitoring):**
+**Alerting Configuration (Azure Monitor):**
 
-```yaml
+```hcl
 # infrastructure/terraform/monitoring.tf (Terraform)
-resource "google_monitoring_alert_policy" "high_error_rate" {
-  display_name = "High API Error Rate"
-  combiner     = "OR"
-  conditions {
-    display_name = "Error rate > 5%"
-    condition_threshold {
-      filter          = "metric.type=\"cloudrun.googleapis.com/request_count\" AND resource.type=\"cloud_run_revision\" AND metric.label.response_code_class=\"5xx\""
-      duration        = "60s"
-      comparison      = "COMPARISON_GT"
-      threshold_value = 5
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
+resource "azurerm_monitor_metric_alert" "high_error_rate" {
+  name                = "high-api-error-rate"
+  resource_group_name = var.resource_group_name
+  scopes              = [azurerm_container_app.numeroly_api.id]
+  description         = "Alert when API error rate exceeds 5%"
+  severity            = 2
+  frequency           = "PT1M"
+  window_size         = "PT5M"
+
+  criteria {
+    metric_namespace = "Microsoft.App/containerApps"
+    metric_name      = "Requests"
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = 5
+
+    dimension {
+      name     = "StatusCodeClass"
+      operator = "Include"
+      values   = ["5xx"]
     }
   }
-  notification_channels = [google_monitoring_notification_channel.email.name]
+
+  action {
+    action_group_id = azurerm_monitor_action_group.email_alerts.id
+  }
 }
 
-resource "google_monitoring_alert_policy" "slow_voice_processing" {
-  display_name = "Voice Processing Latency > 3s"
-  combiner     = "OR"
-  conditions {
-    display_name = "P95 latency exceeds PRD requirement"
-    condition_threshold {
-      filter          = "metric.type=\"custom.googleapis.com/numeroly/voice_transcription_latency\""
-      duration        = "300s"
-      comparison      = "COMPARISON_GT"
-      threshold_value = 3000
-      aggregations {
-        alignment_period     = "60s"
-        per_series_aligner   = "ALIGN_PERCENTILE_95"
-      }
+resource "azurerm_monitor_metric_alert" "slow_voice_processing" {
+  name                = "slow-voice-processing"
+  resource_group_name = var.resource_group_name
+  scopes              = [azurerm_application_insights.numeroly.id]
+  description         = "Alert when P95 voice transcription latency exceeds 3s"
+  severity            = 1
+  frequency           = "PT1M"
+  window_size         = "PT5M"
+
+  criteria {
+    metric_namespace = "Microsoft.Insights/components"
+    metric_name      = "customMetrics/numeroly/latency"
+    aggregation      = "Percentile95"
+    operator         = "GreaterThan"
+    threshold        = 3000
+
+    dimension {
+      name     = "endpoint"
+      operator = "Include"
+      values   = ["voice_transcription_latency"]
     }
   }
-  notification_channels = [google_monitoring_notification_channel.pagerduty.name]
+
+  action {
+    action_group_id = azurerm_monitor_action_group.pagerduty_alerts.id
+  }
+}
+
+resource "azurerm_monitor_action_group" "email_alerts" {
+  name                = "email-alerts"
+  resource_group_name = var.resource_group_name
+  short_name          = "email"
+
+  email_receiver {
+    name          = "team-email"
+    email_address = var.alert_email
+  }
 }
 ```
 
@@ -3477,7 +3620,7 @@ Before finalizing this architecture document, the Architect Checklist should be 
 
 ---
 
-**Document Version:** 1.0  
+**Document Version:** 1.2  
 **Last Updated:** 2025-01-14  
 **Author:** Winston (Architect)  
-**Status:** Draft - Pending Review
+**Status:** Fully Azure-Integrated - Ready for Review
