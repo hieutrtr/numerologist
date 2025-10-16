@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Numeroly",
+    "slug": "numeroly-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#6B4CE6"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.numeroly.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Numeroly cần quyền truy cập microphone để ghi âm giọng nói của bạn.",
+        "NSSpeechRecognitionUsageDescription": "Numeroly cần quyền nhận diện giọng nói để hiểu các câu hỏi của bạn."
+      }
+    },
+    "android": {
+      "package": "com.numeroly.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
+    },
+    "web": {},
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Numeroly cần quyền truy cập microphone để ghi âm giọng nói của bạn."
+        }
+      ],
+      "expo-font"
+    ]
+  }
+}
