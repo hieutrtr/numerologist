@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { useUserStore } from '../stores/userStore';
 import { fetchNumerologyProfile } from '../services/numerology';
 import { speakText, recordAndTranscribe } from '../services/voice-orchestration';
 import { generatePersonalInsight } from '../services/insight-generator';
 import { saveConversation } from '../services/conversation-api';
+import { ConversationProgress } from '../components/conversation/ConversationProgress';
+import { WaveformVisualizer } from '../components/conversation/WaveformVisualizer';
 import {
   ConversationFlowController,
   ConversationStep,
@@ -27,6 +29,8 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
   const [displayText, setDisplayText] = useState('Chào mừng đến với Numeroly...');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [meterValue, setMeterValue] = useState(-160);
+  const [isRecording, setIsRecording] = useState(false);
   
   const flowControllerRef = useRef<ConversationFlowController>(new ConversationFlowController());
   const { setNumerologyProfile, setLoadingProfile, setProfileError, user } = useUserStore();
@@ -370,12 +374,20 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Numeroly</Text>
+      
+      {conversationState && (
+        <ConversationProgress currentStep={conversationState.currentStep} />
+      )}
       
       <View style={styles.displayBox}>
         <Text style={styles.displayText}>{displayText}</Text>
       </View>
+
+      {isRecording && (
+        <WaveformVisualizer isActive={isRecording} meterValue={meterValue} />
+      )}
 
       {isProcessing && (
         <View style={styles.loadingContainer}>
@@ -390,10 +402,8 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
         </View>
       )}
 
-      <Text style={styles.stepIndicator}>
-        Bước: {conversationState?.currentStep || 'Chưa bắt đầu'}
-      </Text>
-    </View>
+      <View style={styles.paddingBottom} />
+    </ScrollView>
   );
 };
 
@@ -401,15 +411,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
-    padding: 20,
-    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#FFD700',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 16,
   },
   displayBox: {
     backgroundColor: '#16213e',
@@ -425,7 +435,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
     lineHeight: 24,
-    fontStyle: 'italic',
   },
   loadingContainer: {
     alignItems: 'center',
@@ -437,19 +446,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   errorBox: {
-    backgroundColor: '#8b0000',
+    backgroundColor: 'rgba(139, 0, 0, 0.3)',
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6B6B',
   },
   errorText: {
-    color: '#FFFFFF',
+    color: '#FF6B6B',
     fontSize: 14,
   },
-  stepIndicator: {
-    color: '#888888',
-    textAlign: 'center',
-    fontSize: 12,
-    marginTop: 20,
+  paddingBottom: {
+    height: 40,
   },
 });
