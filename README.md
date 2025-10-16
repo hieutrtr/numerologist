@@ -228,6 +228,232 @@ Complete architecture documentation is available in the `docs/architecture/` dir
 - **[coding-standards.md](docs/architecture/coding-standards.md)** - Development standards
 - **[source-tree.md](docs/architecture/source-tree.md)** - Project structure details
 
+## Voice Services Migration Guide (Story 1.6)
+
+### Overview
+
+Voice services have been refactored to use production-ready libraries instead of direct API calls:
+
+- **Speech-to-Text:** Now uses **Azure AI OpenAI SDK** (`azure-ai-openai`)
+- **Text-to-Speech:** Now uses **ElevenLabs Python SDK** (`elevenlabs`)
+- **Orchestration:** New **Agent Framework** service for multi-turn conversations
+
+### Key Improvements
+
+#### 1. Automatic Retry & Error Handling
+- SDK handles connection retries, timeouts, and errors automatically
+- Reduces boilerplate code in service layer
+- Better reliability for production use
+
+#### 2. Request Stitching (TTS)
+- ElevenLabs SDK now tracks previous request IDs
+- Maintains voice consistency across multiple TTS calls
+- Seamless multi-turn conversations with same voice
+
+#### 3. Dual Deployment Strategy
+- **STT:** `gpt-4o-mini-transcribe` (optimized for speech recognition)
+- **Reasoning:** `gpt-4o-mini` (optimized for conversation logic)
+- Configurable via environment variables
+
+#### 4. Agent Framework Integration
+- New `NumerologyAgentService` provides orchestration
+- Enables multi-turn reasoning with context
+- Ready for integration with tool use and function calling
+
+### Updated Dependencies
+
+```bash
+# Added
+agent-framework==1.0.0           # Microsoft orchestration
+azure-ai-openai==1.13.0          # STT and embedding models
+
+# Updated
+elevenlabs==0.3.0                # TTS with request stitching
+
+# Removed
+openai==1.3.8                    # Replaced by agent-framework
+azure-cognitiveservices-speech   # Replaced by azure-ai-openai
+sentry-sdk==1.39.1               # Observability in agent-framework
+```
+
+### Configuration
+
+**Environment Variables:**
+
+```bash
+# Azure OpenAI (unchanged)
+AZURE_OPENAI_KEY=your-key
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+
+# Deployment Names (NEW)
+AZURE_OPENAI_STT_DEPLOYMENT_NAME=gpt-4o-mini-transcribe
+AZURE_OPENAI_REASONING_DEPLOYMENT_NAME=gpt-4o-mini
+
+# ElevenLabs (unchanged)
+ELEVENLABS_API_KEY=your-api-key
+ELEVENLABS_VOICE_ID=your-voice-id
+```
+
+### Service Updates
+
+#### Speech-to-Text (voice_service.py)
+
+**Before:** Direct HTTP calls to Azure OpenAI endpoint
+```python
+# Old approach
+response = await session.post(
+    f"{endpoint}/openai/deployments/{deployment}/audio/transcriptions",
+    headers={"api-key": api_key},
+    ...
+)
+```
+
+**After:** Azure AI OpenAI SDK
+```python
+# New approach
+client = AsyncAzureOpenAI(...)
+transcription = await client.audio.transcriptions.create(
+    file=audio_file,
+    model="whisper-1",
+    language="vi"
+)
+```
+
+**Benefits:**
+- Automatic retries on transient failures
+- Connection pooling and session management
+- Type-safe API
+
+#### Text-to-Speech (text_to_speech_service.py)
+
+**Before:** Direct REST calls to ElevenLabs
+```python
+# Old approach
+response = await session.post(
+    f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
+    headers={"xi-api-key": api_key},
+    ...
+)
+```
+
+**After:** ElevenLabs Python SDK with request stitching
+```python
+# New approach
+client = ElevenLabs(api_key=api_key)
+audio = client.text_to_speech.stream(
+    text=text,
+    voice_id=voice_id,
+    previous_request_ids=["req-1", "req-2"],  # NEW: Maintains voice consistency
+    model_id="eleven_monolingual_v1"
+)
+```
+
+**Benefits:**
+- Request stitching for voice consistency
+- Streaming support built-in
+- Automatic error handling
+- Voice setting presets (stability, clarity)
+
+#### Agent Framework Integration (agent_service.py)
+
+**New Service:** `NumerologyAgentService`
+
+```python
+# Initialize
+service = NumerologyAgentService()
+
+# Process voice input with context
+result = await service.process_voice_input(
+    text="Ngày sinh của tôi là 15/3/1990",
+    user_id=uuid.uuid4(),
+    context={
+        "user_profile": {"name": "Nguyễn Văn A", ...},
+        "conversation_history": [...]
+    }
+)
+
+# Check health
+health = await service.health_check()
+assert health["status"] == "healthy"
+```
+
+**Features:**
+- Multi-turn conversation with context
+- Automatic system prompt building
+- Error handling and retry logic
+- Health check endpoint
+- Supports tool use (for future enhancements)
+
+### Testing
+
+New test files cover all refactored services:
+
+- `apps/api/src/__tests__/test_voice_service.py` - STT service tests
+- `apps/api/src/__tests__/test_tts_service.py` - TTS service tests  
+- `apps/api/src/__tests__/test_agent_service.py` - Agent service tests
+
+**Run tests:**
+```bash
+cd apps/api
+pip install pytest-cov  # Required for coverage
+pytest src/__tests__/ -v
+```
+
+### Backward Compatibility
+
+✅ All refactored services maintain backward-compatible interfaces:
+
+- `AzureOpenAISpeechToTextService.transcribe_audio_stream()` - Unchanged signature
+- `ElevenLabsTextToSpeechService.synthesize_text()` - Unchanged signature
+- `TranscriptionResult` and `TextToSpeechResult` - Unchanged structure
+
+**Migration Path:** Replace old implementations without changing calling code.
+
+### Next Steps
+
+1. **Install Dependencies:**
+   ```bash
+   pip install -r apps/api/requirements.txt
+   ```
+
+2. **Run Tests:**
+   ```bash
+   pytest apps/api/src/__tests__/ -v
+   ```
+
+3. **Verify Configuration:**
+   - Check environment variables are set
+   - Verify dual deployment names in config.py
+   - Test with: `curl http://localhost:8000/health`
+
+4. **Deploy:**
+   - Update Docker image
+   - Set environment variables in deployment
+   - Monitor logs for any integration issues
+
+### Troubleshooting
+
+**"ModuleNotFoundError: No module named 'agent_framework'"**
+```bash
+pip install agent-framework==1.0.0
+```
+
+**"Azure authentication failed"**
+- Check `AZURE_OPENAI_KEY` and `AZURE_OPENAI_ENDPOINT` are set
+- Verify deployment names match Azure resource
+
+**"ElevenLabs API error"**
+- Check `ELEVENLABS_API_KEY` is valid
+- Verify `ELEVENLABS_VOICE_ID` exists in your account
+
+**"Request stitching not working"**
+- Ensure `elevenlabs>=0.3.0` is installed
+- Verify `use_request_stitching=True` is passed to `synthesize_text()`
+
+### Support
+
+See story [1.6 - Voice Services Refactoring](docs/stories/1.6.story.md) for implementation details.
+
 ## Development Stories
 
 Development is organized by user stories in `docs/stories/`:

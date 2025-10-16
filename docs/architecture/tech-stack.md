@@ -12,8 +12,11 @@ Complete technology stack for Numeroly with versions, rationale, and integration
 | Frontend Framework | React Native | 0.76 | Cross-platform mobile app | Single codebase for iOS/Android, large community, PWA support via Expo |
 | UI Component Library | React Native Elements | 4.1 | Pre-built mobile UI components | Consistent design patterns, accessibility built-in, customizable themes |
 | State Management | Zustand | 5.0 | Lightweight global state | Simpler than Redux, perfect for voice session state, minimal boilerplate |
-| Backend Language | Python | 3.13 | AI/ML ecosystem compatibility | Best support for GPT-4o, numerology calculations, extensive libraries, latest stable |
+| Backend Language | Python | 3.13 | AI/ML ecosystem compatibility | Best support for Agent Framework, numerology calculations, extensive libraries, latest stable |
 | Backend Framework | FastAPI | 0.115 | High-performance async API | Native async support for voice streaming, automatic OpenAPI docs, fast development |
+| Agent Framework | Microsoft Agent Framework | 1.0+ | AI orchestration & tool management | Purpose-built for Azure OpenAI, automatic tool use, built-in error handling, production-ready |
+| AI/LLM Platform | Azure OpenAI | - | STT, reasoning, conversation logic | Cost-optimized gpt-4o-mini, 12x cheaper STT via gpt-4o-mini-transcribe, Vietnamese support |
+| Text-to-Speech | ElevenLabs Python SDK | 0.3+ | Vietnamese voice synthesis | Official SDK (Trust 9/10), streaming audio, request stitching for voice consistency |
 | API Style | REST + WebSocket | - | Real-time voice and standard CRUD | REST for standard ops, WebSocket for streaming voice/conversation updates |
 | Database | PostgreSQL | 17 | Relational data with JSONB | Strong data integrity, JSONB for flexible conversation storage, native encryption, latest stable |
 | Cache | Redis | 7.4 | Session state and rate limiting | In-memory speed for conversation context, pub/sub for real-time updates, latest stable |
@@ -27,7 +30,7 @@ Complete technology stack for Numeroly with versions, rationale, and integration
 | Bundler | Metro | 0.80 | React Native JavaScript bundling | Default for React Native, optimized for mobile, supports PWA |
 | IaC Tool | Terraform | 1.9 | Infrastructure as Code | Azure provider support, state management, reproducible deployments, latest stable |
 | CI/CD | GitHub Actions | - | Automated testing and deployment | Free for open source, Azure integration, parallel job execution |
-| Monitoring | Azure Monitor + Application Insights + Sentry | - | Application observability | Azure native monitoring, AI-powered insights, Sentry for error tracking |
+| Monitoring | Azure Monitor + Application Insights | - | Application observability | Azure native monitoring, AI-powered insights, built-in with Agent Framework |
 | Logging | Azure Monitor Logs (Log Analytics) | - | Centralized log aggregation | KQL queries, conversation flow tracking, compliance audit trails |
 | CSS Framework | NativeWind | 4.1 | Tailwind for React Native | Rapid UI development, consistent design system, small bundle size, latest stable |
 
@@ -300,42 +303,93 @@ async def test_create_conversation(client: AsyncClient, db: AsyncSession):
 - **Services:** Container Apps, App Gateway, CDN, Application Insights, Monitor
 - **Cost Optimization:** Reserved instances for predictable workloads, spot instances for background jobs
 
-### AI/ML Services
+### AI/ML Services Stack
 
-**Azure Speech Services (Cognitive Services)**
-- Vietnamese speech recognition: `vi-VN` locale
-- WebSocket streaming for sub-2-second latency
-- Custom speech models available for accents
-- Fallback: `gpt-4o-mini-transcribe` (10x cheaper, released March 2025)
+#### Microsoft Agent Framework (Orchestration)
+- **Purpose:** Central orchestration of AI agent logic, tool management, and conversation state
+- **Version:** 1.0+ (Python SDK)
+- **Features:**
+  - Automatic tool use and invocation
+  - Built-in error handling and retries
+  - Threading & conversation history management
+  - Integration with Azure OpenAI for seamless LLM calls
+  - Observable/traceable execution with OpenTelemetry
+- **Trust Score:** 9.5/10 (413 code snippets, official Microsoft)
+- **Configuration:** AZURE_OPENAI_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_VERSION
 
-**OpenAI GPT-4o**
-- Latest multimodal model (May 2024)
-- Excellent Vietnamese language support
-- 128K context window
-- Fallback: `gpt-4o-mini` for cost optimization
-- Advanced reasoning: `o3-mini` for complex numerology analysis (Jan 2025)
+#### Azure OpenAI - Dual Deployment Strategy
+Two separate deployments for different tasks:
 
-**ElevenLabs Text-to-Speech**
-- Vietnamese voices (or custom voice clones)
-- Emotional modulation: warmth, stability settings
-- Cost: ~$50-150 per million characters
-- Fallback: OpenAI `tts-1` ($15/million chars, but English voices only)
+**1. Speech-to-Text (STT) Deployment: `gpt-4o-mini-transcribe`**
+- **Deployment Name:** `gpt-4o-mini-transcribe`
+- **Region:** East US 2 (public preview)
+- **Cost:** $0.003/minute = **$0.18/hour** (12x cheaper than Azure Speech Services)
+- **Accuracy:** 54% better than OpenAI Whisper
+- **Vietnamese Support:** Excellent (supports 86+ languages including Vietnamese)
+- **Use Case:** Convert incoming user audio to text
+- **Integration:** Agent framework calls this deployment for STT operations
 
-### Cost-Effective Alternatives
+**2. Reasoning & Conversation Deployment: `gpt-4o-mini`**
+- **Deployment Name:** `gpt-4o-mini`
+- **Cost:** $0.15/M input tokens, $0.60/M output tokens
+- **Features:** 128K context window, multimodal support
+- **Vietnamese Support:** Native Vietnamese language understanding
+- **Use Case:** Numerology calculations, conversation logic, tool invocation
+- **Integration:** Agent framework primary reasoning model for all agent.run() calls
 
-**Speech-to-Text: gpt-4o-mini-transcribe**
-- Pricing: $0.003/minute = **$0.18/hour** (12x cheaper than Azure Speech)
-- Better accuracy: 54% better than Whisper
-- Vietnamese support: Excellent (86+ languages)
+**Configuration Example:**
+```python
+# From apps/api/src/config.py
+azure_openai_key: str                                    # Shared API key
+azure_openai_endpoint: str                               # Shared endpoint
+azure_openai_api_version: str = "2025-01-01-preview"   # API version
+azure_openai_stt_deployment_name: str = "gpt-4o-mini-transcribe"
+azure_openai_reasoning_deployment_name: str = "gpt-4o-mini"
+```
 
-**Text-to-Speech: OpenAI TTS-1**
-- Pricing: $0.015/1K characters = **$15/million** (3-10x cheaper)
-- Limitation: English voices only, no Vietnamese voices
-- Quality: Natural but less expressive than ElevenLabs
+#### ElevenLabs Text-to-Speech (TTS)
+- **SDK:** Official Python SDK (`elevenlabs` package, Trust 9/10)
+- **Deployment:** 451 code snippets, active maintenance
+- **Vietnamese Voices:** Multiple warm, stable Vietnamese voices available
+- **Features:**
+  - Real-time audio streaming (low-latency)
+  - Request stitching for voice consistency across multiple responses
+  - Emotional modulation (warmth, stability, emotion settings)
+  - Support for custom voice cloning
+- **Cost:** ~$0.30 per 1K characters (~$300 per million characters)
+- **Pricing Model:** Pay-as-you-go, no minimum
+- **Use Case:** Convert numerology insights to natural-sounding Vietnamese audio
+- **Integration:** Called by FastAPI endpoint after Agent Framework generates response text
 
-**Recommendation:**
-- **STT:** Switch to `gpt-4o-mini-transcribe` post-MVP (12x savings)
-- **TTS:** Keep ElevenLabs for MVP (Vietnamese voice critical), consider OpenAI for future expansion
+**Multi-Response Audio Consistency:**
+```python
+# Request stitching ensures same voice across multiple agent responses
+request_ids = []
+
+for paragraph in agent_response_paragraphs:
+    response = elevenlabs_client.text_to_speech.convert(
+        text=paragraph,
+        voice_id=settings.elevenlabs_voice_id,
+        previous_request_ids=request_ids  # Maintains consistency
+    )
+    request_ids.append(response.headers.get("request-id"))
+```
+
+### Complete Voice Conversation Flow
+
+```
+User Audio Input
+    ↓
+Azure OpenAI STT (gpt-4o-mini-transcribe)
+    ↓ [User Text]
+Microsoft Agent Framework
+    ↓ [Numerology Tools]
+Azure OpenAI Reasoning (gpt-4o-mini)
+    ↓ [Agent Response]
+ElevenLabs TTS (Python SDK)
+    ↓
+User Audio Output
+```
 
 ### Authentication
 
@@ -371,17 +425,18 @@ Key dependencies:
 ### Backend (`apps/api/requirements.txt`)
 
 Key dependencies:
-- `fastapi`: 0.109+
+- `fastapi`: 0.109+ (web framework)
 - `sqlalchemy[asyncio]`: 2.x (ORM)
-- `alembic`: 1.x (migrations)
-- `pydantic`: 2.x (validation)
-- `python-jose[cryptography]`: (JWT)
-- `pytest`: 7.x + `pytest-asyncio` (testing)
-- `redis`: 5.x (caching)
+- `alembic`: 1.x (database migrations)
+- `pydantic`: 2.x (data validation)
+- `pydantic-settings`: 2.x (environment config)
+- `python-jose[cryptography]`: (JWT token signing)
+- `pytest`: 7.x + `pytest-asyncio` (async testing)
+- `redis`: 5.x (session caching)
 - `aiohttp`: 3.x (async HTTP client)
-- `openai`: 1.x (GPT-4 integration)
-- `azure-cognitiveservices-speech`: (Azure Speech)
-- `elevenlabs`: (TTS)
+- `agent-framework`: 1.0+ (AI agent orchestration)
+- `azure-identity`: (optional - for managed identity auth, not needed if using API keys)
+- `elevenlabs`: 2.18.0 (TTS - Vietnamese voice synthesis)
 
 ## Version Management Strategy
 
@@ -433,6 +488,10 @@ Key dependencies:
 | Django | FastAPI | Async-first, better for voice streaming WebSockets |
 | Firebase | Azure AD B2C + PostgreSQL | Better phone auth for Vietnamese users, cost predictability |
 | Socket.io | WebSocket (native) | Lighter implementation, faster voice streaming |
+| Claude Agent SDK | Microsoft Agent Framework | Azure OpenAI native integration, automatic tool orchestration, production-ready |
+| Direct Azure OpenAI API | Agent Framework | Built-in error handling, streaming support, thread management, observability |
+| Azure Speech Services | gpt-4o-mini-transcribe | 12x cheaper, 54% better accuracy, simpler integration (same Azure account) |
+| Multiple TTS providers | ElevenLabs | Vietnamese voice quality, real-time streaming, request stitching for consistency |
 
 ---
 

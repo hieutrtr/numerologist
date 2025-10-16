@@ -31,28 +31,24 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 15
     jwt_refresh_token_expire_days: int = 7
 
-    # Azure
-    azure_subscription_id: Optional[str] = None
-    azure_tenant_id: Optional[str] = None
-    azure_resource_group: Optional[str] = None
-    azure_region: str = "southeastasia"
-
-    # Azure Cognitive Services
-    azure_speech_key: Optional[str] = None
-    azure_speech_region: str = "southeastasia"
-    azure_storage_connection_string: Optional[str] = None
-    azure_storage_container_name: str = "conversation-audio"
+    # Azure OpenAI Configuration
+    azure_openai_key: Optional[str] = None
+    azure_openai_endpoint: Optional[str] = None
+    azure_openai_api_version: str = "2025-01-01-preview"
+    
+    # Azure OpenAI - Speech-to-Text (STT)
+    # Using gpt-4o-mini-transcribe: 12x cheaper than Azure Speech Services, 54% better accuracy
+    # Availability: eastus2 region (public preview 2025)
+    azure_openai_stt_deployment_name: str = "gpt-4o-mini-transcribe"
+    
+    # Azure OpenAI - Reasoning & Agent Logic
+    # Using gpt-4o-mini for numerology calculations and conversation
+    azure_openai_reasoning_deployment_name: str = "gpt-4o-mini"
 
     # External APIs
-    openai_api_key: Optional[str] = None
-    openai_model: str = "gpt-4o"
-    openai_temperature: float = 0.7
-
+    # ElevenLabs - Text-to-Speech (Vietnamese voice synthesis)
     elevenlabs_api_key: Optional[str] = None
     elevenlabs_voice_id: str = "default"
-
-    # Sentry
-    sentry_dsn: Optional[str] = None
 
     # Logging
     log_level: str = "INFO"
