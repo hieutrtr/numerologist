@@ -1,209 +1,165 @@
-import React, { useEffect, useRef } from 'react';
-import { Pressable, View, Text, StyleSheet, Animated } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import { VoiceButtonProps } from '../../types';
-import { Colors, Spacing, BorderRadius } from '../../utils/colors';
+/**
+ * Voice Button Component
+ * 
+ * Main UI control for voice recording with visual state feedback.
+ * States: idle, listening, processing, error
+ */
 
-const BUTTON_SIZES = {
-  small: 48,
-  medium: 80,
-  large: 200,
+import React, { useCallback, useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import * as Haptics from 'expo-haptics';
+
+export type VoiceButtonState = 'idle' | 'listening' | 'processing' | 'error';
+
+export interface VoiceButtonProps {
+  onPress: () => Promise<void>;
+  onLongPress?: () => Promise<void>;
+  state: VoiceButtonState;
+  isDisabled?: boolean;
+  size?: 'small' | 'medium' | 'large';
+  accessibilityLabel?: string;
+}
+
+const COLORS = {
+  idle: '#6366F1',
+  listening: '#EC4899',
+  processing: '#F59E0B',
+  error: '#EF4444',
 };
 
+const SIZE_CONFIG = {
+  small: { size: 48, fontSize: 12 },
+  medium: { size: 64, fontSize: 14 },
+  large: { size: 80, fontSize: 16 },
+};
+
+/**
+ * VoiceButton Component
+ * 
+ * Provides voice recording control with haptic feedback and visual state indication.
+ */
 export const VoiceButton: React.FC<VoiceButtonProps> = ({
-  size = 'large',
-  state,
   onPress,
-  audioAmplitude = 0,
-  label,
+  onLongPress,
+  state,
+  isDisabled = false,
+  size = 'medium',
+  accessibilityLabel = 'Voice input button',
 }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-  const rotation = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [isPressing, setIsPressing] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timer | null>(null);
 
-  const buttonSize = BUTTON_SIZES[size];
+  const config = SIZE_CONFIG[size];
+  const isEnabled = !isDisabled && state !== 'error';
 
-  // Pulse animation for idle state
-  useEffect(() => {
-    if (state === 'idle') {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.05,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    } else {
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+  const handlePressIn = useCallback(async () => {
+    setIsPressing(true);
+    try {
+      await Haptics.selectionAsync();
+    } catch (error) {
+      console.warn('Haptic feedback not available');
     }
-  }, [state, scale]);
 
-  // Rotating shimmer for processing state
-  useEffect(() => {
-    if (state === 'processing') {
-      Animated.loop(
-        Animated.timing(rotation, {
-          toValue: 1,
-          duration: 1500,
-          useNativeDriver: true,
-        })
-      ).start();
-      Animated.timing(opacity, {
-        toValue: 0.7,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      rotation.setValue(0);
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+    // Set up long press timer if handler provided
+    if (onLongPress && !isDisabled) {
+      const timer = setTimeout(async () => {
+        try {
+          await onLongPress();
+        } catch (error) {
+          console.error('Long press handler error:', error);
+        }
+      }, 500);
+      setLongPressTimer(timer);
     }
-  }, [state, rotation, opacity]);
+  }, [onLongPress, isDisabled]);
 
-  // Shake animation for error state
-  useEffect(() => {
-    if (state === 'error') {
-      Animated.sequence([
-        Animated.timing(scale, {
-          toValue: 1.1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 0.95,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1.05,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [state, scale]);
+  const handlePressOut = useCallback(() => {
+    setIsPressing(false);
 
-  const handlePress = () => {
-    if (state !== 'disabled') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      onPress();
+    // Clear long press timer
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
     }
+  }, [longPressTimer]);
+
+  const handlePress = useCallback(async () => {
+    // Clear long press timer first
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+
+    if (!isEnabled) {
+      return;
+    }
+
+    try {
+      await onPress();
+    } catch (error) {
+      console.error('Button press error:', error);
+    }
+  }, [onPress, isEnabled, longPressTimer]);
+
+  const buttonColor = COLORS[state];
+  const containerStyle: ViewStyle = {
+    width: config.size,
+    height: config.size,
+    borderRadius: config.size / 2,
+    backgroundColor: buttonColor,
+    opacity: isDisabled ? 0.5 : isPressing ? 0.8 : 1,
+    transform: [
+      {
+        scale: isPressing ? 0.95 : 1,
+      },
+    ],
   };
 
-  const getGradientColors = () => {
-    switch (state) {
-      case 'error':
-        return [Colors.error, '#FF6B6B'];
-      case 'listening':
-        return [Colors.primaryBlue, Colors.primaryPurple];
-      case 'speaking':
-        return [Colors.primaryPurple, '#9B82FF'];
-      default:
-        return [Colors.primaryPurple, Colors.primaryBlue];
-    }
+  const stateLabels = {
+    idle: 'Nhấn để nói',
+    listening: 'Đang nghe...',
+    processing: 'Đang xử lý...',
+    error: 'Lỗi',
   };
-
-  const getLabel = () => {
-    if (label) return label;
-    switch (state) {
-      case 'listening':
-        return 'Đang nghe...';
-      case 'processing':
-        return 'Đang xử lý...';
-      case 'speaking':
-        return 'Đang nói...';
-      case 'error':
-        return 'Lỗi - Thử lại';
-      default:
-        return 'Chạm để nói';
-    }
-  };
-
-  const rotateInterpolate = rotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <TouchableOpacity
+        style={[styles.button, containerStyle]}
         onPress={handlePress}
-        disabled={state === 'disabled'}
-        accessibilityLabel="Nút ghi âm. Nhấn để bắt đầu nói."
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={!isEnabled}
+        activeOpacity={1}
         accessibilityRole="button"
-        accessibilityState={{ disabled: state === 'disabled' }}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityState={{
+          disabled: !isEnabled,
+        }}
       >
-        <Animated.View
+        <Text
           style={[
-            styles.buttonContainer,
-            { width: buttonSize, height: buttonSize },
+            styles.icon,
             {
-              transform: [
-                { scale },
-                { rotate: rotateInterpolate },
-              ],
-              opacity: state === 'disabled' ? 0.4 : opacity,
+              fontSize: config.fontSize + 12,
             },
           ]}
         >
-          <LinearGradient
-            colors={getGradientColors()}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[
-              styles.gradient,
-              { borderRadius: buttonSize / 2 },
-            ]}
-          >
-            {state === 'listening' && (
-              <View style={styles.waveformContainer}>
-                {/* Simplified waveform - use WaveformVisualizer component for full version */}
-                <View style={styles.waveformBar} />
-                <View style={[styles.waveformBar, { height: 20 }]} />
-                <View style={styles.waveformBar} />
-              </View>
-            )}
-            {state === 'idle' && (
-              <Text style={[styles.micIcon, { fontSize: buttonSize * 0.3 }]}>
-                🎤
-              </Text>
-            )}
-            {state === 'processing' && (
-              <Text style={[styles.micIcon, { fontSize: buttonSize * 0.3 }]}>
-                ⚙️
-              </Text>
-            )}
-            {state === 'speaking' && (
-              <Text style={[styles.micIcon, { fontSize: buttonSize * 0.3 }]}>
-                🔊
-              </Text>
-            )}
-            {state === 'error' && (
-              <Text style={[styles.micIcon, { fontSize: buttonSize * 0.3 }]}>
-                ⚠️
-              </Text>
-            )}
-          </LinearGradient>
-        </Animated.View>
-      </Pressable>
-      <Text style={styles.label}>{getLabel()}</Text>
+          {state === 'error' ? '⚠️' : '🎤'}
+        </Text>
+      </TouchableOpacity>
+
+      {/* State Label */}
+      <Text
+        style={[
+          styles.stateLabel,
+          {
+            color: buttonColor,
+          },
+        ]}
+      >
+        {stateLabels[state]}
+      </Text>
     </View>
   );
 };
@@ -212,38 +168,27 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 12,
   },
-  buttonContainer: {
-    shadowColor: Colors.primaryPurple,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  gradient: {
-    width: '100%',
-    height: '100%',
+  button: {
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  micIcon: {
-    color: Colors.white,
+  icon: {
+    color: '#FFF',
+    fontWeight: '600',
   },
-  waveformContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  waveformBar: {
-    width: 4,
-    height: 30,
-    backgroundColor: Colors.white,
-    borderRadius: 2,
-  },
-  label: {
-    marginTop: Spacing.md,
-    fontSize: 16,
+  stateLabel: {
+    fontSize: 12,
     fontWeight: '500',
-    color: Colors.black,
+    marginTop: 8,
   },
 });
