@@ -2,67 +2,71 @@
 
 Complete technology stack for Numeroly with versions, rationale, and integration notes.
 
-**Document Version:** 1.0 | **Last Updated:** January 14, 2025
+**Document Version:** 1.1 | **Last Updated:** January 16, 2025 | **Versions Updated to Latest Stable**
 
 ## Tech Stack Summary
 
 | Category | Technology | Version | Purpose | Rationale |
 |----------|-----------|---------|---------|-----------|
-| Frontend Language | TypeScript | 5.3+ | Type-safe mobile development | Strong typing prevents runtime errors, excellent IDE support, shares types with backend |
-| Frontend Framework | React Native | 0.73+ | Cross-platform mobile app | Single codebase for iOS/Android, large community, PWA support via Expo |
-| UI Component Library | React Native Elements | 4.0+ | Pre-built mobile UI components | Consistent design patterns, accessibility built-in, customizable themes |
-| State Management | Zustand | 4.5+ | Lightweight global state | Simpler than Redux, perfect for voice session state, minimal boilerplate |
-| Backend Language | Python | 3.11+ | AI/ML ecosystem compatibility | Best support for GPT-4, numerology calculations, extensive libraries |
-| Backend Framework | FastAPI | 0.109+ | High-performance async API | Native async support for voice streaming, automatic OpenAPI docs, fast development |
+| Frontend Language | TypeScript | 5.7 | Type-safe mobile development | Strong typing prevents runtime errors, excellent IDE support, shares types with backend |
+| Frontend Framework | React Native | 0.76 | Cross-platform mobile app | Single codebase for iOS/Android, large community, PWA support via Expo |
+| UI Component Library | React Native Elements | 4.1 | Pre-built mobile UI components | Consistent design patterns, accessibility built-in, customizable themes |
+| State Management | Zustand | 5.0 | Lightweight global state | Simpler than Redux, perfect for voice session state, minimal boilerplate |
+| Backend Language | Python | 3.13 | AI/ML ecosystem compatibility | Best support for GPT-4o, numerology calculations, extensive libraries, latest stable |
+| Backend Framework | FastAPI | 0.115 | High-performance async API | Native async support for voice streaming, automatic OpenAPI docs, fast development |
 | API Style | REST + WebSocket | - | Real-time voice and standard CRUD | REST for standard ops, WebSocket for streaming voice/conversation updates |
-| Database | PostgreSQL | 15+ | Relational data with JSONB | Strong data integrity, JSONB for flexible conversation storage, native encryption |
-| Cache | Redis | 7.2+ | Session state and rate limiting | In-memory speed for conversation context, pub/sub for real-time updates |
+| Database | PostgreSQL | 17 | Relational data with JSONB | Strong data integrity, JSONB for flexible conversation storage, native encryption, latest stable |
+| Cache | Redis | 7.4 | Session state and rate limiting | In-memory speed for conversation context, pub/sub for real-time updates, latest stable |
 | File Storage | Azure Blob Storage | - | Conversation audio archives | Scalable object storage, encryption-at-rest, Azure CDN integration |
 | Authentication | Azure AD B2C | - | User identity management | Consumer identity platform, phone auth with SMS OTP for Vietnamese users, JWT tokens |
 | Frontend Testing | Jest + React Native Testing Library | - | Unit and component tests | Industry standard, snapshot testing, accessibility testing |
 | Backend Testing | Pytest + httpx | - | API and unit testing | Async test support, fixture-based, high code coverage tools |
 | E2E Testing | Detox | - | Mobile end-to-end flows | React Native native support, reliable gesture testing |
-| Monorepo Tool | Nx | 18+ | Enterprise monorepo orchestration | Smart builds with caching, dependency graph, code generation, task runners |
-| Build Tool | Expo | 50+ | React Native development platform | Simplified mobile builds, OTA updates, managed workflow for MVP speed |
-| Bundler | Metro | - | React Native JavaScript bundling | Default for React Native, optimized for mobile, supports PWA |
-| IaC Tool | Terraform | 1.7+ | Infrastructure as Code | Azure provider support, state management, reproducible deployments |
+| Monorepo Tool | Nx | 20 | Enterprise monorepo orchestration | Smart builds with caching, dependency graph, code generation, task runners, latest stable |
+| Build Tool | Expo | 52 | React Native development platform | Simplified mobile builds, OTA updates, managed workflow for MVP speed, latest SDK |
+| Bundler | Metro | 0.80 | React Native JavaScript bundling | Default for React Native, optimized for mobile, supports PWA |
+| IaC Tool | Terraform | 1.9 | Infrastructure as Code | Azure provider support, state management, reproducible deployments, latest stable |
 | CI/CD | GitHub Actions | - | Automated testing and deployment | Free for open source, Azure integration, parallel job execution |
 | Monitoring | Azure Monitor + Application Insights + Sentry | - | Application observability | Azure native monitoring, AI-powered insights, Sentry for error tracking |
 | Logging | Azure Monitor Logs (Log Analytics) | - | Centralized log aggregation | KQL queries, conversation flow tracking, compliance audit trails |
-| CSS Framework | NativeWind | 4.0+ | Tailwind for React Native | Rapid UI development, consistent design system, small bundle size |
+| CSS Framework | NativeWind | 4.1 | Tailwind for React Native | Rapid UI development, consistent design system, small bundle size, latest stable |
 
 ## Frontend Tech Stack Details
 
 ### Languages & Frameworks
 
-**TypeScript 5.3+**
+**TypeScript 5.7**
 - Strict mode enabled across entire frontend
 - Target: ES2020 for broad device compatibility
 - Module: ESNext with bundler-based resolution
 - Strict type checking required for all components
 - Use type-only imports where possible: `import type { User } from './types'`
+- Improved type inference and performance
 
-**React Native 0.73+**
+**React Native 0.76**
 - Managed by Expo for simplified builds
 - Async rendering for smooth 60fps animations
 - Native module linking via Expo modules
 - Platform-specific code: `.ios.tsx`, `.android.tsx` suffixes
 - Web support via React Native Web (PWA deployment)
+- Latest stable version with improved performance and compatibility
 
-**Expo 50+**
+**Expo 52 SDK**
 - Managed workflow (no EAS prebuild needed for MVP)
 - Development server on port 19006
 - EAS Build for production iOS/Android builds
 - EAS Submit for app store submissions
 - OTA updates via Expo's update service
+- Latest SDK with enhanced stability and features
 
 ### State Management
 
-**Zustand 4.5+**
+**Zustand 5.0**
 - Simple store-based state management
 - No boilerplate compared to Redux
 - Perfect for voice session state and conversation context
 - Integrates with React dev tools
+- Major version 5 with improved TypeScript support and performance
 
 ```typescript
 // Example store structure
@@ -87,19 +91,21 @@ export const useConversationStore = create<ConversationState>((set) => ({
 
 ### Component Library
 
-**React Native Elements 4.0+**
+**React Native Elements 4.1**
 - Pre-built components with consistent theming
 - Accessibility features built-in (ARIA labels, keyboard navigation)
 - Customizable via theme provider
 - Includes: Button, Card, Input, Icon, Avatar, Badge, etc.
+- Latest stable with improved TypeScript support
 
 ### UI/CSS Framework
 
-**NativeWind 4.0+**
+**NativeWind 4.1**
 - Tailwind CSS utility classes for React Native
 - Rapid prototyping with familiar class names
 - Responsive design with breakpoints
 - Dark mode support via class-based toggling
+- Latest stable with enhanced compatibility
 
 ```typescript
 import { View, Text } from 'react-native';
