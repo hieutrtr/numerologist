@@ -13,7 +13,7 @@ import logging
 from typing import AsyncGenerator, Optional
 from uuid import UUID
 
-from azure.ai.openai import AsyncAzureOpenAI
+from openai import AsyncAzureOpenAI
 from fastapi import WebSocketException
 
 from apps.api.src.config import settings
@@ -57,7 +57,8 @@ class AzureOpenAISpeechToTextService:
     - Public Preview in eastus2 region
 
     Refactoring:
-    - Replaced: Direct aiohttp calls → azure-ai-openai SDK
+    - Replaced: Direct aiohttp calls → OpenAI SDK (AsyncAzureOpenAI for Azure endpoints)
+    - SDK Package: openai>=1.3.0 (OpenAI's official SDK with Azure support)
     - Benefit: No manual error handling needed; SDK handles retries transparently
     - Performance: SDK optimized for Azure endpoints
 
