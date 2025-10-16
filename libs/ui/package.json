@@ -1,0 +1,24 @@
+{
+  "name": "@numerologist/ui",
+  "version": "1.0.0",
+  "description": "Shared React Native components for Numeroly",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-native": "^0.73.0",
+    "react-native-elements": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-native": "^0.73.0"
+  }
+}

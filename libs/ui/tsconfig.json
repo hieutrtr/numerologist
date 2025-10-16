@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/libs/ui",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": ["jest", "react-native"]
+  },
+  "exclude": ["jest.config.ts", "src/**/*.spec.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

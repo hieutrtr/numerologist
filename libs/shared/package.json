@@ -1,0 +1,16 @@
+{
+  "name": "@numerologist/shared",
+  "version": "1.0.0",
+  "description": "Shared TypeScript utilities and types for Numeroly",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

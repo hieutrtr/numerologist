@@ -1,0 +1,23 @@
+{
+  "name": "ui",
+  "prefix": "",
+  "projectType": "library",
+  "sourceRoot": "libs/ui/src",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd libs/ui && jest",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd libs/ui && eslint src --ext .ts,.tsx",
+        "cwd": "."
+      }
+    }
+  },
+  "tags": ["type:lib", "scope:ui"]
+}

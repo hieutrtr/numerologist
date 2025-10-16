@@ -1,0 +1,23 @@
+{
+  "name": "numerology",
+  "prefix": "",
+  "projectType": "library",
+  "sourceRoot": "libs/numerology/src",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd libs/numerology && python -m pytest tests/",
+        "cwd": "."
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd libs/numerology && python -m mypy src/",
+        "cwd": "."
+      }
+    }
+  },
+  "tags": ["type:lib", "scope:numerology"]
+}

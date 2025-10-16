@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "cli": {
+    "defaultCollection": "@nx/react-native"
+  },
+  "extends": "nx/presets/npm.json",
+  "defaultBase": "main",
+  "defaultProject": "mobile",
+  "targetDefaults": {
+    "build": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/react-native/plugin",
+      "options": {
+        "projectSourceRoot": "{projectRoot}/src"
+      }
+    }
+  ],
+  "generators": {
+    "@nx/react-native:component": {
+      "style": "none"
+    }
+  },
+  "release": {
+    "projectsRelationship": "independent",
+    "releaseTagPattern": "{projectName}-v{version}",
+    "changelog": {
+      "projectChangelogs": false
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "test",
+          "lint"
+        ],
+        "parallel": 4
+      }
+    }
+  }
+}
