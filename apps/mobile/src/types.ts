@@ -64,6 +64,21 @@ export interface NumerologyCardProps extends NumerologyCard {
   isSelected?: boolean;
 }
 
+export interface NumerologyProfile {
+  id: string;
+  userId: string;
+  lifePathNumber: number;
+  destinyNumber: number;
+  soulUrgeNumber: number;
+  personalityNumber: number;
+  currentPersonalYear: number;
+  currentPersonalMonth: number;
+  calculatedAt: string;
+  interpretations: {
+    [key: string]: string;
+  };
+}
+
 export interface WaveformVisualizerProps {
   mode: 'listening' | 'speaking' | 'idle';
   barCount?: number;
