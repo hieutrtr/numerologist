@@ -1,7 +1,7 @@
 # Multi-stage build for FastAPI application
 
 # Build stage
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 WORKDIR /build
 
@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 # Runtime stage
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 

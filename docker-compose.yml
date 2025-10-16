@@ -3,7 +3,7 @@ version: '3.9'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: numeroly-postgres
     environment:
       POSTGRES_USER: numeroly
@@ -23,7 +23,7 @@ services:
 
   # Redis Cache
   redis:
-    image: redis:7.2-alpine
+    image: redis:7.4-alpine
     container_name: numeroly-redis
     ports:
       - "6379:6379"
