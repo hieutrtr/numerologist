@@ -4,7 +4,7 @@
  * Orchestrates transitions between: greeting → name → date → concern → calculation → insight → feedback → save
  */
 
-import { NumerologyProfile } from '../../types';
+import type { NumerologyProfile } from '../../types';
 
 // Conversation flow states
 export enum ConversationStep {

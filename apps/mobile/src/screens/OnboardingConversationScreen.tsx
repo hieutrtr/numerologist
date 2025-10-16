@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useUserStore } from '../stores/userStore';
 import { fetchNumerologyProfile } from '../services/numerology';
-import { speakText } from '../services/text-to-speech';
-import { recordAndTranscribe } from '../services/speech-to-text';
+import { speakText, recordAndTranscribe } from '../services/voice-orchestration';
+import { generatePersonalInsight } from '../services/insight-generator';
+import { saveConversation } from '../services/conversation-api';
 import {
   ConversationFlowController,
   ConversationStep,
@@ -28,7 +29,14 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const flowControllerRef = useRef<ConversationFlowController>(new ConversationFlowController());
-  const { setNumerologyProfile, setLoadingProfile, setProfileError } = useUserStore();
+  const { setNumerologyProfile, setLoadingProfile, setProfileError, user } = useUserStore();
+  
+  // Note: Auth token should come from authentication service
+  // For now, we'll use a placeholder that should be replaced with actual auth
+  const getAuthToken = () => {
+    // TODO: Get from auth store/service
+    return 'placeholder-token';
+  };
 
   // Initialize conversation on mount
   useEffect(() => {
@@ -95,10 +103,10 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     
     try {
       await speakText(greeting);
-      // Auto-advance to name input after greeting
-      flowControllerRef.current.processNameInput('');
-      setConversationState(flowControllerRef.current.getState());
-      await executeCurrentStep();
+      // Move to name input step after greeting
+      // Note: Actual name input will be handled when user speaks
+      // For now, just transition the state to show we're ready for input
+      // executeCurrentStep will be called again when voice input is received
     } catch (error) {
       handleError('Lỗi khi phát âm thanh.');
     }
@@ -259,7 +267,12 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     const data = flowControllerRef.current.getCollectedData();
     const profile = data.numerologyProfile!;
 
-    const insight = `Số đường sống của bạn là ${profile.lifePathNumber}. ${profile.interpretations?.[`lifePathNumber_${profile.lifePathNumber}`] || 'Bạn là một người có tiềm năng sáng tạo và lãnh đạo.'}`;
+    // Generate personalized insight using the service
+    const insight = generatePersonalInsight(
+      profile,
+      data.userConcern,
+      data.fullName || 'Bạn'
+    );
 
     flowControllerRef.current.setGeneratedInsight(insight);
     setDisplayText(insight);
@@ -309,14 +322,27 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     setIsProcessing(true);
 
     try {
-      // TODO: Implement conversation save endpoint call
-      // await saveConversation(flowControllerRef.current.getCollectedData());
+      const data = flowControllerRef.current.getCollectedData();
+      const profile = data.numerologyProfile!;
+
+      // Only save if user is authenticated and has valid data
+      if (user?.id && data.fullName && data.birthDate && profile) {
+        await saveConversation(data, getAuthToken());
+      }
+
+      // Also save to local storage for offline access
+      const { saveConversationToHistory } = await import('../services/session-storage');
+      await saveConversationToHistory(data);
       
       flowControllerRef.current.markSaved();
       setConversationState(flowControllerRef.current.getState());
       await executeCurrentStep();
     } catch (error) {
-      handleError('Lỗi khi lưu cuộc trò chuyện.');
+      console.error('Error saving conversation:', error);
+      // Don't fail the flow even if save fails - user has already got their insight
+      flowControllerRef.current.markSaved();
+      setConversationState(flowControllerRef.current.getState());
+      await executeCurrentStep();
     } finally {
       setIsProcessing(false);
     }

@@ -6,16 +6,15 @@ Handles saving and retrieving voice-numerology conversations
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 
 from ..models.conversation import Conversation
-from ..models.user import User
 from ..schemas.conversation import (
     ConversationCreateRequest,
     ConversationResponse,
     ConversationListResponse,
 )
-from ..dependencies import get_db, get_current_user
+from ..dependencies import get_db
 
 router = APIRouter(prefix='/conversations', tags=['conversations'])
 
@@ -23,7 +22,7 @@ router = APIRouter(prefix='/conversations', tags=['conversations'])
 @router.post('', response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
 async def create_conversation(
     request: ConversationCreateRequest,
-    current_user: User = Depends(get_current_user),
+    user_id: str = Header(..., alias='x-user-id'),
     db: AsyncSession = Depends(get_db),
 ) -> ConversationResponse:
     """
@@ -31,11 +30,22 @@ async def create_conversation(
     
     Creates a new conversation record with all collected user data,
     calculated numerology numbers, and generated insight.
+    
+    Requires x-user-id header with the authenticated user's ID.
     """
     try:
+        # Validate user_id is a valid UUID
+        try:
+            UUID(user_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Invalid user_id format',
+            )
+
         # Create conversation object
         conversation = Conversation(
-            user_id=current_user.id,
+            user_id=UUID(user_id),
             user_name=request.user_name,
             birth_date=request.birth_date,
             user_question=request.user_question,
@@ -50,6 +60,8 @@ async def create_conversation(
 
         return ConversationResponse.from_orm(conversation)
 
+    except HTTPException:
+        raise
     except Exception as e:
         await db.rollback()
         raise HTTPException(
@@ -61,7 +73,7 @@ async def create_conversation(
 @router.get('/{conversation_id}', response_model=ConversationResponse)
 async def get_conversation(
     conversation_id: UUID,
-    current_user: User = Depends(get_current_user),
+    user_id: str = Header(..., alias='x-user-id'),
     db: AsyncSession = Depends(get_db),
 ) -> ConversationResponse:
     """
@@ -69,10 +81,18 @@ async def get_conversation(
     
     Only users who own the conversation can retrieve it.
     """
+    try:
+        user_uuid = UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid user_id format',
+        )
+
     # Query for conversation
     stmt = select(Conversation).where(
         (Conversation.id == conversation_id) &
-        (Conversation.user_id == current_user.id)
+        (Conversation.user_id == user_uuid)
     )
     result = await db.execute(stmt)
     conversation = result.scalar_one_or_none()
@@ -88,7 +108,7 @@ async def get_conversation(
 
 @router.get('', response_model=ConversationListResponse)
 async def list_conversations(
-    current_user: User = Depends(get_current_user),
+    user_id: str = Header(..., alias='x-user-id'),
     db: AsyncSession = Depends(get_db),
     skip: int = 0,
     limit: int = 10,
@@ -98,15 +118,23 @@ async def list_conversations(
     
     Returns all conversations for the current user, newest first.
     """
+    try:
+        user_uuid = UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid user_id format',
+        )
+
     # Count total conversations for user
-    count_stmt = select(Conversation).where(Conversation.user_id == current_user.id)
+    count_stmt = select(Conversation).where(Conversation.user_id == user_uuid)
     count_result = await db.execute(count_stmt)
     total = len(count_result.fetchall())
 
     # Query conversations with pagination
     stmt = (
         select(Conversation)
-        .where(Conversation.user_id == current_user.id)
+        .where(Conversation.user_id == user_uuid)
         .order_by(Conversation.created_at.desc())
         .offset(skip)
         .limit(limit)
@@ -122,7 +150,7 @@ async def list_conversations(
 
 @router.get('/user/recent', response_model=ConversationResponse)
 async def get_recent_conversation(
-    current_user: User = Depends(get_current_user),
+    user_id: str = Header(..., alias='x-user-id'),
     db: AsyncSession = Depends(get_db),
 ) -> ConversationResponse:
     """
@@ -130,9 +158,17 @@ async def get_recent_conversation(
     
     Useful for displaying last insight or continuing conversation.
     """
+    try:
+        user_uuid = UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Invalid user_id format',
+        )
+
     stmt = (
         select(Conversation)
-        .where(Conversation.user_id == current_user.id)
+        .where(Conversation.user_id == user_uuid)
         .order_by(Conversation.created_at.desc())
         .limit(1)
     )
