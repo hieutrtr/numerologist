@@ -8,8 +8,8 @@ from .config import settings
 from .middleware.error_handler import setup_error_handlers
 from .utils.logger import setup_logging
 
-# Import routers when they're created
-# from .routes import auth, users, conversations, voice, numerology, journal
+# Import routers
+from .routes import numerology
 
 
 @asynccontextmanager
@@ -64,12 +64,7 @@ def create_app() -> FastAPI:
         }
 
     # Register route groups
-    # app.include_router(auth.router)
-    # app.include_router(users.router)
-    # app.include_router(conversations.router)
-    # app.include_router(voice.router)
-    # app.include_router(numerology.router)
-    # app.include_router(journal.router)
+    app.include_router(numerology.router)
 
     return app
 
