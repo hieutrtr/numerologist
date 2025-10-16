@@ -1,22 +1,28 @@
-"""Numerologist - Pure Pythagorean numerology calculation engine."""
+"""
+Numerology calculation library for Pythagorean numerology calculations.
+Provides functions for calculating Life Path, Destiny, Soul Urge, and Personality numbers.
+"""
 
 from .calculator import (
-    calculate_life_path,
-    calculate_destiny,
-    calculate_soul_urge,
-    calculate_personality,
-    calculate_personal_year,
-    calculate_personal_month,
-    reduce_to_single_digit,
+    calculateLifePath,
+    calculateDestiny,
+    calculateSoulUrge,
+    calculatePersonality,
+    calculatePersonalYear,
+    calculatePersonalMonth,
 )
+from .vietnamese_mappings import get_letter_value, is_vowel, normalize_vietnamese
+from .interpretations import getInterpretation
 
-__version__ = "1.0.0"
 __all__ = [
-    "calculate_life_path",
-    "calculate_destiny",
-    "calculate_soul_urge",
-    "calculate_personality",
-    "calculate_personal_year",
-    "calculate_personal_month",
-    "reduce_to_single_digit",
+    "calculateLifePath",
+    "calculateDestiny",
+    "calculateSoulUrge",
+    "calculatePersonality",
+    "calculatePersonalYear",
+    "calculatePersonalMonth",
+    "get_letter_value",
+    "is_vowel",
+    "normalize_vietnamese",
+    "getInterpretation",
 ]
