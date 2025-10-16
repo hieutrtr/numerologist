@@ -57,6 +57,7 @@ class Settings(BaseSettings):
         """Pydantic config."""
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"  # Ignore frontend env vars (EXPO_PUBLIC_*)
 
 
 def get_settings() -> Settings:
