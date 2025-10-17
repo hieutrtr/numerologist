@@ -1,6 +1,12 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
 
-const config = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const config = getDefaultConfig(projectRoot);
+
+// Monorepo fix: Only watch mobile app directory
+config.watchFolders = [projectRoot];
+config.resolver.nodeModulesPaths = [path.resolve(projectRoot, 'node_modules')];
 
 // Exclude debugger frontend and sucrase from bundling
 // These packages use import.meta in ways that break with Hermes

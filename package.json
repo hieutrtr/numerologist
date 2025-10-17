@@ -30,22 +30,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@nx/eslint": "^18.0.0",
-    "@nx/eslint-plugin": "^18.0.0",
-    "@nx/jest": "^18.0.0",
-    "@nx/js": "^18.0.0",
-    "@nx/linter": "^18.0.0",
-    "@nx/node": "^18.0.0",
-    "@nx/react-native": "^18.0.0",
-    "@nx/react": "^18.0.0",
-    "@nx/typescript": "^18.0.0",
-    "@nx/workspace": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.1.1",
-    "typescript": "^5.3.3",
-    "nx": "^18.0.0"
+    "nx": "^20.3.2",
+    "@nx/workspace": "^20.3.2",
+    "prettier": "^3.1.1"
   },
   "workspaces": [
     "apps/*",
