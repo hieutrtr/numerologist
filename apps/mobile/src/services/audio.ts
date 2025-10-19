@@ -12,28 +12,34 @@ import { Platform } from 'react-native';
 // 16kHz sample rate, PCM format (LINEAR16), mono channel
 const RECORDING_CONFIG: Audio.RecordingOptions = {
   isMeteringEnabled: true,
-  android: {
-    extension: '.wav',
-    outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-    audioEncoder: Audio.AndroidAudioEncoder.AAC,
-    sampleRate: 16000,
-    numberOfChannels: 1,
-    bitRate: 128000,
-  },
-  ios: {
-    extension: '.wav',
-    audioQuality: Audio.IosAudioQuality.MAX,
-    sampleRate: 16000,
-    numberOfChannels: 1,
-    bitRate: 128000,
-    linearPCMBitDepth: 16,
-    linearPCMIsBigEndian: false,
-    linearPCMIsFloat: false,
-  },
-  web: {
-    mimeType: 'audio/wav',
-    bitsPerSecond: 128000,
-  },
+  ...(Platform.OS === 'android' && {
+    android: {
+      extension: '.wav',
+      outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+      audioEncoder: Audio.AndroidAudioEncoder.AAC,
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      bitRate: 128000,
+    },
+  }),
+  ...(Platform.OS === 'ios' && {
+    ios: {
+      extension: '.wav',
+      audioQuality: Audio.IosAudioQuality.MAX,
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      bitRate: 128000,
+      linearPCMBitDepth: 16,
+      linearPCMIsBigEndian: false,
+      linearPCMIsFloat: false,
+    },
+  }),
+  ...(Platform.OS === 'web' && {
+    web: {
+      mimeType: 'audio/wav',
+      bitsPerSecond: 128000,
+    },
+  }),
 };
 
 export interface AudioMetrics {
