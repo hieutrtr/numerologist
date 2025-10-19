@@ -1,5 +1,35 @@
 # Azure Speech Services Setup Guide
 
+> **Important:** Beginning January 2025, Numeroly uses **Azure OpenAI gpt-4o-mini-transcribe** for
+> Vietnamese speech-to-text. The quick checklist below covers the current deployment steps. The
+> remainder of this document is preserved as a legacy reference for the retired Azure Speech
+> Services integration.
+
+## Azure OpenAI Speech-to-Text Setup (Current)
+
+1. In [Azure AI Foundry](https://ai.azure.com), create or reuse an Azure OpenAI resource in the
+   `eastus2` region (first region with audio model preview).
+2. Deploy **gpt-4o-mini-transcribe** with API version `2025-01-01-preview` and note the deployment
+   name.
+3. Copy the endpoint and API key from the resource and populate the following environment variables:
+
+   ```bash
+   AZURE_OPENAI_KEY=<your-api-key>
+   AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
+   AZURE_OPENAI_STT_DEPLOYMENT_NAME=gpt-4o-mini-transcribe
+   AZURE_OPENAI_REASONING_DEPLOYMENT_NAME=gpt-4o-mini
+   AZURE_OPENAI_API_VERSION=2025-01-01-preview
+   ```
+
+4. Restart the FastAPI backend and hit `POST /api/v1/voice/transcriptions` with a short WAV clip to
+   confirm transcription (`curl` example in `START_SERVER.md`).
+5. Remove legacy Azure Speech Services credentials from your `.env` file after verifying the new
+   flow.
+
+---
+
+## Legacy Azure Speech Services Setup (Archived)
+
 Complete setup guide for Azure Speech Services (Speech-to-Text) for Vietnamese language support.
 
 **Last Updated:** January 16, 2025

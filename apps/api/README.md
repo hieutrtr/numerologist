@@ -76,6 +76,19 @@ alembic downgrade -1
 - **Swagger UI:** http://localhost:8000/docs
 - **ReDoc:** http://localhost:8000/redoc
 
+## Voice Transcription Endpoint
+
+Upload a short WAV clip to verify the Azure OpenAI speech-to-text flow:
+
+```bash
+curl -X POST \
+  -H "x-request-id: demo-request" \
+  -F "audio_file=@sample_vi.wav" \
+  http://localhost:8000/api/v1/voice/transcriptions
+```
+
+The response includes the transcript, confidence score, alternatives, and audio duration in milliseconds.
+
 ## Project Structure
 
 ```
@@ -111,8 +124,10 @@ See `.env.example` for all required environment variables. Key variables:
 - `DATABASE_URL`: PostgreSQL connection string
 - `REDIS_URL`: Redis connection string
 - `JWT_SECRET_KEY`: Secret key for JWT tokens
-- `OPENAI_API_KEY`: OpenAI API key for GPT-4 integration
-- `AZURE_SPEECH_KEY`: Azure Speech Services key for STT
+- `AZURE_OPENAI_KEY`: Azure OpenAI API key for STT/LLM access
+- `AZURE_OPENAI_ENDPOINT`: Azure OpenAI endpoint URL
+- `AZURE_OPENAI_STT_DEPLOYMENT_NAME`: Speech-to-text deployment (e.g. `gpt-4o-mini-transcribe`)
+- `AZURE_OPENAI_REASONING_DEPLOYMENT_NAME`: Reasoning deployment (e.g. `gpt-4o-mini`)
 - `ELEVENLABS_API_KEY`: ElevenLabs API key for TTS
 
 ## Docker

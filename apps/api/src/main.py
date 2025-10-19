@@ -9,7 +9,7 @@ from .middleware.error_handler import setup_error_handlers
 from .utils.logger import setup_logging
 
 # Import routers
-from .routes import numerology, conversations
+from .routes import numerology, conversations, voice
 
 
 @asynccontextmanager
@@ -66,6 +66,7 @@ def create_app() -> FastAPI:
     # Register route groups
     app.include_router(numerology.router)
     app.include_router(conversations.router)
+    app.include_router(voice.router)
 
     return app
 

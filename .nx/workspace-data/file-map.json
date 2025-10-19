@@ -1,0 +1,919 @@
+{
+  "version": "6.0",
+  "nxVersion": "20.8.2",
+  "pathMappings": {
+    "@numerologist/mobile/*": [
+      "apps/mobile/src/*"
+    ],
+    "@numerologist/api/*": [
+      "apps/api/src/*"
+    ],
+    "@numerologist/shared/*": [
+      "libs/shared/src/*"
+    ],
+    "@numerologist/numerology/*": [
+      "libs/numerology/src/*"
+    ],
+    "@numerologist/ui/*": [
+      "libs/ui/src/*"
+    ]
+  },
+  "nxJsonPlugins": [
+    {
+      "name": "@nx/react-native/plugin",
+      "options": {
+        "projectSourceRoot": "{projectRoot}/src"
+      }
+    }
+  ],
+  "pluginsConfig": {
+    "@nx/js": {
+      "analyzeSourceFiles": false
+    }
+  },
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "docs/prd.md",
+        "hash": "939469808141458569"
+      },
+      {
+        "file": "SETUP_GUIDE.md",
+        "hash": "17279775301055970308"
+      },
+      {
+        "file": "mobile.pid",
+        "hash": "5586745211040110070"
+      },
+      {
+        "file": ".github/workflows/ci.yaml",
+        "hash": "4552736518517430494"
+      },
+      {
+        "file": ".ai/validation-report-1.3.md",
+        "hash": "10101717957731731811"
+      },
+      {
+        "file": "docs/azure-setup-guide.md",
+        "hash": "9709267151646420545"
+      },
+      {
+        "file": "start-api.sh",
+        "hash": "8598695847688681142"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1682515240176212989"
+      },
+      {
+        "file": "docs/architecture.md",
+        "hash": "502498488043667243"
+      },
+      {
+        "file": "api.pid",
+        "hash": "6821489048957217071"
+      },
+      {
+        "file": ".ai/STORY_1_5_DEV_STATUS.md",
+        "hash": "443206944703869667"
+      },
+      {
+        "file": "docs/front-end-spec.md",
+        "hash": "17417143050392559221"
+      },
+      {
+        "file": "INSTALLATION_VERIFIED.md",
+        "hash": "5146131329744484141"
+      },
+      {
+        "file": "docs/stories/1.1.story.md",
+        "hash": "5747109942451315564"
+      },
+      {
+        "file": "UV_SETUP.md",
+        "hash": "17177638249889892739"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "11451813786561658725"
+      },
+      {
+        "file": "docs/brief.md",
+        "hash": "4276483156240388749"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "4343365537952712207"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "1672316374534158790"
+      },
+      {
+        "file": "start-mobile.sh",
+        "hash": "17110128880448368019"
+      },
+      {
+        "file": "docs/stories/1.2a.story.md",
+        "hash": "17231156907035491444"
+      },
+      {
+        "file": "docs/architecture/tech-stack.md",
+        "hash": "17156649048083121043"
+      },
+      {
+        "file": "docs/architecture/coding-standards.md",
+        "hash": "16500460085060321447"
+      },
+      {
+        "file": "package.json",
+        "hash": "17601489413760908869"
+      },
+      {
+        "file": "DEVELOPMENT_COMPLETE.md",
+        "hash": "6069456730476839778"
+      },
+      {
+        "file": "docs/numerology-calculation-guide.md",
+        "hash": "3651355154740543404"
+      },
+      {
+        "file": "AGENTS.md",
+        "hash": "14868573887273208886"
+      },
+      {
+        "file": "README.md",
+        "hash": "6995685507510389026"
+      },
+      {
+        "file": "START_SERVER.md",
+        "hash": "4724013813703118845"
+      },
+      {
+        "file": "docs/stories/1.2b.story.md",
+        "hash": "6705309767292124504"
+      },
+      {
+        "file": "start-dev.sh",
+        "hash": "13663414838857244297"
+      },
+      {
+        "file": "docs/stories/1.2.story.md",
+        "hash": "12410707003969021033"
+      },
+      {
+        "file": ".ai/story-1.2-optimization-summary.md",
+        "hash": "12440297951090041826"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6023897676811565512"
+      },
+      {
+        "file": "docs/stories/1.6.story.md",
+        "hash": "2119054230302431427"
+      },
+      {
+        "file": ".github/workflows/deploy-api.yaml",
+        "hash": "14661096915682003277"
+      },
+      {
+        "file": "docs/stories/1.5.story.md",
+        "hash": "10786029456449067342"
+      },
+      {
+        "file": "docs/stories/1.3.story.md",
+        "hash": "7977603330663878308"
+      },
+      {
+        "file": "stop-dev.sh",
+        "hash": "9220305637708287569"
+      },
+      {
+        "file": "docs/stories/1.4.story.md",
+        "hash": "9762823961001561352"
+      },
+      {
+        "file": "docs/architecture/index.md",
+        "hash": "15273846883369513624"
+      },
+      {
+        "file": "docs/architecture/source-tree.md",
+        "hash": "10888486220837832491"
+      },
+      {
+        "file": "docs/ai-prompts-react-native.md",
+        "hash": "4582576792855277522"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "199087888850237344"
+      }
+    ],
+    "projectFileMap": {
+      "ui": [
+        {
+          "file": "libs/ui/package.json",
+          "hash": "7428868760943008468",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:typescript",
+            "npm:react-native-elements"
+          ]
+        },
+        {
+          "file": "libs/ui/project.json",
+          "hash": "18431237197170676668"
+        },
+        {
+          "file": "libs/ui/src/Button/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/Button/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/Card/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/Card/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/Input/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/Input/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/LoadingSpinner/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/LoadingSpinner/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/forms/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/forms/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/index.ts",
+          "hash": "6771017461462474719"
+        },
+        {
+          "file": "libs/ui/tsconfig.json",
+          "hash": "1747006648638529739"
+        }
+      ],
+      "api": [
+        {
+          "file": "apps/api/.coverage",
+          "hash": "2046854422611904923"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "hash": "3096698317558125989"
+        },
+        {
+          "file": "apps/api/Dockerfile",
+          "hash": "17100097775292367701"
+        },
+        {
+          "file": "apps/api/README.md",
+          "hash": "1976290930673671034"
+        },
+        {
+          "file": "apps/api/alembic.ini",
+          "hash": "7283604514624029951"
+        },
+        {
+          "file": "apps/api/alembic/env.py",
+          "hash": "17217857824843295057"
+        },
+        {
+          "file": "apps/api/alembic/script.py.mako",
+          "hash": "8208815103719339798"
+        },
+        {
+          "file": "apps/api/coverage.xml",
+          "hash": "3075883502032341521"
+        },
+        {
+          "file": "apps/api/project.json",
+          "hash": "2636159601368860322"
+        },
+        {
+          "file": "apps/api/pyproject.toml",
+          "hash": "12126208075230360122"
+        },
+        {
+          "file": "apps/api/pytest.ini",
+          "hash": "15995696401100207901"
+        },
+        {
+          "file": "apps/api/requirements.txt",
+          "hash": "12215311060188060592"
+        },
+        {
+          "file": "apps/api/src/__init__.py",
+          "hash": "3454793044141497556"
+        },
+        {
+          "file": "apps/api/src/__tests__/__init__.py",
+          "hash": "4055606894390288348"
+        },
+        {
+          "file": "apps/api/src/__tests__/test_agent_service.py",
+          "hash": "1357889873902593126"
+        },
+        {
+          "file": "apps/api/src/__tests__/test_numerology_endpoint.py",
+          "hash": "10922782229465047771"
+        },
+        {
+          "file": "apps/api/src/__tests__/test_tts_service.py",
+          "hash": "5363794677488804464"
+        },
+        {
+          "file": "apps/api/src/__tests__/test_voice_endpoint.py",
+          "hash": "7313635815704450400"
+        },
+        {
+          "file": "apps/api/src/__tests__/test_voice_service.py",
+          "hash": "12252520205771760688"
+        },
+        {
+          "file": "apps/api/src/config.py",
+          "hash": "6890432988175842391"
+        },
+        {
+          "file": "apps/api/src/dependencies.py",
+          "hash": "14229700604680488502"
+        },
+        {
+          "file": "apps/api/src/main.py",
+          "hash": "4492019223926666253"
+        },
+        {
+          "file": "apps/api/src/middleware/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/middleware/error_handler.py",
+          "hash": "3067824551315655320"
+        },
+        {
+          "file": "apps/api/src/migrations/versions/add_conversations_table.py",
+          "hash": "11510127549608452886"
+        },
+        {
+          "file": "apps/api/src/models/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/models/base.py",
+          "hash": "527662279305673426"
+        },
+        {
+          "file": "apps/api/src/models/conversation.py",
+          "hash": "805341784764283094"
+        },
+        {
+          "file": "apps/api/src/models/numerology_profile.py",
+          "hash": "10182648949933512258"
+        },
+        {
+          "file": "apps/api/src/repositories/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/repositories/example_repository.py",
+          "hash": "12553492104493829455"
+        },
+        {
+          "file": "apps/api/src/routes/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/routes/conversations.py",
+          "hash": "10305174354499117946"
+        },
+        {
+          "file": "apps/api/src/routes/health.py",
+          "hash": "2563294484601888526"
+        },
+        {
+          "file": "apps/api/src/routes/numerology.py",
+          "hash": "2412486422517671206"
+        },
+        {
+          "file": "apps/api/src/routes/voice.py",
+          "hash": "755497218228284451"
+        },
+        {
+          "file": "apps/api/src/schemas/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/schemas/conversation.py",
+          "hash": "125776204665773258"
+        },
+        {
+          "file": "apps/api/src/schemas/numerology.py",
+          "hash": "14675832190793644421"
+        },
+        {
+          "file": "apps/api/src/schemas/voice.py",
+          "hash": "5704563631837591527"
+        },
+        {
+          "file": "apps/api/src/services/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/services/agent_service.py",
+          "hash": "12757995515559590891"
+        },
+        {
+          "file": "apps/api/src/services/example_service.py",
+          "hash": "17611431943801384902"
+        },
+        {
+          "file": "apps/api/src/services/numerology_service.py",
+          "hash": "6250500498043368402"
+        },
+        {
+          "file": "apps/api/src/services/text_to_speech_service.py",
+          "hash": "11697620430760543234"
+        },
+        {
+          "file": "apps/api/src/services/voice_service.py",
+          "hash": "15250447240785408143"
+        },
+        {
+          "file": "apps/api/src/utils/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/src/utils/database.py",
+          "hash": "1575872352748156781"
+        },
+        {
+          "file": "apps/api/src/utils/logger.py",
+          "hash": "5467855660291726272"
+        },
+        {
+          "file": "apps/api/src/websockets/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/tests/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/tests/fixtures/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/tests/integration/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/tests/unit/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/api/tests/unit/test_example.py",
+          "hash": "9360266537876409813"
+        }
+      ],
+      "numerology": [
+        {
+          "file": "libs/numerology/project.json",
+          "hash": "13070135687922590003"
+        },
+        {
+          "file": "libs/numerology/setup.py",
+          "hash": "10829448977984673343"
+        },
+        {
+          "file": "libs/numerology/src/__init__.py",
+          "hash": "2018481393073464493"
+        },
+        {
+          "file": "libs/numerology/src/__tests__/__init__.py",
+          "hash": "4055606894390288348"
+        },
+        {
+          "file": "libs/numerology/src/__tests__/test_calculator.py",
+          "hash": "2283668098163083927"
+        },
+        {
+          "file": "libs/numerology/src/calculator.py",
+          "hash": "9724717846582430117"
+        },
+        {
+          "file": "libs/numerology/src/interpretations.py",
+          "hash": "1868553244679708589"
+        },
+        {
+          "file": "libs/numerology/src/vietnamese_mappings.py",
+          "hash": "1507789963310643324"
+        }
+      ],
+      "numeroly-mobile": [
+        {
+          "file": "apps/mobile/.babelignore",
+          "hash": "1627660389349289316"
+        },
+        {
+          "file": "apps/mobile/.gitignore",
+          "hash": "5698471884054160209"
+        },
+        {
+          "file": "apps/mobile/App.tsx",
+          "hash": "8406390085008583551"
+        },
+        {
+          "file": "apps/mobile/BUILD_FIXES_SUMMARY.md",
+          "hash": "13871397173815814824"
+        },
+        {
+          "file": "apps/mobile/FIXES_APPLIED.md",
+          "hash": "10859749919100222483"
+        },
+        {
+          "file": "apps/mobile/IMPORT_META_FIX.md",
+          "hash": "14311310116828327497"
+        },
+        {
+          "file": "apps/mobile/PROJECT_SUMMARY.md",
+          "hash": "18380131043687554963"
+        },
+        {
+          "file": "apps/mobile/QUICKSTART.md",
+          "hash": "3764935742319180102"
+        },
+        {
+          "file": "apps/mobile/README.md",
+          "hash": "13474059810692876497"
+        },
+        {
+          "file": "apps/mobile/SETUP_ANDROID.md",
+          "hash": "994313114720068089"
+        },
+        {
+          "file": "apps/mobile/app.json",
+          "hash": "11726485810699333039"
+        },
+        {
+          "file": "apps/mobile/assets/README.txt",
+          "hash": "18345516174688554269"
+        },
+        {
+          "file": "apps/mobile/assets/create-assets.js",
+          "hash": "10428030197010143258"
+        },
+        {
+          "file": "apps/mobile/babel.config.js",
+          "hash": "11608753683327412269"
+        },
+        {
+          "file": "apps/mobile/metro.config.js",
+          "hash": "16036450126948379402"
+        },
+        {
+          "file": "apps/mobile/package-lock.json",
+          "hash": "17456392585153071616"
+        },
+        {
+          "file": "apps/mobile/package.json",
+          "hash": "8877851514972058456",
+          "deps": [
+            "npm:@babel/core",
+            "npm:@types/react@19.1.17",
+            "npm:typescript",
+            "npm:@babel/runtime",
+            "npm:@expo/vector-icons@15.0.2",
+            "npm:@react-native-async-storage/async-storage@2.2.0",
+            "npm:@react-navigation/bottom-tabs@6.6.1",
+            "npm:@react-navigation/native@6.1.18",
+            "npm:@react-navigation/native-stack@6.11.0",
+            "npm:@react-navigation/stack@6.4.1",
+            "npm:axios",
+            "npm:expo@54.0.13",
+            "npm:expo-av@16.0.7",
+            "npm:expo-font@14.0.9",
+            "npm:expo-haptics@15.0.7",
+            "npm:expo-linear-gradient@15.0.7",
+            "npm:expo-status-bar@3.0.8",
+            "npm:lottie-react-native@7.3.4",
+            "npm:react@19.1.0",
+            "npm:react-dom@19.1.0",
+            "npm:react-native@0.81.4",
+            "npm:react-native-gesture-handler@2.28.0",
+            "npm:react-native-linear-gradient@2.8.3",
+            "npm:react-native-safe-area-context@5.6.1",
+            "npm:react-native-screens@4.16.0",
+            "npm:react-native-svg@15.12.1",
+            "npm:react-native-vector-icons@10.3.0",
+            "npm:react-native-web@0.21.1",
+            "npm:react-refresh@0.18.0",
+            "npm:zustand"
+          ]
+        },
+        {
+          "file": "apps/mobile/src/__tests__/e2e/conversation-flow.e2e.test.ts",
+          "hash": "10357746655497381046"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/integration/conversation-flow.integration.test.ts",
+          "hash": "18139474297945282216"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/services/audio.test.ts",
+          "hash": "10373433331186840961"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/services/numerology.test.ts",
+          "hash": "8872969480633721075"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/services/speech-to-text.test.ts",
+          "hash": "16040239831852322418"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/services/text-to-speech.test.ts",
+          "hash": "17752093159096491810"
+        },
+        {
+          "file": "apps/mobile/src/__tests__/stores/userStore.test.ts",
+          "hash": "10316860482981652216"
+        },
+        {
+          "file": "apps/mobile/src/components/ErrorBoundary.tsx",
+          "hash": "7060866709978747813"
+        },
+        {
+          "file": "apps/mobile/src/components/cards/NumerologyCard.tsx",
+          "hash": "8831693675020616878"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/ConversationFlowController.ts",
+          "hash": "17852376528012790681"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/ConversationProgress.tsx",
+          "hash": "10984593354285287430"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/ConversationTranscript.tsx",
+          "hash": "3856656997935379700"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/InsightCard.tsx",
+          "hash": "4887787289914571907"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/MessageBubble.tsx",
+          "hash": "4259752917163709175"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/TypingIndicator.tsx",
+          "hash": "11643356132044505823"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/WaveformVisualizer.tsx",
+          "hash": "14119477140488555025"
+        },
+        {
+          "file": "apps/mobile/src/components/conversation/__tests__/ConversationFlowController.test.ts",
+          "hash": "10957154269050691034"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/AudioControls.tsx",
+          "hash": "12090048981542833735"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/PlaybackStatus.tsx",
+          "hash": "10069877001623068358"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/TranscriptionDisplay.tsx",
+          "hash": "3625951844890732737"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/VoiceButton.tsx",
+          "hash": "18121527915037856192"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/VoiceResponsePlayer.tsx",
+          "hash": "5558502220372199918"
+        },
+        {
+          "file": "apps/mobile/src/components/voice/WaveformVisualizer.tsx",
+          "hash": "128570731276339994"
+        },
+        {
+          "file": "apps/mobile/src/navigation/RootNavigator.tsx",
+          "hash": "12330163159486569956"
+        },
+        {
+          "file": "apps/mobile/src/navigation/TabNavigator.tsx",
+          "hash": "11151869358250620081"
+        },
+        {
+          "file": "apps/mobile/src/screens/HomeScreen.tsx",
+          "hash": "2165408130180673331"
+        },
+        {
+          "file": "apps/mobile/src/screens/OnboardingConversationScreen.tsx",
+          "hash": "5257444193806738939"
+        },
+        {
+          "file": "apps/mobile/src/screens/ProfileScreen.tsx",
+          "hash": "10654870970724838128"
+        },
+        {
+          "file": "apps/mobile/src/screens/onboarding/PhoneAuthScreen.tsx",
+          "hash": "14554659130112165519"
+        },
+        {
+          "file": "apps/mobile/src/screens/onboarding/WelcomeScreen.tsx",
+          "hash": "500081836183407828"
+        },
+        {
+          "file": "apps/mobile/src/services/api.ts",
+          "hash": "5329107820212881595"
+        },
+        {
+          "file": "apps/mobile/src/services/audio-player.ts",
+          "hash": "14818402537011378972"
+        },
+        {
+          "file": "apps/mobile/src/services/audio.ts",
+          "hash": "15843068017204419508"
+        },
+        {
+          "file": "apps/mobile/src/services/conversation-api.ts",
+          "hash": "16460980194284758178"
+        },
+        {
+          "file": "apps/mobile/src/services/insight-generator.ts",
+          "hash": "10287383973354304475"
+        },
+        {
+          "file": "apps/mobile/src/services/numerology.ts",
+          "hash": "14907637044269646683"
+        },
+        {
+          "file": "apps/mobile/src/services/session-storage.ts",
+          "hash": "12396048777290978167"
+        },
+        {
+          "file": "apps/mobile/src/services/speech-to-text.ts",
+          "hash": "7349923173150105790"
+        },
+        {
+          "file": "apps/mobile/src/services/text-to-speech.ts",
+          "hash": "11462213240822253867"
+        },
+        {
+          "file": "apps/mobile/src/services/voice-orchestration.ts",
+          "hash": "3961909493124511317"
+        },
+        {
+          "file": "apps/mobile/src/store/authStore.ts",
+          "hash": "12172589889730167280"
+        },
+        {
+          "file": "apps/mobile/src/store/conversationStore.ts",
+          "hash": "12558171934627737572"
+        },
+        {
+          "file": "apps/mobile/src/stores/conversationStore.ts",
+          "hash": "1887049910640832692"
+        },
+        {
+          "file": "apps/mobile/src/stores/userStore.ts",
+          "hash": "773915020810111929"
+        },
+        {
+          "file": "apps/mobile/src/types.ts",
+          "hash": "1777853155106255843"
+        },
+        {
+          "file": "apps/mobile/src/types/index.ts",
+          "hash": "6798160340508536145"
+        },
+        {
+          "file": "apps/mobile/src/utils/colors.ts",
+          "hash": "634402716515920586"
+        },
+        {
+          "file": "apps/mobile/src/utils/constants.ts",
+          "hash": "7306703672213394370"
+        },
+        {
+          "file": "apps/mobile/tsconfig.json",
+          "hash": "18110150382427267721"
+        }
+      ],
+      "shared": [
+        {
+          "file": "libs/shared/package.json",
+          "hash": "8003647280358893748",
+          "deps": [
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "libs/shared/project.json",
+          "hash": "98606802558023225"
+        },
+        {
+          "file": "libs/shared/src/constants/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/constants/defaults.ts",
+          "hash": "12760932820641569804"
+        },
+        {
+          "file": "libs/shared/src/constants/errors.ts",
+          "hash": "9644658430115385031"
+        },
+        {
+          "file": "libs/shared/src/constants/limits.ts",
+          "hash": "16817763622709684187"
+        },
+        {
+          "file": "libs/shared/src/index.ts",
+          "hash": "14197749569009644942"
+        },
+        {
+          "file": "libs/shared/src/types/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/types/api.ts",
+          "hash": "2152581378738827466"
+        },
+        {
+          "file": "libs/shared/src/types/conversation.ts",
+          "hash": "15828859686129454910"
+        },
+        {
+          "file": "libs/shared/src/types/numerology.ts",
+          "hash": "16062541101162789160"
+        },
+        {
+          "file": "libs/shared/src/types/user.ts",
+          "hash": "3191807658638187100"
+        },
+        {
+          "file": "libs/shared/src/utils/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/utils/converters.ts",
+          "hash": "11513832476502458712"
+        },
+        {
+          "file": "libs/shared/src/utils/formatters.ts",
+          "hash": "10042286238082833136"
+        },
+        {
+          "file": "libs/shared/src/validators/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/validators/dates.ts",
+          "hash": "9735567953345108875"
+        },
+        {
+          "file": "libs/shared/src/validators/phone.ts",
+          "hash": "2963101812057443226"
+        },
+        {
+          "file": "libs/shared/src/validators/user.ts",
+          "hash": "13123970655887737748"
+        },
+        {
+          "file": "libs/shared/tsconfig.json",
+          "hash": "9555513119911836784"
+        }
+      ]
+    }
+  }
+}

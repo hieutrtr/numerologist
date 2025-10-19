@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VoiceButton } from '../components/voice/VoiceButton';
 import { ConversationTranscript } from '../components/conversation/ConversationTranscript';
@@ -9,16 +9,21 @@ import { useAuthStore } from '../store/authStore';
 import { Colors, Spacing, FontSizes } from '../utils/colors';
 import { VIETNAMESE_GREETINGS } from '../utils/constants';
 import { VoiceButtonState } from '../types';
+import { recordAndTranscribe, stopRecording } from '../services/voice-orchestration';
 
 export const HomeScreen: React.FC = () => {
   const [voiceState, setVoiceState] = useState<VoiceButtonState>('idle');
+  const [audioLevel, setAudioLevel] = useState<number>(-160);
   const { user } = useAuthStore();
   const {
+    activeConversationId,
     messages,
-    isRecording,
-    isProcessing,
     isAiTyping,
     startConversation,
+    addMessage,
+    setRecording,
+    setProcessing,
+    setTranscription,
   } = useConversationStore();
 
   const getGreeting = () => {
@@ -35,25 +40,70 @@ export const HomeScreen: React.FC = () => {
     return `${greeting}, ${name}!`;
   };
 
-  const handleVoicePress = async () => {
-    if (voiceState === 'idle') {
-      setVoiceState('listening');
-      await startConversation();
-      // TODO: Start voice recording
-      setTimeout(() => {
+  const handleVoicePress = useCallback(async () => {
+    if (voiceState === 'listening') {
+      try {
         setVoiceState('processing');
-        setTimeout(() => {
-          setVoiceState('speaking');
-          setTimeout(() => {
-            setVoiceState('idle');
-          }, 2000);
-        }, 1500);
-      }, 3000);
-    } else if (voiceState === 'listening') {
-      setVoiceState('processing');
-      // TODO: Stop recording and process
+        await stopRecording();
+      } catch (error) {
+        console.error('Stop recording failed', error);
+        setVoiceState('error');
+        setTimeout(() => setVoiceState('idle'), 2000);
+      }
+      return;
     }
-  };
+
+    if (voiceState !== 'idle') {
+      return;
+    }
+
+    try {
+      setVoiceState('listening');
+      setRecording(true);
+      setProcessing(false);
+      setTranscription('');
+      setAudioLevel(-160);
+
+      const conversationId =
+        activeConversationId ?? (await startConversation());
+
+      const transcript = await recordAndTranscribe({
+        conversationId,
+        onMeter: (meter) => setAudioLevel(meter),
+      });
+
+      setVoiceState('processing');
+      setProcessing(true);
+
+      if (transcript.trim().length > 0) {
+        addMessage({
+          id: `user-${Date.now()}`,
+          text: transcript.trim(),
+          type: 'user',
+          timestamp: new Date(),
+        });
+        setTranscription(transcript.trim());
+      }
+
+      setVoiceState('idle');
+    } catch (error) {
+      console.error('Voice capture error', error);
+      setVoiceState('error');
+      setTimeout(() => setVoiceState('idle'), 2000);
+    } finally {
+      setRecording(false);
+      setProcessing(false);
+      setAudioLevel(-160);
+    }
+  }, [
+    voiceState,
+    activeConversationId,
+    startConversation,
+    addMessage,
+    setRecording,
+    setProcessing,
+    setTranscription,
+  ]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,12 +130,12 @@ export const HomeScreen: React.FC = () => {
       <View style={styles.voiceContainer}>
         {voiceState === 'listening' && (
           <WaveformVisualizer
-            mode="listening"
-            isActive={true}
-            height={60}
+            isActive={voiceState === 'listening'}
+            audioLevel={audioLevel}
+            height={80}
           />
         )}
-        
+
         <VoiceButton
           size="large"
           state={voiceState}

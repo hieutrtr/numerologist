@@ -130,6 +130,12 @@ docker-compose ps
 
 # Terminal 3: Backend logs
 # You should see: Uvicorn running on http://127.0.0.1:8000
+
+# Terminal 4: STT endpoint (requires sample WAV file)
+curl -X POST \
+  -H "x-request-id: setup-check" \
+  -F "audio_file=@sample_vi.wav" \
+  http://localhost:8000/api/v1/voice/transcriptions
 ```
 
 Expected responses:
@@ -137,6 +143,7 @@ Expected responses:
 - ✅ PostgreSQL container is running
 - ✅ Redis container is running
 - ✅ Backend server is listening on port 8000
+- ✅ Transcription endpoint returns JSON with `text`, `confidence`, and `duration_ms`
 
 ---
 
@@ -184,7 +191,6 @@ pytest src/__tests__/ -v
 **Frontend:**
 ```bash
 EXPO_PUBLIC_API_URL=http://localhost:8000/v1
-EXPO_PUBLIC_WS_URL=ws://localhost:8000/ws
 ```
 
 **Backend - Database:**

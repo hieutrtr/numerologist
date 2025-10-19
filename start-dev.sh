@@ -25,7 +25,7 @@ echo "   API started (PID: $API_PID) at http://localhost:8000"
 # Start Mobile
 echo "📱 Starting React Native mobile app..."
 cd $PROJECT_ROOT/apps/mobile
-nohup expo start --clear > $PROJECT_ROOT/mobile.log 2>&1 &
+nohup expo start --clear --tunnel > $PROJECT_ROOT/mobile.log 2>&1 &
 MOBILE_PID=$!
 echo $MOBILE_PID > $PROJECT_ROOT/mobile.pid
 echo "   Mobile started (PID: $MOBILE_PID)"

@@ -146,6 +146,12 @@ curl http://localhost:19006  # Should return Expo dev server
 # Backend
 curl http://localhost:8000/health  # Should return {"status": "healthy"}
 
+# Speech-to-Text endpoint (requires sample WAV file)
+curl -X POST \
+  -H "x-request-id: quickstart" \
+  -F "audio_file=@sample_vi.wav" \
+  http://localhost:8000/api/v1/voice/transcriptions
+
 # Database
 docker-compose exec postgres psql -U numeroly -d numeroly -c "\dt"
 ```

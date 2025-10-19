@@ -1,6 +1,8 @@
 """Global error handling middleware."""
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import uuid
@@ -14,6 +16,8 @@ logger = get_logger(__name__)
 
 async def api_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle all API exceptions with consistent error format."""
+    if isinstance(exc, (HTTPException, StarletteHTTPException)):
+        return await http_exception_handler(request, exc)
     request_id = str(uuid.uuid4())
     timestamp = datetime.utcnow().isoformat() + "Z"
 
@@ -22,6 +26,7 @@ async def api_exception_handler(request: Request, exc: Exception) -> JSONRespons
         extra={
             "request_id": request_id,
             "error": str(exc),
+            "exception_type": type(exc).__name__,
             "path": request.url.path,
         },
     )
@@ -30,11 +35,11 @@ async def api_exception_handler(request: Request, exc: Exception) -> JSONRespons
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "error": {
-                "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected error occurred. Please try again later.",
-                "timestamp": timestamp,
-                "requestId": request_id,
-            }
+            "code": "INTERNAL_SERVER_ERROR",
+            "message": "An unexpected error occurred. Please try again later.",
+            "timestamp": timestamp,
+            "requestId": request_id,
+        }
         },
     )
 
@@ -77,5 +82,6 @@ async def validation_exception_handler(
 
 def setup_error_handlers(app: FastAPI) -> None:
     """Register error handlers with FastAPI app."""
+    app.add_exception_handler(HTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
     app.add_exception_handler(Exception, api_exception_handler)

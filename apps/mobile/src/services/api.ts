@@ -1,7 +1,12 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+const DEFAULT_BASE_URL = 'http://localhost:8000/v1';
+const rawBaseUrl = process.env.EXPO_PUBLIC_API_URL || DEFAULT_BASE_URL;
+const trimmedBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+export const API_BASE_URL = trimmedBaseUrl.endsWith('/v1')
+  ? trimmedBaseUrl
+  : `${trimmedBaseUrl}/v1`;
 
 interface ApiResponse<T> {
   data: T;
@@ -13,7 +18,7 @@ class ApiClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: `${API_BASE_URL}/v1`,
+      baseURL: API_BASE_URL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +29,6 @@ class ApiClient {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor
     this.client.interceptors.request.use(
       async (config) => {
         const token = await SecureStore.getItemAsync('access_token');
@@ -36,14 +40,11 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         if (error.response?.status === 401) {
-          // Token expired - clear storage
           await SecureStore.deleteItemAsync('access_token');
-          // Could trigger logout here
         }
         return Promise.reject(error);
       }

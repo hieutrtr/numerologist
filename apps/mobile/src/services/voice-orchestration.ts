@@ -5,8 +5,7 @@
  */
 
 import { textToSpeechClient } from './text-to-speech';
-import { speechToTextClient } from './speech-to-text';
-import { audioRecorder } from './audio';
+import { speechToTextClient, MeterCallback } from './speech-to-text';
 
 /**
  * Speak text using text-to-speech service
@@ -40,79 +39,86 @@ export async function speakText(text: string): Promise<void> {
  * Record audio and return transcription text
  * Handles WebSocket streaming and audio recording
  */
+type RecordOptions = {
+  conversationId?: string;
+  maxDuration?: number;
+  onMeter?: MeterCallback;
+};
+
+const createConversationId = () => `conv_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
 export async function recordAndTranscribe(
-  maxDuration: number = 30000, // 30 seconds max
-  onMeter?: (meter: number) => void,
+  optionsOrDuration?: number | RecordOptions,
+  legacyOnMeter?: MeterCallback,
 ): Promise<string> {
-  const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-  
+  let conversationId = createConversationId();
+  let maxDuration = 30000;
+  let onMeter: MeterCallback | undefined = undefined;
+
+  if (typeof optionsOrDuration === 'object' && optionsOrDuration !== null) {
+    conversationId = optionsOrDuration.conversationId ?? conversationId;
+    maxDuration = optionsOrDuration.maxDuration ?? maxDuration;
+    onMeter = optionsOrDuration.onMeter;
+  } else {
+    if (typeof optionsOrDuration === 'number') {
+      maxDuration = optionsOrDuration;
+      onMeter = legacyOnMeter;
+    }
+  }
+
   return new Promise(async (resolve, reject) => {
     let timeoutId: NodeJS.Timer | null = null;
     let finalTranscript = '';
 
-    try {
-      // Request audio permissions and setup
-      const hasPermissions = await audioRecorder.checkPermissions();
-      if (!hasPermissions) {
-        const granted = await audioRecorder.requestPermissions();
-        if (!granted) {
-          reject(new Error('Không có quyền truy cập microphone'));
-          return;
-        }
+    const cleanup = async () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
       }
+      await speechToTextClient.disconnect();
+    };
 
-      // Setup audio session
-      await audioRecorder.setupAudioSession();
-
-      // Setup STT callbacks
-      const onResult = (result: any) => {
-        finalTranscript = result.text;
-        if (result.isFinal) {
-          // If we got a final result, wait a bit to see if more comes, then resolve
-          clearTimeout(timeoutId!);
-          timeoutId = setTimeout(() => {
-            resolve(finalTranscript);
-          }, 500);
+    const onResult = (result: { text: string; isFinal: boolean }) => {
+      finalTranscript = result.text;
+      if (result.isFinal) {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
-      };
+        cleanup()
+          .then(() => resolve(finalTranscript))
+          .catch((error) => reject(error as Error));
+      }
+    };
 
-      const onError = (error: any) => {
-        if (timeoutId) clearTimeout(timeoutId);
-        reject(new Error(error.message || 'Lỗi khi ghi âm'));
-      };
+    const onError = (error: { message?: string }) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      cleanup()
+        .then(() => reject(new Error(error.message || 'Lỗi khi ghi âm')))
+        .catch((cleanupError) => reject(cleanupError as Error));
+    };
 
-      // Connect to STT service
+    try {
       await speechToTextClient.connect(conversationId, onResult, onError);
-
-      // Start recording and streaming
-      await audioRecorder.startRecording(onMeter);
       await speechToTextClient.startStreaming(onMeter);
 
-      // Set maximum duration timeout
       timeoutId = setTimeout(async () => {
         try {
-          await stopRecording();
+          await speechToTextClient.stopStreaming();
+          await cleanup();
           resolve(finalTranscript || '');
         } catch (error) {
-          reject(error);
+          reject(error as Error);
         }
       }, maxDuration);
 
-      // Helper function to stop recording
-      const stopRecording = async () => {
-        try {
-          await speechToTextClient.stopStreaming();
-          await audioRecorder.stopRecording();
-          await speechToTextClient.disconnect();
-        } catch (error) {
-          console.error('Error stopping recording:', error);
-        }
+      (globalThis as any).numerologyStopRecording = async () => {
+        await speechToTextClient.stopStreaming();
+        await cleanup();
       };
-
-      // Make stopRecording accessible if needed (e.g., button press)
-      (window as any).numerologyStopRecording = stopRecording;
     } catch (error) {
-      if (timeoutId) clearTimeout(timeoutId);
+      await cleanup();
       const errorMsg = error instanceof Error ? error.message : 'Lỗi ghi âm không xác định';
       reject(new Error(errorMsg));
     }
@@ -158,7 +164,6 @@ async function playAudioFromUrl(audioUrl: string): Promise<void> {
 export async function stopRecording(): Promise<void> {
   try {
     await speechToTextClient.stopStreaming();
-    await audioRecorder.stopRecording();
     await speechToTextClient.disconnect();
   } catch (error) {
     console.error('Error stopping recording:', error);
@@ -170,7 +175,6 @@ export async function stopRecording(): Promise<void> {
  */
 export async function cancelRecording(): Promise<void> {
   try {
-    await audioRecorder.cancelRecording();
     await speechToTextClient.cancelStreaming();
     await speechToTextClient.disconnect();
   } catch (error) {

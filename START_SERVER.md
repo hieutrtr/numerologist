@@ -27,6 +27,17 @@ curl http://localhost:8000/health
 # {"status":"healthy","app":"Numeroly API","version":"1.0.0","environment":"development"}
 ```
 
+```bash
+# Verify speech-to-text REST endpoint (requires WAV file)
+curl -X POST \
+  -H "x-request-id: local-dev" \
+  -F "audio_file=@sample_vi.wav" \
+  http://localhost:8000/api/v1/voice/transcriptions
+
+# Expected response:
+# {"text":"...","confidence":0.95,"alternatives":[],"duration_ms":1234.0}
+```
+
 ## Access API
 
 - **API Docs:** http://localhost:8000/docs (Swagger UI)
