@@ -29,7 +29,9 @@
     "db:reset": "docker-compose down -v && docker-compose up -d postgres redis"
   },
   "dependencies": {
-    "expo-secure-store": "^15.0.7"
+    "expo-secure-store": "^15.0.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@nx/workspace": "^20.3.2",
