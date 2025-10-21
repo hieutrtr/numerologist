@@ -110,23 +110,24 @@ export function useVoiceInputService(
 
       console.log('[Voice Input] Microphones available:', availableMics.length);
 
-      setState((prevState) => ({
-        ...prevState,
-        availableMics,
-      }));
-
-      // Auto-select first microphone if enabled and none selected
-      if (
-        options.autoSelectFirst &&
-        !state.selectedMicId &&
-        availableMics.length > 0
-      ) {
-        console.log('[Voice Input] Auto-selecting first microphone:', availableMics[0].id);
-        setState((prevState) => ({
+      setState((prevState) => {
+        const newState = {
           ...prevState,
-          selectedMicId: availableMics[0].id,
-        }));
-      }
+          availableMics,
+        };
+
+        // Auto-select first microphone if enabled and none selected
+        if (
+          options.autoSelectFirst &&
+          !prevState.selectedMicId &&
+          availableMics.length > 0
+        ) {
+          console.log('[Voice Input] Auto-selecting first microphone:', availableMics[0].id);
+          newState.selectedMicId = availableMics[0].id;
+        }
+
+        return newState;
+      });
     } else {
       console.log('[Voice Input] No microphones available yet');
     }

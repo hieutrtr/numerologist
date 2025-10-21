@@ -106,22 +106,23 @@ export function useVoiceOutputService(
           `Speaker ${speaker.device.deviceId.substring(0, 8)}`,
       }));
 
-      setState((prevState) => ({
-        ...prevState,
-        availableSpeakers,
-      }));
-
-      // Auto-select first speaker if enabled and none selected
-      if (
-        options.autoSelectFirst &&
-        !prevState.selectedSpeakerId &&
-        availableSpeakers.length > 0
-      ) {
-        setState((prevState) => ({
+      setState((prevState) => {
+        const newState = {
           ...prevState,
-          selectedSpeakerId: availableSpeakers[0].id,
-        }));
-      }
+          availableSpeakers,
+        };
+
+        // Auto-select first speaker if enabled and none selected
+        if (
+          options.autoSelectFirst &&
+          !prevState.selectedSpeakerId &&
+          availableSpeakers.length > 0
+        ) {
+          newState.selectedSpeakerId = availableSpeakers[0].id;
+        }
+
+        return newState;
+      });
     }
   }, [speakers, options.autoSelectFirst]);
 
