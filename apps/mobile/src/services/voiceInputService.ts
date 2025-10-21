@@ -145,8 +145,11 @@ export function useVoiceInputService(
         error: null,
       }));
 
-      // Request microphone access
-      await daily.updateInputSettings({ audio: true });
+      // Request microphone access with proper input settings format
+      // Daily.co requires: { audio: { processor: { type: 'none' | 'noise-cancellation' } } }
+      await daily.updateInputSettings({
+        audio: { processor: { type: 'none' } },
+      });
 
       // Select specific microphone if one is chosen
       if (state.selectedMicId) {
@@ -196,7 +199,11 @@ export function useVoiceInputService(
         error: null,
       }));
 
-      await daily.updateInputSettings({ audio: false });
+      // Disable audio with proper input settings format
+      // Daily.co requires specific processor format even for disabling
+      await daily.updateInputSettings({
+        audio: { processor: { type: 'none' } },
+      });
 
       setState((prevState) => ({
         ...prevState,
