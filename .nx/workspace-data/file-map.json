@@ -34,112 +34,136 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".ai/STORY_1_5_DEV_STATUS.md",
-        "hash": "443206944703869667"
+        "file": "docs/stories/1.5.story.md",
+        "hash": "10786029456449067342"
       },
       {
-        "file": ".ai/story-1.2-optimization-summary.md",
-        "hash": "12440297951090041826"
+        "file": "docs/stories/1.2.story.md",
+        "hash": "12410707003969021033"
       },
       {
-        "file": ".ai/validation-report-1.3.md",
-        "hash": "10101717957731731811"
+        "file": "package-lock.json",
+        "hash": "9027951228919415560"
       },
       {
-        "file": ".env.example",
-        "hash": "6023897676811565512"
+        "file": "tsconfig.json",
+        "hash": "13354667176562422547"
       },
       {
-        "file": ".expo/README.md",
-        "hash": "15098062590768810805"
+        "file": "nx.json",
+        "hash": "1682515240176212989"
       },
       {
-        "file": ".expo/devices.json",
-        "hash": "9079673538751451102"
+        "file": "docs/architecture/tech-stack.md",
+        "hash": "17156649048083121043"
       },
       {
-        "file": ".expo/settings.json",
-        "hash": "4299207701458512922"
+        "file": "docs/stories/1.2a.story.md",
+        "hash": "17231156907035491444"
       },
       {
-        "file": ".github/workflows/ci.yaml",
-        "hash": "4552736518517430494"
+        "file": "docs/stories/1.6.story.md",
+        "hash": "2119054230302431427"
       },
       {
-        "file": ".github/workflows/deploy-api.yaml",
-        "hash": "14661096915682003277"
+        "file": "docs/stories/1.3.story.md",
+        "hash": "7977603330663878308"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "4343365537952712207"
       },
       {
         "file": ".gitignore",
         "hash": "10411227948770499333"
       },
       {
-        "file": ".npmrc",
-        "hash": "1829183420567411207"
-      },
-      {
-        "file": "AGENTS.md",
-        "hash": "14868573887273208886"
-      },
-      {
-        "file": "CLAUDE.md",
-        "hash": "12794597975217767553"
-      },
-      {
-        "file": "DEVELOPMENT_COMPLETE.md",
-        "hash": "6069456730476839778"
-      },
-      {
-        "file": "INSTALLATION_VERIFIED.md",
-        "hash": "5146131329744484141"
-      },
-      {
-        "file": "README.md",
-        "hash": "6995685507510389026"
-      },
-      {
-        "file": "SETUP_GUIDE.md",
-        "hash": "17279775301055970308"
-      },
-      {
-        "file": "START_SERVER.md",
-        "hash": "4724013813703118845"
-      },
-      {
-        "file": "UV_SETUP.md",
-        "hash": "17177638249889892739"
-      },
-      {
-        "file": "api.pid",
-        "hash": "6821489048957217071"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "199087888850237344"
-      },
-      {
-        "file": "docs/DAILY_CO_ASYNC_PATTERNS.md",
-        "hash": "6275026688478820470"
-      },
-      {
-        "file": "docs/DAILY_CO_INDEX.md",
-        "hash": "5131882511523171261"
+        "file": ".expo/settings.json",
+        "hash": "4299207701458512922"
       },
       {
         "file": "docs/DAILY_CO_INTEGRATION.md",
         "hash": "14088292333715681388"
       },
       {
-        "file": "docs/DAILY_CO_MIGRATION_SUMMARY.md",
-        "hash": "15919284078856876906"
+        "file": "README.md",
+        "hash": "6995685507510389026"
+      },
+      {
+        "file": ".ai/STORY_1_5_DEV_STATUS.md",
+        "hash": "443206944703869667"
+      },
+      {
+        "file": "docs/stories/reports/README.md",
+        "hash": "16469681349673568198"
+      },
+      {
+        "file": "docs/DAILY_CO_REFERENCE_CARD.md",
+        "hash": "10607187016024704521"
+      },
+      {
+        "file": "docs/DAILY_CO_ASYNC_PATTERNS.md",
+        "hash": "6275026688478820470"
+      },
+      {
+        "file": "docs/front-end-spec.md",
+        "hash": "17417143050392559221"
+      },
+      {
+        "file": "docs/stories/reports/1.2b-compatibility-report.md",
+        "hash": "1030844168785958402"
+      },
+      {
+        "file": "docs/stories/1.2c.story.md",
+        "hash": "12562948142909486895"
+      },
+      {
+        "file": "docs/stories/reports/.gitkeep",
+        "hash": "1109526994136149952"
+      },
+      {
+        "file": "mobile.pid",
+        "hash": "5586745211040110070"
+      },
+      {
+        "file": "package.json",
+        "hash": "12824407728275344134"
+      },
+      {
+        "file": ".npmrc",
+        "hash": "1829183420567411207"
+      },
+      {
+        "file": "start-dev.sh",
+        "hash": "13663414838857244297"
+      },
+      {
+        "file": "docs/stories/1.4.story.md",
+        "hash": "9762823961001561352"
+      },
+      {
+        "file": ".ai/story-1.2-optimization-summary.md",
+        "hash": "12440297951090041826"
+      },
+      {
+        "file": "CLAUDE.md",
+        "hash": "12794597975217767553"
+      },
+      {
+        "file": "UV_SETUP.md",
+        "hash": "17177638249889892739"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6023897676811565512"
       },
       {
         "file": "docs/DAILY_CO_QUICKSTART.md",
         "hash": "177061907627938649"
       },
       {
-        "file": "docs/DAILY_CO_REFERENCE_CARD.md",
-        "hash": "10607187016024704521"
+        "file": "START_SERVER.md",
+        "hash": "4724013813703118845"
       },
       {
         "file": "docs/VOICE_SERVICE_EXAMPLES.md",
@@ -150,36 +174,32 @@
         "hash": "4582576792855277522"
       },
       {
-        "file": "docs/architecture.md",
-        "hash": "6645597223581377024"
+        "file": "docs/stories/reports/1.2c-implementation-complete.md",
+        "hash": "9087929305623506217"
       },
       {
-        "file": "docs/architecture/coding-standards.md",
-        "hash": "16500460085060321447"
+        "file": "stop-dev.sh",
+        "hash": "9220305637708287569"
       },
       {
-        "file": "docs/architecture/index.md",
-        "hash": "15273846883369513624"
+        "file": ".expo/devices.json",
+        "hash": "9079673538751451102"
       },
       {
-        "file": "docs/architecture/source-tree.md",
-        "hash": "10888486220837832491"
+        "file": ".github/workflows/deploy-api.yaml",
+        "hash": "14661096915682003277"
       },
       {
-        "file": "docs/architecture/tech-stack.md",
-        "hash": "17156649048083121043"
+        "file": "docs/stories/1.1.story.md",
+        "hash": "5747109942451315564"
       },
       {
-        "file": "docs/azure-setup-guide.md",
-        "hash": "9709267151646420545"
+        "file": ".ai/validation-report-1.3.md",
+        "hash": "10101717957731731811"
       },
       {
-        "file": "docs/brief.md",
-        "hash": "4276483156240388749"
-      },
-      {
-        "file": "docs/front-end-spec.md",
-        "hash": "17417143050392559221"
+        "file": "AGENTS.md",
+        "hash": "14868573887273208886"
       },
       {
         "file": "docs/numerology-calculation-guide.md",
@@ -190,108 +210,88 @@
         "hash": "939469808141458569"
       },
       {
-        "file": "docs/stories/1.1.story.md",
-        "hash": "5747109942451315564"
-      },
-      {
-        "file": "docs/stories/1.2.story.md",
-        "hash": "12410707003969021033"
-      },
-      {
-        "file": "docs/stories/1.2a.story.md",
-        "hash": "17231156907035491444"
-      },
-      {
-        "file": "docs/stories/1.2b.story.md",
-        "hash": "6705309767292124504"
-      },
-      {
-        "file": "docs/stories/1.2c.story.md",
-        "hash": "12562948142909486895"
-      },
-      {
-        "file": "docs/stories/1.3.story.md",
-        "hash": "7977603330663878308"
-      },
-      {
-        "file": "docs/stories/1.4.story.md",
-        "hash": "9762823961001561352"
-      },
-      {
-        "file": "docs/stories/1.5.story.md",
-        "hash": "10786029456449067342"
-      },
-      {
-        "file": "docs/stories/1.6.story.md",
-        "hash": "2119054230302431427"
-      },
-      {
-        "file": "docs/stories/reports/.gitkeep",
-        "hash": "1109526994136149952"
-      },
-      {
-        "file": "docs/stories/reports/1.2b-compatibility-report.md",
-        "hash": "1030844168785958402"
-      },
-      {
-        "file": "docs/stories/reports/1.2c-implementation-complete.md",
-        "hash": "9087929305623506217"
-      },
-      {
-        "file": "docs/stories/reports/1.2c-validation-report.md",
-        "hash": "12586508471017607625"
-      },
-      {
-        "file": "docs/stories/reports/INDEX.md",
-        "hash": "2570662179759336637"
-      },
-      {
-        "file": "docs/stories/reports/ORGANIZATION_GUIDE.md",
-        "hash": "5281114932586407028"
-      },
-      {
-        "file": "docs/stories/reports/README.md",
-        "hash": "16469681349673568198"
-      },
-      {
-        "file": "mobile.pid",
-        "hash": "5586745211040110070"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1682515240176212989"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "9027951228919415560"
-      },
-      {
-        "file": "package.json",
-        "hash": "12824407728275344134"
+        "file": "docs/architecture/index.md",
+        "hash": "15273846883369513624"
       },
       {
         "file": "start-api.sh",
         "hash": "8598695847688681142"
       },
       {
-        "file": "start-dev.sh",
-        "hash": "13663414838857244297"
+        "file": "DEVELOPMENT_COMPLETE.md",
+        "hash": "6069456730476839778"
+      },
+      {
+        "file": "SETUP_GUIDE.md",
+        "hash": "17279775301055970308"
+      },
+      {
+        "file": "docs/stories/reports/1.2c-validation-report.md",
+        "hash": "12586508471017607625"
+      },
+      {
+        "file": "docs/architecture/coding-standards.md",
+        "hash": "16500460085060321447"
+      },
+      {
+        "file": "api.pid",
+        "hash": "6821489048957217071"
+      },
+      {
+        "file": "docs/azure-setup-guide.md",
+        "hash": "9709267151646420545"
+      },
+      {
+        "file": "docs/DAILY_CO_MIGRATION_SUMMARY.md",
+        "hash": "15919284078856876906"
+      },
+      {
+        "file": "INSTALLATION_VERIFIED.md",
+        "hash": "5146131329744484141"
+      },
+      {
+        "file": "docs/DAILY_CO_INDEX.md",
+        "hash": "5131882511523171261"
+      },
+      {
+        "file": ".github/workflows/ci.yaml",
+        "hash": "4552736518517430494"
+      },
+      {
+        "file": "docs/stories/reports/ORGANIZATION_GUIDE.md",
+        "hash": "5281114932586407028"
+      },
+      {
+        "file": "docs/architecture.md",
+        "hash": "6645597223581377024"
+      },
+      {
+        "file": "docs/stories/reports/INDEX.md",
+        "hash": "2570662179759336637"
+      },
+      {
+        "file": "docs/stories/1.2b.story.md",
+        "hash": "6705309767292124504"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "199087888850237344"
+      },
+      {
+        "file": "docs/brief.md",
+        "hash": "4276483156240388749"
+      },
+      {
+        "file": "docs/architecture/source-tree.md",
+        "hash": "10888486220837832491"
       },
       {
         "file": "start-mobile.sh",
         "hash": "17110128880448368019"
       },
       {
-        "file": "stop-dev.sh",
-        "hash": "9220305637708287569"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "4343365537952712207"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "13354667176562422547"
+        "file": ".expo/README.md",
+        "hash": "15098062590768810805"
       }
     ],
     "projectFileMap": {
@@ -751,7 +751,7 @@
         },
         {
           "file": "apps/mobile/src/providers/DailyProvider.tsx",
-          "hash": "14982739366764019352"
+          "hash": "9774607927633742331"
         },
         {
           "file": "apps/mobile/src/screens/HomeScreen.tsx",
