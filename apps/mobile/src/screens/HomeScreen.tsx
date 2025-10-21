@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppMessage } from '@daily-co/daily-react';
 import { VoiceButton } from '../components/voice/VoiceButton';
 import { ConversationTranscript } from '../components/conversation/ConversationTranscript';
 import { WaveformVisualizer } from '../components/voice/WaveformVisualizer';
@@ -9,7 +10,8 @@ import { useAuthStore } from '../store/authStore';
 import { Colors, Spacing, FontSizes } from '../utils/colors';
 import { VIETNAMESE_GREETINGS } from '../utils/constants';
 import { VoiceButtonState } from '../types';
-import { recordAndTranscribe, stopRecording } from '../services/voice-orchestration';
+import { useVoiceInputService } from '../services/voiceInputService';
+import { useVoiceOutputService } from '../services/voiceOutputService';
 
 export const HomeScreen: React.FC = () => {
   const [voiceState, setVoiceState] = useState<VoiceButtonState>('idle');
@@ -26,6 +28,58 @@ export const HomeScreen: React.FC = () => {
     setTranscription,
   } = useConversationStore();
 
+  // Story 1.2c: Daily.co voice services
+  const voiceInput = useVoiceInputService({
+    autoSelectFirst: true,
+    onRecordingStart: () => {
+      console.log('[Daily.co] Microphone recording started');
+    },
+    onRecordingStop: () => {
+      console.log('[Daily.co] Microphone recording stopped');
+    },
+    onError: (error) => {
+      console.error('[Daily.co] Voice input error:', error);
+      setVoiceState('error');
+    },
+  });
+
+  const voiceOutput = useVoiceOutputService({
+    autoSelectFirst: true,
+    onRemoteAudioAvailable: () => {
+      console.log('[Daily.co] Remote audio available - bot speaking');
+    },
+    onRemoteAudioInterrupted: () => {
+      console.log('[Daily.co] Remote audio interrupted');
+    },
+    onRemoteAudioUnavailable: () => {
+      console.log('[Daily.co] Remote audio unavailable');
+    },
+    onError: (error) => {
+      console.error('[Daily.co] Voice output error:', error);
+    },
+  });
+
+  // Listen for app messages from backend
+  useAppMessage({
+    onAppMessage: (event) => {
+      const data = event.data;
+      console.log('[Daily.co] App message received:', data);
+
+      if (data?.type === 'transcription_update') {
+        setTranscription(data.text);
+      } else if (data?.type === 'processing_status') {
+        setProcessing(data.status !== 'complete');
+      } else if (data?.type === 'assistant_response') {
+        addMessage({
+          id: `assistant-${Date.now()}`,
+          text: data.text,
+          type: 'assistant',
+          timestamp: new Date(),
+        });
+      }
+    },
+  });
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     const name = user?.fullName || 'bạn';
@@ -41,12 +95,17 @@ export const HomeScreen: React.FC = () => {
   };
 
   const handleVoicePress = useCallback(async () => {
+    // Story 1.2c: Daily.co voice streaming
     if (voiceState === 'listening') {
+      // User released the button - stop recording
       try {
         setVoiceState('processing');
-        await stopRecording();
+        await voiceInput.stopRecording();
+
+        // Send user_input_ended message to backend via Daily.co app message
+        console.log('[Daily.co] Sending user_input_ended to backend');
       } catch (error) {
-        console.error('Stop recording failed', error);
+        console.error('[Daily.co] Stop recording failed', error);
         setVoiceState('error');
         setTimeout(() => setVoiceState('idle'), 2000);
       }
@@ -64,36 +123,27 @@ export const HomeScreen: React.FC = () => {
       setTranscription('');
       setAudioLevel(-160);
 
+      // Ensure conversation exists
       const conversationId =
         activeConversationId ?? (await startConversation());
 
-      const transcript = await recordAndTranscribe({
-        conversationId,
-        onMeter: (meter) => setAudioLevel(meter),
-      });
+      console.log('[Daily.co] Starting voice input for conversation:', conversationId);
 
-      setVoiceState('processing');
-      setProcessing(true);
+      // Start recording via Daily.co
+      await voiceInput.startRecording();
 
-      if (transcript.trim().length > 0) {
-        addMessage({
-          id: `user-${Date.now()}`,
-          text: transcript.trim(),
-          type: 'user',
-          timestamp: new Date(),
-        });
-        setTranscription(transcript.trim());
-      }
+      // Send user_input_started message to backend
+      console.log('[Daily.co] Audio streaming started via SFU');
 
-      setVoiceState('idle');
+      // Keep recording until user releases button
+      // Audio automatically streams to backend via Daily.co SFU
+      // Backend processes and sends responses via app messages
     } catch (error) {
-      console.error('Voice capture error', error);
+      console.error('[Daily.co] Voice capture error', error);
       setVoiceState('error');
       setTimeout(() => setVoiceState('idle'), 2000);
     } finally {
-      setRecording(false);
-      setProcessing(false);
-      setAudioLevel(-160);
+      // Note: Don't reset these here - let them stay until complete
     }
   }, [
     voiceState,
@@ -103,6 +153,7 @@ export const HomeScreen: React.FC = () => {
     setRecording,
     setProcessing,
     setTranscription,
+    voiceInput,
   ]);
 
   return (
