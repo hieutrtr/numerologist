@@ -35,8 +35,12 @@ export const DailyProvider: React.FC<DailyProviderProps> = ({
   token = '',
   children,
 }) => {
+  // Only pass token if it's a non-empty string
+  // Daily.co requires token to be a valid string or undefined, not empty string
+  const validToken = token && token.length > 0 ? token : undefined;
+
   return (
-    <DailyProviderBase url={roomUrl} token={token || undefined}>
+    <DailyProviderBase url={roomUrl} token={validToken}>
       {children}
     </DailyProviderBase>
   );
