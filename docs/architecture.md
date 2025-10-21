@@ -849,89 +849,199 @@ paths:
           description: Journal entry created
 ```
 
-### WebSocket Endpoints
+### Real-Time Voice Streaming with Daily.co
 
-**`/ws/conversation/{conversationId}`**
+**Architecture:** Numeroly leverages **Daily.co** (via `daily-react` library) to manage real-time voice conversations with bidirectional audio streaming, eliminating the need for custom WebSocket implementation.
 
-Real-time bidirectional communication for streaming voice conversations.
+**Key Benefits:**
+- **Managed Infrastructure:** Daily.co handles audio routing, codec negotiation, and network optimization
+- **Sub-second Latency:** SFU (Selective Forwarding Unit) topology for optimal voice quality
+- **Built-in Recording:** Conversation recording without additional infrastructure
+- **Scalability:** Global edge network ensures consistent performance across regions (Vietnam users → Singapore SFU)
+- **Reliability:** Enterprise-grade SLA with automatic fallbacks
 
-**Client → Server Messages:**
-```typescript
+#### Daily.co Room Setup
+
+**Room Configuration (Backend):**
+```python
+# Backend creates Daily room and generates meeting token
+POST /daily-rooms
 {
-  type: 'audio_chunk',
-  data: ArrayBuffer, // Audio data chunk
-  sequenceNumber: number
+  "properties": {
+    "enable_chat": false,
+    "enable_screenshare": false,
+    "max_participants": 2,  # User + Assistant AI
+    "sfu_ui": false,  # Disable default UI
+    "lang": "vi",  # Vietnamese
+    "record_on_start": true  # Auto-record all conversations
+  }
 }
 
+Response: { "url": "https://numeroly.daily.co/room-uuid" }
+```
+
+**Meeting Token Generation (Backend):**
+```python
+# Backend generates secure meeting token for frontend
+POST /auth/daily-token
+Response:
 {
-  type: 'end_input',
-  conversationId: string
+  "token": "eyJhbG...",  # JWT token for room access
+  "room_url": "https://numeroly.daily.co/room-uuid",
+  "expires_at": "2025-01-15T10:30:00Z"
 }
 ```
 
-**Server → Client Messages:**
+#### Daily React Integration (Frontend)
+
+**Provider Setup:**
 ```typescript
+// apps/mobile/src/components/conversation/DailyProvider.tsx
+import { DailyProvider } from '@daily-co/daily-react';
+
+interface ConversationProviderProps {
+  roomUrl: string;
+  userName: string;
+  token: string;
+}
+
+export const ConversationDailyProvider: React.FC<ConversationProviderProps> = ({
+  roomUrl,
+  userName,
+  token,
+}) => {
+  return (
+    <DailyProvider url={roomUrl} token={token} userName={userName}>
+      {/* Conversation UI wrapped in provider */}
+    </DailyProvider>
+  );
+};
+```
+
+**Application Message Protocol** (replacing custom WebSocket):
+```typescript
+// Daily's app messages replace custom message types
+interface ConversationMessage {
+  type: 'user_input' | 'assistant_response' | 'transcription_update' | 'processing_status';
+  data: Record<string, any>;
+}
+
+// Examples:
 {
-  type: 'transcription',
-  text: string,
-  confidence: number,
-  isFinal: boolean
+  type: 'user_input',
+  data: {
+    conversationId: string;
+    emotionalTags: string[];
+  }
+}
+
+{
+  type: 'transcription_update',
+  data: {
+    text: string;
+    confidence: number;
+    isFinal: boolean;
+  }
 }
 
 {
   type: 'assistant_response',
-  text: string,
-  audioUrl: string,
-  emotionalTone: string
-}
-
-{
-  type: 'audio_chunk',
-  data: ArrayBuffer, // TTS audio chunk for streaming playback
-  sequenceNumber: number
+  data: {
+    text: string;
+    emotionalTone: 'warm' | 'neutral' | 'energetic';
+  }
 }
 
 {
   type: 'processing_status',
-  status: 'transcribing' | 'thinking' | 'synthesizing' | 'complete'
-}
-
-{
-  type: 'error',
-  code: string,
-  message: string
+  data: {
+    status: 'transcribing' | 'thinking' | 'synthesizing' | 'complete';
+  }
 }
 ```
 
 ## Components
 
-### Voice Input Service (Frontend)
+### Daily Voice Input Service (Frontend - daily-react)
 
-**Responsibility:** Capture audio from device microphone, chunk for streaming, and send to backend via WebSocket
+**Responsibility:** Manage local audio capture and transmission via Daily.co's audio pipeline
 
-**Key Interfaces:**
-- `startRecording()`: Begin audio capture
-- `stopRecording()`: End audio capture and finalize
-- `getAudioStream()`: Access real-time audio chunks
-- `setRecordingConfig(config)`: Configure sample rate, codec
+**Key Interfaces (daily-react hooks):**
+- `useDaily()`: Initialize call object with microphone setup
+- `useDevices()`: Access available microphones and configure audio input
+- `useDailyEvent()`: Listen for local audio state changes
 
-**Dependencies:** React Native Audio API, WebSocket connection manager
+**Implementation Pattern:**
+```typescript
+// apps/mobile/src/services/voiceInputService.ts
+import { useDaily, useDevices } from '@daily-co/daily-react';
 
-**Technology Stack:** React Native `react-native-audio-recorder-player`, WebRTC getUserMedia for web, PCM audio encoding
+export const VoiceInputService = () => {
+  const callObject = useDaily();
+  const { enableMic, disableMic, mics, selectMic } = useDevices();
 
-### Voice Output Service (Frontend)
+  const startRecording = async () => {
+    await enableMic();
+    // Audio now streams through Daily.co's network
+  };
 
-**Responsibility:** Play synthesized Vietnamese voice responses with playback controls
+  const stopRecording = async () => {
+    await disableMic();
+  };
 
-**Key Interfaces:**
-- `playAudio(audioUrl)`: Play audio from URL
-- `playAudioStream(chunks)`: Stream audio playback
-- `pause()`, `resume()`, `stop()`: Playback controls
-- `setVolume(level)`: Volume control
+  const setMicrophone = (deviceId: string) => {
+    selectMic(deviceId);
+  };
 
-**Dependencies:** Device audio player
+  return { startRecording, stopRecording, setMicrophone, mics };
+};
+```
 
-**Technology Stack:** React Native `react-native-sound`, `react-native-track-player` for advanced controls
+**Dependencies:** `@daily-co/daily-react`, `@daily-co/daily-js`
+
+**Technology Stack:**
+- Daily's managed audio codec negotiation (handles PCM, opus, etc.)
+- Platform-native audio APIs (iOS AVAudioEngine, Android MediaRecorder via WebRTC)
+- Automatic echo cancellation and noise suppression
+
+### Daily Voice Output Service (Frontend - daily-react)
+
+**Responsibility:** Play remote audio streams (assistant voice) and manage playback controls
+
+**Key Interfaces (daily-react hooks):**
+- `useParticipants()`: Access remote participant audio tracks
+- `useDevices()`: Control speaker selection and volume
+- `useDailyEvent()`: Monitor audio playback state
+
+**Implementation Pattern:**
+```typescript
+// apps/mobile/src/services/voiceOutputService.ts
+import { useParticipants, useDevices } from '@daily-co/daily-react';
+
+export const VoiceOutputService = () => {
+  const participants = useParticipants();
+  const { selectSpeaker, speakers } = useDevices();
+
+  // Remote audio (assistant voice) automatically plays via Daily's audio mixer
+  const remoteParticipant = participants.find((p) => p.user_id !== 'local');
+
+  // Audio track state indicates if remote audio is available
+  const remoteAudioState = remoteParticipant?.tracks?.audio?.state;
+
+  const setSpeaker = (deviceId: string) => {
+    selectSpeaker(deviceId);
+  };
+
+  return { remoteAudioState, setSpeaker, speakers };
+};
+```
+
+**Dependencies:** `@daily-co/daily-react`, platform audio APIs
+
+**Technology Stack:**
+- Daily's audio mixer (handles multi-participant audio, balancing, gain)
+- Platform speaker selection and routing
+- Automatic adaptive bitrate for poor network conditions
 
 ### Conversation State Manager (Frontend)
 
@@ -1289,15 +1399,16 @@ sequenceDiagram
     M->>U: "Ready for your first conversation?"
 ```
 
-### Voice Conversation Flow
+### Voice Conversation Flow (Daily.co)
 
 ```mermaid
 sequenceDiagram
     participant U as User
     participant M as Mobile App
-    participant WS as WebSocket
+    participant DR as Daily React
+    participant Daily as Daily.co SFU
     participant API as FastAPI Backend
-    participant STT as Azure Speech Services
+    participant STT as OpenAI/Azure STT
     participant GPT as GPT-4o
     participant TTS as ElevenLabs TTS
     participant REDIS as Redis Cache
@@ -1307,49 +1418,67 @@ sequenceDiagram
     M->>API: POST /conversations (start new)
     API->>DB: Create Conversation record
     API->>REDIS: Create session context
-    API->>M: Return conversationId
-    M->>WS: Connect to /ws/conversation/{id}
-    WS->>M: Connection established
-    
+    API->>M: Return {conversationId, roomUrl, token}
+
+    M->>DR: Initialize DailyProvider with token
+    DR->>Daily: Connect to SFU room
+    Daily->>DR: Room connected, ready for audio
+
     M->>U: Show "Listening..." animation
     U->>M: Speaks in Vietnamese
-    M->>WS: Send audio chunks (streaming)
-    WS->>STT: Stream audio to Speech-to-Text
-    STT->>WS: Return interim transcriptions
-    WS->>M: Forward interim text
+    M->>DR: enableMic() via useDevices hook
+    DR->>Daily: Stream user audio to SFU
+    Daily->>API: (via webhook) Audio available in room
+
+    API->>STT: Transcribe audio stream
+    STT->>API: Interim transcription + confidence
+    API->>DR: Send via appMessage (transcription_update)
+    DR->>M: Receive transcription update
     M->>U: Display transcription in real-time
-    
+
     U->>M: Stops speaking
-    M->>WS: Send end_input signal
-    STT->>WS: Final transcription + confidence
-    WS->>API: Process complete user message
+    M->>DR: disableMic() via useDevices hook
+    API->>STT: Final transcription
+    STT->>API: Final text + confidence
     API->>DB: Save ConversationMessage (user)
-    
+
     API->>REDIS: Retrieve conversation context
-    API->>GPT: Generate response with context + numerology profile
+    API->>GPT: Generate response with context + numerology
     Note over API,GPT: Includes: user question, last 5 messages,<br/>numerology numbers, emotional tone
     GPT->>API: Return response text
     API->>DB: Save ConversationMessage (assistant)
     API->>REDIS: Update conversation context
-    
+
     API->>TTS: Synthesize Vietnamese voice
-    TTS->>API: Return audio URL (or stream)
-    API->>WS: Send response {text, audioUrl}
-    WS->>M: Forward response
-    M->>U: Display text + play audio
-    
+    TTS->>API: Return audio stream
+    API->>Daily: (via bot participant) Inject TTS audio into room
+    Daily->>DR: Remote audio available (bot participant)
+
+    DR->>M: Remote audio plays (useParticipants detects)
+    M->>U: Display assistant response text + play audio
+
     U->>M: Tap voice button again (continue)
-    Note over M,DB: Repeat cycle with maintained context
-    
+    Note over M,DB: Repeat: enableMic() → speak → disableMic() → process
+
     U->>M: Tap "End Conversation"
+    M->>DR: Call callObject.leave()
+    DR->>Daily: Leave room (recording stops)
+    Daily->>API: (webhook) Recording completed
     M->>API: PATCH /conversations/{id} {status: completed}
-    API->>DB: Update Conversation status
+    API->>DB: Update Conversation status, retrieve recording URL
     M->>U: Request satisfaction rating
     U->>M: Select 1-5 stars
-    M->>API: PATCH /conversations/{id} {rating}
-    API->>DB: Save rating
-    M->>U: Show conversation summary
+    M->>API: PATCH /conversations/{id} {rating, recordingUrl}
+    API->>DB: Save rating and recording reference
+    M->>U: Show conversation summary with option to replay
 ```
+
+**Key Improvements Over Custom WebSocket:**
+- ✅ Daily.co manages audio routing (no custom codec negotiation)
+- ✅ Automatic recording built-in (no separate infrastructure)
+- ✅ SFU topology ensures low latency (<500ms typically)
+- ✅ Automatic fallback to TURN servers if direct connection fails
+- ✅ Echo cancellation and noise suppression out-of-the-box
 
 ### Numerology Insight Generation Flow
 

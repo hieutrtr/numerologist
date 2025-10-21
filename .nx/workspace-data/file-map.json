@@ -34,267 +34,239 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".ai/validation-report-1.3.md",
-        "hash": "10101717957731731811"
-      },
-      {
-        "file": "DEVELOPMENT_COMPLETE.md",
-        "hash": "6069456730476839778"
-      },
-      {
-        "file": "docs/architecture/source-tree.md",
-        "hash": "10888486220837832491"
-      },
-      {
-        "file": "docs/architecture.md",
-        "hash": "502498488043667243"
-      },
-      {
-        "file": "docs/stories/1.5.story.md",
-        "hash": "10786029456449067342"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "13354667176562422547"
-      },
-      {
-        "file": "mobile.pid",
-        "hash": "5586745211040110070"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "6394546991845765367"
-      },
-      {
-        "file": "INSTALLATION_VERIFIED.md",
-        "hash": "5146131329744484141"
-      },
-      {
-        "file": "start-dev.sh",
-        "hash": "13663414838857244297"
-      },
-      {
-        "file": "docs/stories/1.2a.story.md",
-        "hash": "17231156907035491444"
-      },
-      {
-        "file": "START_SERVER.md",
-        "hash": "4724013813703118845"
-      },
-      {
-        "file": "docs/brief.md",
-        "hash": "4276483156240388749"
-      },
-      {
-        "file": ".expo/README.md",
-        "hash": "15098062590768810805"
-      },
-      {
-        "file": ".expo/settings.json",
-        "hash": "4299207701458512922"
-      },
-      {
-        "file": "api.pid",
-        "hash": "6821489048957217071"
-      },
-      {
-        "file": "docs/architecture/tech-stack.md",
-        "hash": "17156649048083121043"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "4343365537952712207"
-      },
-      {
-        "file": "AGENTS.md",
-        "hash": "14868573887273208886"
-      },
-      {
-        "file": "docs/stories/1.1.story.md",
-        "hash": "5747109942451315564"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "199087888850237344"
-      },
-      {
-        "file": "docs/front-end-spec.md",
-        "hash": "17417143050392559221"
-      },
-      {
-        "file": "docs/azure-setup-guide.md",
-        "hash": "9709267151646420545"
-      },
-      {
-        "file": "start-api.sh",
-        "hash": "8598695847688681142"
-      },
-      {
-        "file": "docs/stories/1.2b.story.md",
-        "hash": "6705309767292124504"
-      },
-      {
-        "file": ".ai/STORY_1_5_DEV_STATUS.md",
-        "hash": "443206944703869667"
-      },
-      {
-        "file": "stop-dev.sh",
-        "hash": "9220305637708287569"
-      },
-      {
-        "file": ".expo/devices.json",
-        "hash": "9079673538751451102"
-      },
-      {
         "file": "docs/stories/1.6.story.md",
         "hash": "2119054230302431427"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1682515240176212989"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "1672316374534158790"
-      },
-      {
-        "file": ".ai/story-1.2-optimization-summary.md",
-        "hash": "12440297951090041826"
-      },
-      {
-        "file": "SETUP_GUIDE.md",
-        "hash": "17279775301055970308"
-      },
-      {
-        "file": "package.json",
-        "hash": "12824407728275344134"
-      },
-      {
-        "file": "docs/prd.md",
-        "hash": "939469808141458569"
-      },
-      {
-        "file": ".npmrc",
-        "hash": "1829183420567411207"
-      },
-      {
-        "file": ".github/workflows/ci.yaml",
-        "hash": "4552736518517430494"
-      },
-      {
-        "file": "docs/numerology-calculation-guide.md",
-        "hash": "3651355154740543404"
-      },
-      {
-        "file": "docs/stories/1.4.story.md",
-        "hash": "9762823961001561352"
-      },
-      {
-        "file": ".github/workflows/deploy-api.yaml",
-        "hash": "14661096915682003277"
-      },
-      {
-        "file": ".env.example",
-        "hash": "6023897676811565512"
       },
       {
         "file": "docs/stories/1.2.story.md",
         "hash": "12410707003969021033"
       },
       {
-        "file": "start-mobile.sh",
-        "hash": "17110128880448368019"
+        "file": ".expo/devices.json",
+        "hash": "9079673538751451102"
       },
       {
-        "file": "README.md",
-        "hash": "6995685507510389026"
-      },
-      {
-        "file": "docs/ai-prompts-react-native.md",
-        "hash": "4582576792855277522"
-      },
-      {
-        "file": "docs/stories/1.3.story.md",
-        "hash": "7977603330663878308"
-      },
-      {
-        "file": "docs/architecture/index.md",
-        "hash": "15273846883369513624"
+        "file": "STORY_1.2c_VALIDATION_REPORT.md",
+        "hash": "12586508471017607625"
       },
       {
         "file": "docs/architecture/coding-standards.md",
         "hash": "16500460085060321447"
       },
       {
+        "file": "docs/azure-setup-guide.md",
+        "hash": "9709267151646420545"
+      },
+      {
+        "file": "package.json",
+        "hash": "12824407728275344134"
+      },
+      {
+        "file": "docs/architecture/source-tree.md",
+        "hash": "10888486220837832491"
+      },
+      {
+        "file": "docs/DAILY_CO_INDEX.md",
+        "hash": "5131882511523171261"
+      },
+      {
+        "file": ".expo/README.md",
+        "hash": "15098062590768810805"
+      },
+      {
+        "file": "docs/stories/1.5.story.md",
+        "hash": "10786029456449067342"
+      },
+      {
+        "file": "docs/architecture/tech-stack.md",
+        "hash": "17156649048083121043"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6023897676811565512"
+      },
+      {
+        "file": "docs/stories/1.3.story.md",
+        "hash": "7977603330663878308"
+      },
+      {
+        "file": "stop-dev.sh",
+        "hash": "9220305637708287569"
+      },
+      {
+        "file": ".github/workflows/ci.yaml",
+        "hash": "4552736518517430494"
+      },
+      {
+        "file": "docs/stories/1.2c.story.md",
+        "hash": "4026926435489234042"
+      },
+      {
+        "file": "start-dev.sh",
+        "hash": "13663414838857244297"
+      },
+      {
+        "file": "docs/stories/1.2b.story.md",
+        "hash": "6705309767292124504"
+      },
+      {
+        "file": "AGENTS.md",
+        "hash": "14868573887273208886"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1682515240176212989"
+      },
+      {
+        "file": "docs/architecture/index.md",
+        "hash": "15273846883369513624"
+      },
+      {
+        "file": "docs/stories/1.2a.story.md",
+        "hash": "17231156907035491444"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "13354667176562422547"
+      },
+      {
+        "file": "docs/brief.md",
+        "hash": "4276483156240388749"
+      },
+      {
+        "file": "docs/numerology-calculation-guide.md",
+        "hash": "3651355154740543404"
+      },
+      {
+        "file": "README.md",
+        "hash": "6995685507510389026"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "4343365537952712207"
+      },
+      {
+        "file": ".ai/STORY_1_5_DEV_STATUS.md",
+        "hash": "443206944703869667"
+      },
+      {
+        "file": ".expo/settings.json",
+        "hash": "4299207701458512922"
+      },
+      {
+        "file": ".ai/story-1.2-optimization-summary.md",
+        "hash": "12440297951090041826"
+      },
+      {
         "file": "UV_SETUP.md",
         "hash": "17177638249889892739"
+      },
+      {
+        "file": "docs/stories/1.4.story.md",
+        "hash": "9762823961001561352"
+      },
+      {
+        "file": "docs/prd.md",
+        "hash": "939469808141458569"
+      },
+      {
+        "file": "DEVELOPMENT_COMPLETE.md",
+        "hash": "6069456730476839778"
+      },
+      {
+        "file": "docs/VOICE_SERVICE_EXAMPLES.md",
+        "hash": "17936632391866468188"
+      },
+      {
+        "file": "docs/front-end-spec.md",
+        "hash": "17417143050392559221"
+      },
+      {
+        "file": "docs/stories/1.1.story.md",
+        "hash": "5747109942451315564"
+      },
+      {
+        "file": "docs/DAILY_CO_QUICKSTART.md",
+        "hash": "177061907627938649"
+      },
+      {
+        "file": "INSTALLATION_VERIFIED.md",
+        "hash": "5146131329744484141"
+      },
+      {
+        "file": "SETUP_GUIDE.md",
+        "hash": "17279775301055970308"
+      },
+      {
+        "file": "start-api.sh",
+        "hash": "8598695847688681142"
+      },
+      {
+        "file": ".ai/validation-report-1.3.md",
+        "hash": "10101717957731731811"
+      },
+      {
+        "file": "mobile.pid",
+        "hash": "5586745211040110070"
+      },
+      {
+        "file": "START_SERVER.md",
+        "hash": "4724013813703118845"
+      },
+      {
+        "file": "start-mobile.sh",
+        "hash": "17110128880448368019"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "199087888850237344"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "6394546991845765367"
+      },
+      {
+        "file": "docs/DAILY_CO_INTEGRATION.md",
+        "hash": "14088292333715681388"
+      },
+      {
+        "file": ".github/workflows/deploy-api.yaml",
+        "hash": "14661096915682003277"
+      },
+      {
+        "file": "docs/ai-prompts-react-native.md",
+        "hash": "4582576792855277522"
+      },
+      {
+        "file": "api.pid",
+        "hash": "6821489048957217071"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "10411227948770499333"
+      },
+      {
+        "file": ".npmrc",
+        "hash": "1829183420567411207"
+      },
+      {
+        "file": "docs/architecture.md",
+        "hash": "6645597223581377024"
+      },
+      {
+        "file": "docs/DAILY_CO_MIGRATION_SUMMARY.md",
+        "hash": "15919284078856876906"
+      },
+      {
+        "file": "docs/DAILY_CO_ASYNC_PATTERNS.md",
+        "hash": "6275026688478820470"
+      },
+      {
+        "file": "docs/DAILY_CO_REFERENCE_CARD.md",
+        "hash": "10607187016024704521"
       }
     ],
     "projectFileMap": {
-      "ui": [
-        {
-          "file": "libs/ui/package.json",
-          "hash": "7428868760943008468",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:typescript",
-            "npm:react-native-elements"
-          ]
-        },
-        {
-          "file": "libs/ui/project.json",
-          "hash": "18431237197170676668"
-        },
-        {
-          "file": "libs/ui/src/Button/.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/Button/__init__.py",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/Card/.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/Card/__init__.py",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/Input/.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/Input/__init__.py",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/LoadingSpinner/.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/LoadingSpinner/__init__.py",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/forms/.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/forms/__init__.py",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/ui/src/index.ts",
-          "hash": "6771017461462474719"
-        },
-        {
-          "file": "libs/ui/tsconfig.json",
-          "hash": "1747006648638529739"
-        }
-      ],
       "api": [
         {
           "file": "apps/api/.coverage",
@@ -517,38 +489,89 @@
           "hash": "9360266537876409813"
         }
       ],
-      "numerology": [
+      "shared": [
         {
-          "file": "libs/numerology/project.json",
-          "hash": "13070135687922590003"
+          "file": "libs/shared/package.json",
+          "hash": "8003647280358893748",
+          "deps": [
+            "npm:typescript"
+          ]
         },
         {
-          "file": "libs/numerology/setup.py",
-          "hash": "10829448977984673343"
+          "file": "libs/shared/project.json",
+          "hash": "98606802558023225"
         },
         {
-          "file": "libs/numerology/src/__init__.py",
-          "hash": "2018481393073464493"
+          "file": "libs/shared/src/constants/__init__.py",
+          "hash": "3244421341483603138"
         },
         {
-          "file": "libs/numerology/src/__tests__/__init__.py",
-          "hash": "4055606894390288348"
+          "file": "libs/shared/src/constants/defaults.ts",
+          "hash": "12760932820641569804"
         },
         {
-          "file": "libs/numerology/src/__tests__/test_calculator.py",
-          "hash": "2283668098163083927"
+          "file": "libs/shared/src/constants/errors.ts",
+          "hash": "9644658430115385031"
         },
         {
-          "file": "libs/numerology/src/calculator.py",
-          "hash": "9724717846582430117"
+          "file": "libs/shared/src/constants/limits.ts",
+          "hash": "16817763622709684187"
         },
         {
-          "file": "libs/numerology/src/interpretations.py",
-          "hash": "1868553244679708589"
+          "file": "libs/shared/src/index.ts",
+          "hash": "14197749569009644942"
         },
         {
-          "file": "libs/numerology/src/vietnamese_mappings.py",
-          "hash": "1507789963310643324"
+          "file": "libs/shared/src/types/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/types/api.ts",
+          "hash": "2152581378738827466"
+        },
+        {
+          "file": "libs/shared/src/types/conversation.ts",
+          "hash": "15828859686129454910"
+        },
+        {
+          "file": "libs/shared/src/types/numerology.ts",
+          "hash": "16062541101162789160"
+        },
+        {
+          "file": "libs/shared/src/types/user.ts",
+          "hash": "3191807658638187100"
+        },
+        {
+          "file": "libs/shared/src/utils/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/utils/converters.ts",
+          "hash": "11513832476502458712"
+        },
+        {
+          "file": "libs/shared/src/utils/formatters.ts",
+          "hash": "10042286238082833136"
+        },
+        {
+          "file": "libs/shared/src/validators/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/validators/dates.ts",
+          "hash": "9735567953345108875"
+        },
+        {
+          "file": "libs/shared/src/validators/phone.ts",
+          "hash": "2963101812057443226"
+        },
+        {
+          "file": "libs/shared/src/validators/user.ts",
+          "hash": "13123970655887737748"
+        },
+        {
+          "file": "libs/shared/tsconfig.json",
+          "hash": "9555513119911836784"
         }
       ],
       "numeroly-mobile": [
@@ -857,89 +880,102 @@
           "hash": "5241561980138559483"
         }
       ],
-      "shared": [
+      "ui": [
         {
-          "file": "libs/shared/package.json",
-          "hash": "8003647280358893748",
+          "file": "libs/ui/package.json",
+          "hash": "7428868760943008468",
           "deps": [
-            "npm:typescript"
+            "npm:react",
+            "npm:react-native",
+            "npm:typescript",
+            "npm:react-native-elements"
           ]
         },
         {
-          "file": "libs/shared/project.json",
-          "hash": "98606802558023225"
+          "file": "libs/ui/project.json",
+          "hash": "18431237197170676668"
         },
         {
-          "file": "libs/shared/src/constants/__init__.py",
+          "file": "libs/ui/src/Button/.ts",
           "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/constants/defaults.ts",
-          "hash": "12760932820641569804"
-        },
-        {
-          "file": "libs/shared/src/constants/errors.ts",
-          "hash": "9644658430115385031"
-        },
-        {
-          "file": "libs/shared/src/constants/limits.ts",
-          "hash": "16817763622709684187"
-        },
-        {
-          "file": "libs/shared/src/index.ts",
-          "hash": "14197749569009644942"
-        },
-        {
-          "file": "libs/shared/src/types/__init__.py",
+          "file": "libs/ui/src/Button/__init__.py",
           "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/types/api.ts",
-          "hash": "2152581378738827466"
-        },
-        {
-          "file": "libs/shared/src/types/conversation.ts",
-          "hash": "15828859686129454910"
-        },
-        {
-          "file": "libs/shared/src/types/numerology.ts",
-          "hash": "16062541101162789160"
-        },
-        {
-          "file": "libs/shared/src/types/user.ts",
-          "hash": "3191807658638187100"
-        },
-        {
-          "file": "libs/shared/src/utils/__init__.py",
+          "file": "libs/ui/src/Card/.ts",
           "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/utils/converters.ts",
-          "hash": "11513832476502458712"
-        },
-        {
-          "file": "libs/shared/src/utils/formatters.ts",
-          "hash": "10042286238082833136"
-        },
-        {
-          "file": "libs/shared/src/validators/__init__.py",
+          "file": "libs/ui/src/Card/__init__.py",
           "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/validators/dates.ts",
-          "hash": "9735567953345108875"
+          "file": "libs/ui/src/Input/.ts",
+          "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/validators/phone.ts",
-          "hash": "2963101812057443226"
+          "file": "libs/ui/src/Input/__init__.py",
+          "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/src/validators/user.ts",
-          "hash": "13123970655887737748"
+          "file": "libs/ui/src/LoadingSpinner/.ts",
+          "hash": "3244421341483603138"
         },
         {
-          "file": "libs/shared/tsconfig.json",
-          "hash": "9555513119911836784"
+          "file": "libs/ui/src/LoadingSpinner/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/forms/.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/forms/__init__.py",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui/src/index.ts",
+          "hash": "6771017461462474719"
+        },
+        {
+          "file": "libs/ui/tsconfig.json",
+          "hash": "1747006648638529739"
+        }
+      ],
+      "numerology": [
+        {
+          "file": "libs/numerology/project.json",
+          "hash": "13070135687922590003"
+        },
+        {
+          "file": "libs/numerology/setup.py",
+          "hash": "10829448977984673343"
+        },
+        {
+          "file": "libs/numerology/src/__init__.py",
+          "hash": "2018481393073464493"
+        },
+        {
+          "file": "libs/numerology/src/__tests__/__init__.py",
+          "hash": "4055606894390288348"
+        },
+        {
+          "file": "libs/numerology/src/__tests__/test_calculator.py",
+          "hash": "2283668098163083927"
+        },
+        {
+          "file": "libs/numerology/src/calculator.py",
+          "hash": "9724717846582430117"
+        },
+        {
+          "file": "libs/numerology/src/interpretations.py",
+          "hash": "1868553244679708589"
+        },
+        {
+          "file": "libs/numerology/src/vietnamese_mappings.py",
+          "hash": "1507789963310643324"
         }
       ]
     }
