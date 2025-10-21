@@ -20,6 +20,7 @@ from ..config import settings
 from ..models.conversation import Conversation
 from ..schemas.conversation import ConversationResponse
 from .voice_service import AzureOpenAISpeechToTextService
+from .pipecat_bot_service import PipecatBotService
 
 logger = logging.getLogger(__name__)
 
@@ -242,11 +243,19 @@ class ConversationService:
             logger.info(f"Daily.co room created: {room_url}")
 
             # Step 2: Generate meeting token with 1-hour expiry
-            logger.info(f"Generating token for room {room_url}")
+            logger.info(f"Generating user token for room {room_url}")
             token = await self.daily_client.create_meeting_token(
                 room_url, expires_in_seconds=3600
             )
-            logger.info("Meeting token generated successfully")
+            logger.info("User meeting token generated successfully")
+
+            # Step 2.5: Generate bot token (separate participant)
+            logger.info(f"Generating bot token for room {room_url}")
+            bot_token = await self.daily_client.create_meeting_token(
+                room_url,
+                expires_in_seconds=3600
+            )
+            logger.info("Bot token generated successfully")
 
             # Step 3: Save conversation to database
             conversation = Conversation(
@@ -278,6 +287,27 @@ class ConversationService:
 
             await self.db.commit()
             await self.db.refresh(conversation)
+
+            # Step 5: Start Pipecat bot pipeline (Story 1.2d)
+            # Bot will join room as separate participant and handle voice conversation
+            try:
+                logger.info(f"Starting bot pipeline for conversation {conversation.id}")
+                bot_service = PipecatBotService()
+                await bot_service.create_pipeline(
+                    room_url=room_url,
+                    conversation_id=str(conversation.id),
+                    token=bot_token,
+                    user_id=user_id
+                )
+                logger.info(f"Bot pipeline started successfully for conversation {conversation.id}")
+            except Exception as bot_error:
+                # Log error but don't fail the conversation creation
+                # User can still join room, just no bot assistance
+                logger.error(
+                    f"Failed to start bot pipeline for conversation {conversation.id}: {bot_error}",
+                    exc_info=True
+                )
+                # Consider adding a status flag to indicate bot unavailable
 
             return {
                 "conversation_id": str(conversation.id),
@@ -555,6 +585,23 @@ class ConversationService:
                 if cached_data:
                     room_info = json.loads(cached_data)
                     room_url = room_info.get("room_url")
+
+            # Stop bot pipeline first (Story 1.2d)
+            # Bot will leave room gracefully before room is deleted
+            try:
+                logger.info(f"Stopping bot pipeline for conversation {conversation_id}")
+                bot_service = PipecatBotService()
+                await bot_service.destroy_pipeline(conversation_id)
+                logger.info(f"Bot pipeline stopped successfully")
+            except ValueError:
+                # Pipeline not found - already stopped or never started
+                logger.info(f"Bot pipeline not found for conversation {conversation_id}")
+            except Exception as bot_error:
+                # Log error but continue with room deletion
+                logger.error(
+                    f"Failed to stop bot pipeline for conversation {conversation_id}: {bot_error}",
+                    exc_info=True
+                )
 
             # Delete Daily.co room (triggers recording finalization)
             if room_url and self.daily_client:

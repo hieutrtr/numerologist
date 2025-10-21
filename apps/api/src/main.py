@@ -40,7 +40,17 @@ async def lifespan(app: FastAPI):
         print(f"Warning: Could not create database tables: {e}")
 
     yield
-    # Shutdown
+
+    # Shutdown - cleanup all bot pipelines (Story 1.2d)
+    try:
+        from .services.pipecat_bot_service import PipecatBotService
+        print("Cleaning up bot pipelines...")
+        bot_service = PipecatBotService()
+        await bot_service.destroy_all_pipelines()
+        print("All bot pipelines cleaned up successfully")
+    except Exception as e:
+        print(f"Warning: Error cleaning up bot pipelines: {e}")
+
     print("Shutting down application")
 
 

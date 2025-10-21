@@ -3,13 +3,13 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .utils.database import async_session_context
+from .utils.database import AsyncSessionLocal
 from .config import settings
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Get database session for dependency injection."""
-    async with async_session_context() as session:
+    async with AsyncSessionLocal() as session:
         yield session
 
 
