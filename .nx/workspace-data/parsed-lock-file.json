@@ -1215,6 +1215,24 @@
         "hash": "sha512-bkFqkLhh3pMBUQQkpVgWDWq/lqzc2678eUyDlTBhRqhCHFguYYGM0Efga7tYk4TogG/3x0EEl66/OQ+WGbWB/Q=="
       }
     },
+    "npm:@daily-co/daily-js": {
+      "type": "npm",
+      "name": "npm:@daily-co/daily-js",
+      "data": {
+        "version": "0.50.0",
+        "packageName": "@daily-co/daily-js",
+        "hash": "sha512-PG/1KX8GWBdZbtGW0UJyz69OkiumCsPUKuQbOFM2N18jabFmkSYgofgUXHEIHvR7M4/xGgIfSseM8rHouwdWTg=="
+      }
+    },
+    "npm:@daily-co/daily-react": {
+      "type": "npm",
+      "name": "npm:@daily-co/daily-react",
+      "data": {
+        "version": "0.10.0",
+        "packageName": "@daily-co/daily-react",
+        "hash": "sha512-Gu5axHHuptiJO/qLtrUVCctymZzWCUDcVFJ9xG6D0hR3VLC+S4VbfwCYpGvUvvYlCDweLOkD8UJf3NyRZtc4OA=="
+      }
+    },
     "npm:@egjs/hammerjs": {
       "type": "npm",
       "name": "npm:@egjs/hammerjs",
@@ -3807,6 +3825,15 @@
         "hash": "sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww=="
       }
     },
+    "npm:bowser": {
+      "type": "npm",
+      "name": "npm:bowser",
+      "data": {
+        "version": "2.12.1",
+        "packageName": "bowser",
+        "hash": "sha512-z4rE2Gxh7tvshQ4hluIT7XcFrgLIQaw9X3A+kTTRdovCz5PMukm/0QC/BKSYPj3omF5Qfypn9O/c5kgpmvYUCw=="
+      }
+    },
     "npm:bplist-creator": {
       "type": "npm",
       "name": "npm:bplist-creator",
@@ -4374,6 +4401,15 @@
         "hash": "sha512-cIK8KYiiGVOFsKdPMmm1L3tA/Gl+JopXL6F5+C7x39MyPsQYnP57Im/D6bNUzcborD7fcMwiwZqcBdBXXZucYQ=="
       }
     },
+    "npm:dequal": {
+      "type": "npm",
+      "name": "npm:dequal",
+      "data": {
+        "version": "2.0.3",
+        "packageName": "dequal",
+        "hash": "sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA=="
+      }
+    },
     "npm:destroy": {
       "type": "npm",
       "name": "npm:destroy",
@@ -4671,6 +4707,15 @@
         "hash": "sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ=="
       }
     },
+    "npm:events": {
+      "type": "npm",
+      "name": "npm:events",
+      "data": {
+        "version": "3.3.0",
+        "packageName": "events",
+        "hash": "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="
+      }
+    },
     "npm:exec-async": {
       "type": "npm",
       "name": "npm:exec-async",
@@ -4831,6 +4876,15 @@
         "version": "3.1.3",
         "packageName": "fast-deep-equal",
         "hash": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q=="
+      }
+    },
+    "npm:fast-equals": {
+      "type": "npm",
+      "name": "npm:fast-equals",
+      "data": {
+        "version": "1.6.3",
+        "packageName": "fast-equals",
+        "hash": "sha512-4WKW0AL5+WEqO0zWavAfYGY1qwLsBgE//DN4TTcVEN2UlINgkv9b3vm2iHicoenWKSX9mKWmGOsU/iI5IST7pQ=="
       }
     },
     "npm:fast-json-stable-stringify": {
@@ -5713,6 +5767,15 @@
         "version": "17.13.3",
         "packageName": "joi",
         "hash": "sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA=="
+      }
+    },
+    "npm:jotai": {
+      "type": "npm",
+      "name": "npm:jotai",
+      "data": {
+        "version": "2.15.0",
+        "packageName": "jotai",
+        "hash": "sha512-nbp/6jN2Ftxgw0VwoVnOg0m5qYM1rVcfvij+MZx99Z5IK13eGve9FJoCwGv+17JvVthTjhSmNtT5e1coJnr6aw=="
       }
     },
     "npm:js-tokens": {
@@ -10140,6 +10203,56 @@
     {
       "source": "npm:@babel/types",
       "target": "npm:@babel/helper-validator-identifier",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:@babel/runtime",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:bowser",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:dequal",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:events",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:fast-equals",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
+      "target": "npm:lodash",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:@daily-co/daily-js",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:react",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:fast-deep-equal",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:lodash.throttle",
       "type": "static"
     },
     {
@@ -16595,6 +16708,26 @@
     {
       "source": "npm:joi",
       "target": "npm:@sideway/pinpoint",
+      "type": "static"
+    },
+    {
+      "source": "npm:jotai",
+      "target": "npm:@babel/core",
+      "type": "static"
+    },
+    {
+      "source": "npm:jotai",
+      "target": "npm:@babel/template",
+      "type": "static"
+    },
+    {
+      "source": "npm:jotai",
+      "target": "npm:@types/react",
+      "type": "static"
+    },
+    {
+      "source": "npm:jotai",
+      "target": "npm:react",
       "type": "static"
     },
     {

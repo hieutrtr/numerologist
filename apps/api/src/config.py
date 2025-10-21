@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     azure_openai_reasoning_deployment_name: str = "gpt-4o-mini"
 
     # External APIs
+    # Daily.co - Voice Streaming & Recording (Story 1.2c)
+    daily_api_key: Optional[str] = None
+
     # ElevenLabs - Text-to-Speech (Vietnamese voice synthesis)
     elevenlabs_api_key: Optional[str] = None
     elevenlabs_voice_id: str = "default"
