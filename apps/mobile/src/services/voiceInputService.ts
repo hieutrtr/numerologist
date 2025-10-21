@@ -59,7 +59,7 @@ export function useVoiceInputService(
   changeMicrophone: (deviceId: string) => Promise<void>;
 } {
   const daily = useDaily();
-  const { mics: microphones } = useDevices();
+  const { microphones } = useDevices();
 
   const [state, setState] = useState<VoiceInputState>({
     isRecording: false,
@@ -104,8 +104,8 @@ export function useVoiceInputService(
   useEffect(() => {
     if (microphones && microphones.length > 0) {
       const availableMics = microphones.map((mic) => ({
-        id: mic.deviceId,
-        label: mic.label || `Microphone ${mic.deviceId.substring(0, 8)}`,
+        id: mic.device.deviceId,
+        label: mic.device.label || `Microphone ${mic.device.deviceId.substring(0, 8)}`,
       }));
 
       console.log('[Voice Input] Microphones available:', availableMics.length);

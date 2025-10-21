@@ -100,10 +100,10 @@ export function useVoiceOutputService(
   useEffect(() => {
     if (speakers && speakers.length > 0) {
       const availableSpeakers = speakers.map((speaker) => ({
-        id: speaker.deviceId,
+        id: speaker.device.deviceId,
         label:
-          speaker.label ||
-          `Speaker ${speaker.deviceId.substring(0, 8)}`,
+          speaker.device.label ||
+          `Speaker ${speaker.device.deviceId.substring(0, 8)}`,
       }));
 
       setState((prevState) => ({
