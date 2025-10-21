@@ -14,6 +14,7 @@ import { DailyProvider as DailyProviderBase } from '@daily-co/daily-react';
  */
 interface DailyProviderProps {
   roomUrl?: string;
+  token?: string;
   children: React.ReactNode;
 }
 
@@ -24,16 +25,18 @@ interface DailyProviderProps {
  * - DailyProvider component wraps conversation UI with proper initialization
  * - Provides Daily context to all child components
  * - Voice services can use Daily hooks for audio/video functionality
+ * - Joins Daily.co room with authentication token
  *
- * @param props - Provider configuration with optional room URL
+ * @param props - Provider configuration with room URL and optional token
  * @returns React component that provides Daily context to children
  */
 export const DailyProvider: React.FC<DailyProviderProps> = ({
   roomUrl = '',
+  token = '',
   children,
 }) => {
   return (
-    <DailyProviderBase url={roomUrl}>
+    <DailyProviderBase url={roomUrl} token={token || undefined}>
       {children}
     </DailyProviderBase>
   );

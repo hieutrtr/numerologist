@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAppMessage } from '@daily-co/daily-react';
+import { useAppMessage, useDailyEvent } from '@daily-co/daily-react';
 import { VoiceButton } from '../components/voice/VoiceButton';
+import { MicrophoneSelector } from '../components/voice/MicrophoneSelector';
 import { ConversationTranscript } from '../components/conversation/ConversationTranscript';
 import { WaveformVisualizer } from '../components/voice/WaveformVisualizer';
 import { useConversationStore } from '../store/conversationStore';
@@ -16,6 +17,7 @@ import { useVoiceOutputService } from '../services/voiceOutputService';
 export const HomeScreen: React.FC = () => {
   const [voiceState, setVoiceState] = useState<VoiceButtonState>('idle');
   const [audioLevel, setAudioLevel] = useState<number>(-160);
+  const [roomJoined, setRoomJoined] = useState(false);
   const { user } = useAuthStore();
   const {
     activeConversationId,
@@ -27,6 +29,48 @@ export const HomeScreen: React.FC = () => {
     setProcessing,
     setTranscription,
   } = useConversationStore();
+
+  // Listen for room join event
+  useDailyEvent(
+    'joined-meeting',
+    useCallback(() => {
+      console.log('[HomeScreen] Successfully joined Daily.co room');
+      setRoomJoined(true);
+    }, [])
+  );
+
+  // Listen for active speaker events to get audio level (simplified)
+  useDailyEvent(
+    'active-speaker-change',
+    useCallback(() => {
+      // Audio level updates will happen during recording
+      // For now, we use a simple animation in WaveformVisualizer
+      console.log('[HomeScreen] Speaker activity detected');
+    }, [])
+  );
+
+  // Simulate audio level updates during recording
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+
+    if (voiceState === 'listening') {
+      // Generate smooth audio level updates while recording
+      interval = setInterval(() => {
+        setAudioLevel((prev) => {
+          // Simulate audio level fluctuation between -80 and -30 dB
+          const change = (Math.random() - 0.5) * 20;
+          const newLevel = Math.max(-80, Math.min(-30, prev + change));
+          return newLevel;
+        });
+      }, 100);
+    } else {
+      setAudioLevel(-160);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [voiceState]);
 
   // Story 1.2c: Daily.co voice services
   const voiceInput = useVoiceInputService({
@@ -179,6 +223,16 @@ export const HomeScreen: React.FC = () => {
       </View>
 
       <View style={styles.voiceContainer}>
+        {/* Story 1.2c: Microphone selector - visible when idle or not recording */}
+        {voiceState === 'idle' && (
+          <MicrophoneSelector
+            availableMics={voiceInput.availableMics}
+            selectedMicId={voiceInput.selectedMicId}
+            onMicrophoneChange={voiceInput.changeMicrophone}
+            isLoading={voiceInput.isLoading}
+          />
+        )}
+
         {voiceState === 'listening' && (
           <WaveformVisualizer
             isActive={voiceState === 'listening'}
@@ -233,7 +287,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   voiceContainer: {
-    padding: Spacing.xxl,
+    paddingBottom: Spacing.xxl,
     alignItems: 'center',
     backgroundColor: Colors.white,
   },

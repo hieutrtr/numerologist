@@ -76,6 +76,30 @@ export function useVoiceInputService(
     callbacksRef.current = options;
   }, [options]);
 
+  // Listen for room join event to request microphone access
+  useDailyEvent(
+    'joined-meeting',
+    useCallback(() => {
+      console.log('[Voice Input] Joined Daily.co room, requesting microphone access');
+      // Request microphone access when room is joined
+      if (daily) {
+        daily.updateInputSettings({
+          audio: { processor: { type: 'none' } },
+        }).catch((err) => {
+          console.warn('[Voice Input] Could not update input settings on join:', err);
+        });
+      }
+    }, [daily])
+  );
+
+  // Listen for device updates - this fires when devices become available
+  useDailyEvent(
+    'available-devices-updated',
+    useCallback(() => {
+      console.log('[Voice Input] Available devices updated');
+    }, [])
+  );
+
   // Update available microphones when devices change
   useEffect(() => {
     if (microphones && microphones.length > 0) {
@@ -83,6 +107,8 @@ export function useVoiceInputService(
         id: mic.deviceId,
         label: mic.label || `Microphone ${mic.deviceId.substring(0, 8)}`,
       }));
+
+      console.log('[Voice Input] Microphones available:', availableMics.length);
 
       setState((prevState) => ({
         ...prevState,
@@ -92,16 +118,19 @@ export function useVoiceInputService(
       // Auto-select first microphone if enabled and none selected
       if (
         options.autoSelectFirst &&
-        !prevState.selectedMicId &&
+        !state.selectedMicId &&
         availableMics.length > 0
       ) {
+        console.log('[Voice Input] Auto-selecting first microphone:', availableMics[0].id);
         setState((prevState) => ({
           ...prevState,
           selectedMicId: availableMics[0].id,
         }));
       }
+    } else {
+      console.log('[Voice Input] No microphones available yet');
     }
-  }, [microphones, options.autoSelectFirst]);
+  }, [microphones, options.autoSelectFirst, state.selectedMicId]);
 
   // Listen for recording state changes
   useDailyEvent(
