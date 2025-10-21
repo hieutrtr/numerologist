@@ -33,6 +33,19 @@ elevenlabs>=0.2.0
 # Daily.co Voice Streaming (Story 1.2c)
 daily-python>=0.20.0
 
+# Pipecat Framework for Voice Bot (Story 1.2d)
+pipecat-ai>=0.0.90
+pipecat-ai[azure]>=0.0.90
+pipecat-ai[elevenlabs]>=0.0.90
+pipecat-ai[daily]>=0.0.90
+
+# WebRTC support (required by Pipecat)
+aiortc>=1.9.0
+av>=12.0.0
+
+# Azure Cognitive Services (required by Pipecat Azure STT)
+azure-cognitiveservices-speech>=1.40.0
+
 # Caching & Session Storage
 redis>=6.4.0
 aioredis>=2.0.1

@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = "INFO"
 
+    # Pipecat Configuration (Story 1.2d)
+    pipecat_log_level: str = "INFO"
+    pipecat_max_pipelines: int = 10
+
     class Config:
         """Pydantic config."""
         env_file = ".env"
