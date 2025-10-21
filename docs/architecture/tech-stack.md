@@ -17,7 +17,8 @@ Complete technology stack for Numeroly with versions, rationale, and integration
 | Agent Framework | Microsoft Agent Framework | 1.0+ | AI orchestration & tool management | Purpose-built for Azure OpenAI, automatic tool use, built-in error handling, production-ready |
 | AI/LLM Platform | Azure OpenAI | - | STT, reasoning, conversation logic | Cost-optimized gpt-4o-mini, 12x cheaper STT via gpt-4o-mini-transcribe, Vietnamese support |
 | Text-to-Speech | ElevenLabs Python SDK | 0.3+ | Vietnamese voice synthesis | Official SDK (Trust 9/10), streaming audio, request stitching for voice consistency |
-| API Style | REST + WebSocket | - | Real-time voice and standard CRUD | REST for standard ops, WebSocket for streaming voice/conversation updates |
+| WebRTC Streaming | Daily.co | daily-js 0.85.0, daily-react 0.23.2 | Real-time bidirectional audio streaming | Low-latency WebRTC, device enumeration, cross-platform support (iOS/Android/Web) |
+| API Style | REST + WebRTC | - | Real-time voice and standard CRUD | REST for standard ops, Daily.co WebRTC for streaming voice audio |
 | Database | PostgreSQL | 17 | Relational data with JSONB | Strong data integrity, JSONB for flexible conversation storage, native encryption, latest stable |
 | Cache | Redis | 7.4 | Session state and rate limiting | In-memory speed for conversation context, pub/sub for real-time updates, latest stable |
 | File Storage | Azure Blob Storage | - | Conversation audio archives | Scalable object storage, encryption-at-rest, Azure CDN integration |
@@ -375,21 +376,64 @@ for paragraph in agent_response_paragraphs:
     request_ids.append(response.headers.get("request-id"))
 ```
 
-### Complete Voice Conversation Flow
+### Complete Voice Conversation Flow (Daily.co WebRTC Integration)
+
+**Current Implementation (Story 1.2c - October 2025):**
 
 ```
-User Audio Input
+User Microphone Input
     ↓
+Daily.co WebRTC (Real-time Audio Streaming)
+    ↓ [Audio Stream via SFU]
+FastAPI Backend (Daily.co Room Participant)
+    ↓ [Receives Audio Stream]
 Azure OpenAI STT (gpt-4o-mini-transcribe)
     ↓ [User Text]
 Microsoft Agent Framework
     ↓ [Numerology Tools]
 Azure OpenAI Reasoning (gpt-4o-mini)
-    ↓ [Agent Response]
+    ↓ [Agent Response Text]
 ElevenLabs TTS (Python SDK)
-    ↓
-User Audio Output
+    ↓ [Audio Response]
+Daily.co WebRTC (Backend sends audio back)
+    ↓ [Audio Stream via SFU]
+User Speaker Output (React Native Frontend)
 ```
+
+**Daily.co Integration Details:**
+
+**Frontend Components:**
+- **Package Versions:**
+  - `@daily-co/daily-js`: 0.85.0 (latest, updated October 2025)
+  - `@daily-co/daily-react`: 0.23.2 (latest, updated August 2025)
+- **DailyProvider:** Wraps HomeScreen with Daily.co context, handles room initialization
+- **Device Enumeration:** Uses `useDevices()` hook to list microphones and speakers
+  - Returns `StatefulDevice[]` with nested `device.deviceId` and `device.label`
+  - Auto-selects first available device when room joins
+- **Voice Services:**
+  - `voiceInputService.ts`: Manages microphone selection, recording start/stop
+  - `voiceOutputService.ts`: Manages speaker selection, remote audio state monitoring
+- **MicrophoneSelector Component:** UI for selecting microphone before recording
+
+**Backend Integration:**
+- FastAPI backend joins Daily.co room as a participant
+- Receives real-time audio stream from user via Daily.co's SFU (Selective Forwarding Unit)
+- Processes audio through Azure OpenAI STT
+- Sends audio responses back through Daily.co to frontend
+
+**Authentication Flow:**
+1. Frontend requests conversation start from backend
+2. Backend creates Daily.co room via Daily.co REST API
+3. Backend returns room URL and authentication token
+4. Frontend joins room with token
+5. Backend joins same room to receive/send audio
+
+**Benefits:**
+- Low-latency WebRTC audio streaming (UDP-based)
+- No file upload needed - continuous streaming
+- Built-in network quality adaptation
+- Supports multiple audio codecs (Opus, etc.)
+- Cross-platform compatibility (iOS, Android, Web)
 
 ### Authentication
 
@@ -412,15 +456,19 @@ User Audio Output
 ### Frontend (`apps/mobile/package.json`)
 
 Key dependencies:
-- `react-native`: 0.73+
+- `react-native`: 0.81.4
+- `react`: 18.2.0
+- `react-dom`: 18.2.0
 - `react-navigation`: 6.x (routing)
 - `axios`: 1.x (HTTP client)
 - `zustand`: 4.5+ (state management)
+- `recoil`: 0.7.7 (additional state management for Daily.co integration)
 - `react-native-elements`: 4.x (UI components)
 - `nativewind`: 4.x (utility CSS)
-- `expo`: 50+ (build tool)
+- `expo`: ~54.0.0 (build tool)
 - `expo-secure-store`: (token storage)
-- `react-native-audio-recorder-player`: (voice recording)
+- `@daily-co/daily-js`: 0.85.0 (WebRTC voice streaming core)
+- `@daily-co/daily-react`: 0.23.2 (React hooks for Daily.co)
 
 ### Backend (`apps/api/requirements.txt`)
 
