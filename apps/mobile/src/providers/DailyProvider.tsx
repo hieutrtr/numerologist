@@ -13,7 +13,7 @@ import { DailyProvider as DailyProviderBase } from '@daily-co/daily-react';
  * Props for DailyProvider wrapper
  */
 interface DailyProviderProps {
-  roomUrl?: string;
+  roomUrl: string;
   token?: string;
   children: React.ReactNode;
 }
@@ -27,20 +27,16 @@ interface DailyProviderProps {
  * - Voice services can use Daily hooks for audio/video functionality
  * - Joins Daily.co room with authentication token
  *
- * @param props - Provider configuration with room URL and optional token
+ * @param props - Provider configuration with required room URL and optional token
  * @returns React component that provides Daily context to children
  */
 export const DailyProvider: React.FC<DailyProviderProps> = ({
-  roomUrl = '',
-  token = '',
+  roomUrl,
+  token,
   children,
 }) => {
-  // Only pass token if it's a non-empty string
-  // Daily.co requires token to be a valid string or undefined, not empty string
-  const validToken = token && token.length > 0 ? token : undefined;
-
   return (
-    <DailyProviderBase url={roomUrl} token={validToken}>
+    <DailyProviderBase url={roomUrl} token={token}>
       {children}
     </DailyProviderBase>
   );

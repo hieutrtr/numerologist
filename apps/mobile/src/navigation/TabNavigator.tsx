@@ -16,11 +16,19 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 // Wrap HomeScreen with DailyProvider for Story 1.2c voice streaming
 // Pass roomUrl and token from conversation store to join Daily.co room
+// Only initialize DailyProvider when we have a valid room URL to prevent
+// premature initialization with empty/null values that Daily.co rejects
 const HomeScreenWithDaily: React.FC = () => {
   const { dailyRoomUrl, dailyToken } = useConversationStore();
 
+  // Only wrap with DailyProvider when we have a room URL
+  // This prevents initialization errors with empty token values
+  if (!dailyRoomUrl) {
+    return <HomeScreen />;
+  }
+
   return (
-    <DailyProvider roomUrl={dailyRoomUrl || ''} token={dailyToken || ''}>
+    <DailyProvider roomUrl={dailyRoomUrl} token={dailyToken || undefined}>
       <HomeScreen />
     </DailyProvider>
   );
