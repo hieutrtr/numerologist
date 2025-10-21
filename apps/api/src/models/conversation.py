@@ -34,8 +34,8 @@ class Conversation(Base):
     # Primary key
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
 
-    # Foreign key
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False, index=True)
+    # User ID (no foreign key for now - User model not yet defined)
+    user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
 
     # Conversation data
     user_name = Column(String(100), nullable=False)
@@ -62,7 +62,8 @@ class Conversation(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
-    user = relationship('User', back_populates='conversations')
+    # Note: Not using back_populates until User model has conversations relationship defined
+    # user = relationship('User', back_populates='conversations', lazy='select')
 
     def __repr__(self) -> str:
         return f'<Conversation(id={self.id}, user_id={self.user_id}, user_name={self.user_name})>'

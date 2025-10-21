@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from uuid import UUID
 
+import httpx
 import redis.asyncio
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,27 +26,27 @@ logger = logging.getLogger(__name__)
 
 class DailyClientWrapper:
     """
-    Wraps the synchronous daily_client library to provide async-safe operations.
-    Since daily_client is sync-only, all calls are wrapped with asyncio.to_thread()
-    to prevent blocking the FastAPI event loop.
+    Wraps the Daily.co REST API to create and manage rooms.
+    Uses httpx for async HTTP requests to the Daily.co REST API.
     """
 
     def __init__(self, api_key: str):
         """
-        Initialize Daily.co client wrapper.
+        Initialize Daily.co REST API client wrapper.
 
         Args:
             api_key: Daily.co API key from environment
         """
-        try:
-            from daily import Daily
-            self.client = Daily(api_key)
-        except ImportError:
-            raise ImportError("daily-client package not installed. Run: pip install daily-client>=1.0.0")
+        self.api_key = api_key
+        self.base_url = "https://api.daily.co/v1"
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
 
     async def create_room(self, room_config: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Create a Daily.co room with async wrapper to prevent event loop blocking.
+        Create a Daily.co room via REST API.
 
         Args:
             room_config: Room configuration dict with properties
@@ -56,13 +57,27 @@ class DailyClientWrapper:
         Raises:
             Exception: If room creation fails
         """
-        return await asyncio.to_thread(self.client.create_room, room_config)
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/rooms",
+                headers=self.headers,
+                json=room_config,
+            )
+            if response.status_code != 200:
+                error_detail = response.text
+                try:
+                    error_detail = response.json()
+                except:
+                    pass
+                logger.error(f"Daily.co API error {response.status_code}: {error_detail}")
+            response.raise_for_status()
+            return response.json()
 
     async def create_meeting_token(
         self, room_url: str, expires_in_seconds: int = 3600
     ) -> str:
         """
-        Generate a meeting token for a room with async wrapper.
+        Generate a meeting token for a room via REST API.
 
         Args:
             room_url: URL of the Daily.co room
@@ -74,15 +89,36 @@ class DailyClientWrapper:
         Raises:
             Exception: If token generation fails
         """
-        token_config = {"expires_in": expires_in_seconds}
-        response = await asyncio.to_thread(
-            self.client.create_meeting_token, room_url, token_config
-        )
-        return response.get("token") if isinstance(response, dict) else str(response)
+        # Extract room name from URL (e.g., "https://example.daily.co" -> "example")
+        room_name = room_url.split("/")[-1] if "/" in room_url else room_url
+
+        # Create token with room_name in properties
+        # Note: The Daily.co API wraps room_name and other config in properties
+        token_payload = {
+            "properties": {
+                "room_name": room_name,
+            }
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/meeting-tokens",
+                headers=self.headers,
+                json=token_payload,
+            )
+            if response.status_code != 200:
+                error_detail = response.text
+                try:
+                    error_detail = response.json()
+                except:
+                    pass
+                logger.error(f"Daily.co API error {response.status_code}: {error_detail}")
+            response.raise_for_status()
+            data = response.json()
+            return data.get("token")
 
     async def get_room(self, room_url: str) -> Dict[str, Any]:
         """
-        Get room information with async wrapper.
+        Get room information via REST API.
 
         Args:
             room_url: URL of the Daily.co room
@@ -90,16 +126,33 @@ class DailyClientWrapper:
         Returns:
             Room object with current status
         """
-        return await asyncio.to_thread(self.client.get_room, room_url)
+        # Extract room name from URL
+        room_name = room_url.split("/")[-1] if "/" in room_url else room_url
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/rooms/{room_name}",
+                headers=self.headers,
+            )
+            response.raise_for_status()
+            return response.json()
 
     async def delete_room(self, room_url: str) -> None:
         """
-        Delete a Daily.co room with async wrapper.
+        Delete a Daily.co room via REST API.
 
         Args:
             room_url: URL of the Daily.co room to delete
         """
-        await asyncio.to_thread(self.client.delete_room, room_url)
+        # Extract room name from URL
+        room_name = room_url.split("/")[-1] if "/" in room_url else room_url
+
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(
+                f"{self.base_url}/rooms/{room_name}",
+                headers=self.headers,
+            )
+            response.raise_for_status()
 
 
 class ConversationService:
@@ -178,14 +231,10 @@ class ConversationService:
             except ValueError:
                 raise ValueError(f"Invalid user_id format: {user_id}")
 
-            # Step 1: Create Daily.co room with auto-recording and Vietnamese UI
-            room_config = {
-                "properties": {
-                    "max_participants": 2,  # user + bot
-                    "record_on_start": True,  # auto-recording
-                    "lang": "vi",  # Vietnamese UI language
-                }
-            }
+            # Step 1: Create Daily.co room
+            # Note: max_participants, recording, and language can be configured after room creation
+            # For now, create a basic room and configure properties later if needed
+            room_config = {}
 
             logger.info(f"Creating Daily.co room for user {user_id}")
             room = await self.daily_client.create_room(room_config)

@@ -3,13 +3,26 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import asyncio
 
 from .config import settings
 from .middleware.error_handler import setup_error_handlers
 from .utils.logger import setup_logging
+from .utils.database import engine
+from .models.base import Base
+
+# Import models to register them with Base
+from .models.conversation import Conversation  # noqa: F401
+from .models.numerology_profile import NumerologyProfile  # noqa: F401
 
 # Import routers
 from .routes import numerology, conversations, voice
+
+
+async def create_tables():
+    """Create database tables on startup."""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 @asynccontextmanager
@@ -18,6 +31,14 @@ async def lifespan(app: FastAPI):
     # Startup
     setup_logging(settings.log_level)
     print(f"Starting {settings.app_name} v{settings.app_version}")
+
+    # Create database tables
+    try:
+        await create_tables()
+        print("Database tables created successfully")
+    except Exception as e:
+        print(f"Warning: Could not create database tables: {e}")
+
     yield
     # Shutdown
     print("Shutting down application")
