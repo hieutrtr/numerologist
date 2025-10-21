@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..config import settings
 from ..models.conversation import Conversation
 from ..schemas.conversation import ConversationResponse
-from .voice_service import VoiceService
+from .voice_service import AzureOpenAISpeechToTextService
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +120,7 @@ class ConversationService:
         self.redis = redis_client
         self.daily_client: Optional[DailyClientWrapper] = None
         self.message_semaphores: Dict[str, asyncio.Semaphore] = {}
-        self.voice_service = VoiceService()
+        self.voice_service = AzureOpenAISpeechToTextService()
 
         # Initialize Daily.co client if API key is configured
         if settings.daily_api_key:

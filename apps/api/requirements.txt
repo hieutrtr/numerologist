@@ -31,7 +31,7 @@ azure-identity>=1.13.0
 elevenlabs>=0.2.0
 
 # Daily.co Voice Streaming (Story 1.2c)
-daily-client>=1.0.0
+daily-python>=0.20.0
 
 # Caching & Session Storage
 redis>=6.4.0

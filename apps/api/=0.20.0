@@ -1,0 +1,6 @@
+Collecting daily-python
+  Downloading daily_python-0.20.0-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Downloading daily_python-0.20.0-cp37-abi3-manylinux_2_28_x86_64.whl (14.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.3/14.3 MB 23.7 MB/s  0:00:00
+Installing collected packages: daily-python
+Successfully installed daily-python-0.20.0

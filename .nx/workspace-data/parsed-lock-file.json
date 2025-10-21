@@ -5247,6 +5247,15 @@
         "hash": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
       }
     },
+    "npm:hamt_plus": {
+      "type": "npm",
+      "name": "npm:hamt_plus",
+      "data": {
+        "version": "1.0.2",
+        "packageName": "hamt_plus",
+        "hash": "sha512-t2JXKaehnMb9paaYA7J0BX8QQAY8lwfQ9Gjf4pg/mk4krt+cmwmU652HOoWonf+7+EQV97ARPMhhVgU1ra2GhA=="
+      }
+    },
     "npm:has-symbols": {
       "type": "npm",
       "name": "npm:has-symbols",
@@ -7261,6 +7270,15 @@
         "version": "0.21.5",
         "packageName": "recast",
         "hash": "sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg=="
+      }
+    },
+    "npm:recoil": {
+      "type": "npm",
+      "name": "npm:recoil",
+      "data": {
+        "version": "0.7.7",
+        "packageName": "recoil",
+        "hash": "sha512-8Og5KPQW9LwC577Vc7Ug2P0vQshkv1y3zG3tSSkWMqkWSwHmE+by06L8JtnGocjW6gcCvfwB3YtrJG6/tWivNQ=="
       }
     },
     "npm:regenerate": {
@@ -10243,6 +10261,11 @@
     {
       "source": "npm:@daily-co/daily-react",
       "target": "npm:react",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:recoil",
       "type": "static"
     },
     {
@@ -20173,6 +20196,16 @@
     {
       "source": "npm:recast",
       "target": "npm:tslib",
+      "type": "static"
+    },
+    {
+      "source": "npm:recoil",
+      "target": "npm:react",
+      "type": "static"
+    },
+    {
+      "source": "npm:recoil",
+      "target": "npm:hamt_plus",
       "type": "static"
     },
     {

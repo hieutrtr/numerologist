@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { Colors, FontSizes } from '../utils/colors';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
+import { DailyProvider } from '../providers/DailyProvider';
 
 export type TabParamList = {
   Home: undefined;
@@ -11,6 +12,13 @@ export type TabParamList = {
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
+
+// Wrap HomeScreen with DailyProvider for Story 1.2c voice streaming
+const HomeScreenWithDaily: React.FC = () => (
+  <DailyProvider>
+    <HomeScreen />
+  </DailyProvider>
+);
 
 export const TabNavigator: React.FC = () => {
   return (
@@ -34,7 +42,7 @@ export const TabNavigator: React.FC = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeScreenWithDaily}
         options={{
           tabBarLabel: 'Trang chủ',
           tabBarIcon: ({ color, size }) => (

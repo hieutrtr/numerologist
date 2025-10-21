@@ -16,7 +16,7 @@ from uuid import UUID
 from openai import AsyncAzureOpenAI
 from fastapi import WebSocketException
 
-from apps.api.src.config import settings
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
