@@ -16,13 +16,51 @@ from typing import Dict, Optional
 
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner, PipelineTask
+from pipecat.pipeline.task import PipelineParams
 from pipecat.transports.daily.transport import DailyTransport, DailyParams
 from pipecat.services.openai.stt import OpenAISTTService
+from pipecat.services.openai import OpenAITTSService
 from pipecat.transcriptions.language import Language
+from pipecat.processors.frameworks.rtvi import RTVIProcessor
+from pipecat.frames.frames import (
+    Frame,
+    TranscriptionFrame,
+    TextFrame,
+    LLMMessagesFrame,
+    EndFrame,
+)
 
 from ..config import settings
 
 logger = logging.getLogger(__name__)
+
+
+class SimpleEchoProcessor(RTVIProcessor):
+    """
+    Simple echo processor for testing audio pipeline.
+    Responds with a greeting when it hears transcribed text.
+    """
+
+    async def process_frame(self, frame: Frame, direction):
+        """Process frames through the pipeline."""
+        await super().process_frame(frame, direction)
+
+        # Log transcriptions
+        if isinstance(frame, TranscriptionFrame):
+            logger.info(
+                f"📝 Transcription received: {frame.text}",
+                extra={"text": frame.text, "user_id": frame.user_id}
+            )
+
+            # Generate a simple response
+            response_text = f"Xin chào! Tôi đã nghe bạn nói: {frame.text}"
+            logger.info(f"🤖 Bot response: {response_text}")
+
+            # Send response as text frame
+            await self.push_frame(TextFrame(text=response_text))
+
+        # Pass through other frames
+        await self.push_frame(frame, direction)
 
 
 class PipecatBotService:
@@ -129,26 +167,40 @@ class PipecatBotService:
                 }
             )
 
-            # TODO: Task 5 - Add NumerologyAgentProcessor
-            # agent_processor = NumerologyAgentProcessor(
-            #     conversation_id=conversation_id,
-            #     user_id=user_id,
-            # )
+            # Task 5: Add Simple Echo Processor (temporary - for testing)
+            echo_processor = SimpleEchoProcessor()
+            logger.info("Echo processor created for testing")
 
-            # TODO: Task 6 - Add ElevenLabsTTSService
-            # elevenlabs_tts = ElevenLabsTTSService(
-            #     api_key=settings.elevenlabs_api_key,
-            #     voice_id=settings.elevenlabs_voice_id,
-            #     model="eleven_multilingual_v2",
-            # )
+            # Task 6: Add OpenAI TTS for voice synthesis
+            # Using OpenAI TTS with Azure endpoint for Vietnamese voice
+            azure_tts_base_url = (
+                f"{settings.azure_openai_endpoint}/openai/deployments/"
+                f"{settings.azure_openai_reasoning_deployment_name}"
+            )
+
+            openai_tts = OpenAITTSService(
+                api_key=settings.azure_openai_key,
+                base_url=azure_tts_base_url,
+                voice="alloy",  # OpenAI voice
+                model="tts-1",
+            )
+
+            logger.info(
+                "OpenAI TTS configured for voice synthesis",
+                extra={
+                    "conversation_id": conversation_id,
+                    "voice": "alloy",
+                    "model": "tts-1"
+                }
+            )
 
             # Create pipeline with DailyTransport input/output
-            # Pipeline flow: transport.input() → STT → [Agent] → [TTS] → transport.output()
+            # Pipeline flow: transport.input() → STT → Echo → TTS → transport.output()
             pipeline = Pipeline([
                 daily_transport.input(),    # Audio frames from user
                 azure_stt,                  # Speech → Text (Vietnamese)
-                # TODO: Task 5 - Add agent_processor here
-                # TODO: Task 6 - Add elevenlabs_tts processor here
+                echo_processor,             # Simple echo processor (testing)
+                openai_tts,                 # Text → Speech synthesis
                 daily_transport.output(),   # Audio frames to user
             ])
 
