@@ -14,7 +14,8 @@ import {
   useDaily,
   useDevices,
   useDailyEvent,
-  useParticipants,
+  useParticipantIds,
+  useParticipantProperty,
   DailyParticipant,
 } from '@daily-co/daily-react';
 
@@ -67,7 +68,15 @@ export function useVoiceOutputService(
 } {
   const daily = useDaily();
   const { speakers } = useDevices();
-  const participants = useParticipants();
+
+  // Get remote participant IDs (filter for remote participants only)
+  const remoteParticipantIds = useParticipantIds({ filter: 'remote' });
+
+  // Get audio track state for the first remote participant (usually the assistant/bot)
+  const remoteAudioState = useParticipantProperty(
+    remoteParticipantIds[0] || '',
+    ['tracks.audio.state']
+  )?.[0] as AudioTrackState | undefined;
 
   const [state, setState] = useState<VoiceOutputState>({
     remoteAudioAvailable: false,
@@ -80,6 +89,7 @@ export function useVoiceOutputService(
   });
 
   const callbacksRef = useRef(options);
+  const prevAudioStateRef = useRef<AudioTrackState>('unknown');
 
   // Update callbacks ref on options change
   useEffect(() => {
@@ -115,89 +125,54 @@ export function useVoiceOutputService(
     }
   }, [speakers, options.autoSelectFirst]);
 
-  // Monitor remote participants for audio state
+  // Monitor remote audio state changes
   useEffect(() => {
-    if (!participants || participants.length === 0) {
+    if (!remoteParticipantIds.length) {
+      // No remote participants
+      if (state.remoteAudioAvailable) {
+        callbacksRef.current.onRemoteAudioUnavailable?.();
+      }
       setState((prevState) => ({
         ...prevState,
         remoteAudioAvailable: false,
         remoteAudioState: 'off',
         remoteParticipantId: null,
       }));
-      callbacksRef.current.onRemoteAudioUnavailable?.();
       return;
     }
 
-    // Find remote participant (non-local user)
-    const remoteParticipant = participants.find(
-      (p: DailyParticipant) => !p.local
-    );
+    // We have a remote participant
+    const firstRemoteId = remoteParticipantIds[0];
+    const audioState: AudioTrackState = remoteAudioState || 'unknown';
+    const isAudioAvailable = audioState === 'playable';
 
-    if (!remoteParticipant) {
-      setState((prevState) => ({
+    setState((prevState) => {
+      const newState = {
         ...prevState,
-        remoteAudioAvailable: false,
-        remoteAudioState: 'off',
-        remoteParticipantId: null,
-      }));
-      callbacksRef.current.onRemoteAudioUnavailable?.();
-      return;
-    }
+        remoteParticipantId: firstRemoteId,
+        remoteAudioAvailable: isAudioAvailable,
+        remoteAudioState: audioState,
+      };
 
-    // Check audio track state
-    const audioTrack = remoteParticipant.audioTrack;
-    let audioState: AudioTrackState = 'unknown';
-    let isAudioAvailable = false;
-
-    if (audioTrack) {
-      // Determine track state based on readyState and enabled
-      if (audioTrack.enabled === false) {
-        audioState = 'off';
-      } else if (audioTrack.readyState === 'live') {
-        audioState = 'playable';
-        isAudioAvailable = true;
-      } else if (audioTrack.readyState === 'ended') {
-        audioState = 'off';
-      } else {
-        audioState = 'interrupted';
+      // Trigger callbacks based on state transitions
+      if (isAudioAvailable && prevAudioStateRef.current !== 'playable') {
+        callbacksRef.current.onRemoteAudioAvailable?.();
+      } else if (
+        audioState === 'interrupted' &&
+        prevAudioStateRef.current === 'playable'
+      ) {
+        callbacksRef.current.onRemoteAudioInterrupted?.();
+      } else if (
+        audioState === 'off' &&
+        prevAudioStateRef.current !== 'off'
+      ) {
+        callbacksRef.current.onRemoteAudioUnavailable?.();
       }
-    } else {
-      audioState = 'off';
-    }
 
-    setState((prevState) => ({
-      ...prevState,
-      remoteParticipantId: remoteParticipant.session_id || null,
-      remoteAudioAvailable: isAudioAvailable,
-      remoteAudioState: audioState,
-    }));
-
-    // Trigger appropriate callbacks
-    if (isAudioAvailable && prevState.remoteAudioState !== 'playable') {
-      callbacksRef.current.onRemoteAudioAvailable?.();
-    } else if (
-      audioState === 'interrupted' &&
-      prevState.remoteAudioState === 'playable'
-    ) {
-      callbacksRef.current.onRemoteAudioInterrupted?.();
-    } else if (
-      audioState === 'off' &&
-      prevState.remoteAudioState !== 'off'
-    ) {
-      callbacksRef.current.onRemoteAudioUnavailable?.();
-    }
-  }, [participants]);
-
-  // Listen for participant audio changes
-  useDailyEvent(
-    'participant-updated',
-    useCallback((event) => {
-      if (event?.participant?.audioTrack) {
-        // Trigger re-render by updating participants effect
-        // The participants hook will already have the updated data
-      }
-    }, [])
-  );
+      prevAudioStateRef.current = audioState;
+      return newState;
+    });
+  }, [remoteParticipantIds, remoteAudioState]);
 
   /**
    * Switch to a different speaker device
