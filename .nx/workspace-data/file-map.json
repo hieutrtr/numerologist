@@ -34,48 +34,68 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "docs/prd.md",
-        "hash": "939469808141458569"
+        "file": "docs/stories/1.5.story.md",
+        "hash": "10786029456449067342"
       },
       {
-        "file": "SETUP_GUIDE.md",
-        "hash": "17279775301055970308"
+        "file": "docs/architecture/source-tree.md",
+        "hash": "10888486220837832491"
       },
       {
-        "file": "mobile.pid",
-        "hash": "5586745211040110070"
+        "file": ".npmrc",
+        "hash": "1829183420567411207"
       },
       {
-        "file": ".github/workflows/ci.yaml",
-        "hash": "4552736518517430494"
+        "file": "docs/stories/1.3.story.md",
+        "hash": "7977603330663878308"
       },
       {
         "file": ".ai/validation-report-1.3.md",
         "hash": "10101717957731731811"
       },
       {
-        "file": "docs/azure-setup-guide.md",
-        "hash": "9709267151646420545"
-      },
-      {
-        "file": "start-api.sh",
-        "hash": "8598695847688681142"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1682515240176212989"
-      },
-      {
-        "file": "docs/architecture.md",
-        "hash": "502498488043667243"
-      },
-      {
-        "file": "api.pid",
-        "hash": "6821489048957217071"
-      },
-      {
         "file": ".ai/STORY_1_5_DEV_STATUS.md",
         "hash": "443206944703869667"
+      },
+      {
+        "file": "SETUP_GUIDE.md",
+        "hash": "17279775301055970308"
+      },
+      {
+        "file": ".github/workflows/ci.yaml",
+        "hash": "4552736518517430494"
+      },
+      {
+        "file": "package.json",
+        "hash": "12824407728275344134"
+      },
+      {
+        "file": ".github/workflows/deploy-api.yaml",
+        "hash": "14661096915682003277"
+      },
+      {
+        "file": "docs/architecture/coding-standards.md",
+        "hash": "16500460085060321447"
+      },
+      {
+        "file": "docs/numerology-calculation-guide.md",
+        "hash": "3651355154740543404"
+      },
+      {
+        "file": "README.md",
+        "hash": "6995685507510389026"
+      },
+      {
+        "file": "docs/stories/1.4.story.md",
+        "hash": "9762823961001561352"
+      },
+      {
+        "file": "docs/prd.md",
+        "hash": "939469808141458569"
+      },
+      {
+        "file": "docs/azure-setup-guide.md",
+        "hash": "9709267151646420545"
       },
       {
         "file": "docs/front-end-spec.md",
@@ -86,128 +106,128 @@
         "hash": "5146131329744484141"
       },
       {
-        "file": "docs/stories/1.1.story.md",
-        "hash": "5747109942451315564"
+        "file": "start-dev.sh",
+        "hash": "13663414838857244297"
       },
       {
-        "file": "UV_SETUP.md",
-        "hash": "17177638249889892739"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "11451813786561658725"
-      },
-      {
-        "file": "docs/brief.md",
-        "hash": "4276483156240388749"
+        "file": ".expo/settings.json",
+        "hash": "4299207701458512922"
       },
       {
         "file": "tsconfig.base.json",
         "hash": "4343365537952712207"
       },
       {
-        "file": ".gitignore",
-        "hash": "1672316374534158790"
+        "file": ".expo/devices.json",
+        "hash": "9079673538751451102"
       },
       {
-        "file": "start-mobile.sh",
-        "hash": "17110128880448368019"
+        "file": "docs/architecture.md",
+        "hash": "502498488043667243"
+      },
+      {
+        "file": "api.pid",
+        "hash": "6821489048957217071"
       },
       {
         "file": "docs/stories/1.2a.story.md",
         "hash": "17231156907035491444"
       },
       {
-        "file": "docs/architecture/tech-stack.md",
-        "hash": "17156649048083121043"
-      },
-      {
-        "file": "docs/architecture/coding-standards.md",
-        "hash": "16500460085060321447"
-      },
-      {
-        "file": "package.json",
-        "hash": "17601489413760908869"
-      },
-      {
-        "file": "DEVELOPMENT_COMPLETE.md",
-        "hash": "6069456730476839778"
-      },
-      {
-        "file": "docs/numerology-calculation-guide.md",
-        "hash": "3651355154740543404"
-      },
-      {
-        "file": "AGENTS.md",
-        "hash": "14868573887273208886"
-      },
-      {
-        "file": "README.md",
-        "hash": "6995685507510389026"
-      },
-      {
         "file": "START_SERVER.md",
         "hash": "4724013813703118845"
       },
       {
-        "file": "docs/stories/1.2b.story.md",
-        "hash": "6705309767292124504"
+        "file": "docs/stories/1.1.story.md",
+        "hash": "5747109942451315564"
       },
       {
-        "file": "start-dev.sh",
-        "hash": "13663414838857244297"
+        "file": "package-lock.json",
+        "hash": "6394546991845765367"
       },
       {
-        "file": "docs/stories/1.2.story.md",
-        "hash": "12410707003969021033"
-      },
-      {
-        "file": ".ai/story-1.2-optimization-summary.md",
-        "hash": "12440297951090041826"
-      },
-      {
-        "file": ".env.example",
-        "hash": "6023897676811565512"
-      },
-      {
-        "file": "docs/stories/1.6.story.md",
-        "hash": "2119054230302431427"
-      },
-      {
-        "file": ".github/workflows/deploy-api.yaml",
-        "hash": "14661096915682003277"
-      },
-      {
-        "file": "docs/stories/1.5.story.md",
-        "hash": "10786029456449067342"
-      },
-      {
-        "file": "docs/stories/1.3.story.md",
-        "hash": "7977603330663878308"
-      },
-      {
-        "file": "stop-dev.sh",
-        "hash": "9220305637708287569"
-      },
-      {
-        "file": "docs/stories/1.4.story.md",
-        "hash": "9762823961001561352"
-      },
-      {
-        "file": "docs/architecture/index.md",
-        "hash": "15273846883369513624"
-      },
-      {
-        "file": "docs/architecture/source-tree.md",
-        "hash": "10888486220837832491"
+        "file": "docker-compose.yml",
+        "hash": "199087888850237344"
       },
       {
         "file": "docs/ai-prompts-react-native.md",
         "hash": "4582576792855277522"
       },
       {
-        "file": "docker-compose.yml",
-        "hash": "199087888850237344"
+        "file": "tsconfig.json",
+        "hash": "13354667176562422547"
+      },
+      {
+        "file": "UV_SETUP.md",
+        "hash": "17177638249889892739"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6023897676811565512"
+      },
+      {
+        "file": "docs/architecture/tech-stack.md",
+        "hash": "17156649048083121043"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1682515240176212989"
+      },
+      {
+        "file": "DEVELOPMENT_COMPLETE.md",
+        "hash": "6069456730476839778"
+      },
+      {
+        "file": "AGENTS.md",
+        "hash": "14868573887273208886"
+      },
+      {
+        "file": ".ai/story-1.2-optimization-summary.md",
+        "hash": "12440297951090041826"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "1672316374534158790"
+      },
+      {
+        "file": "docs/architecture/index.md",
+        "hash": "15273846883369513624"
+      },
+      {
+        "file": ".expo/README.md",
+        "hash": "15098062590768810805"
+      },
+      {
+        "file": "docs/stories/1.6.story.md",
+        "hash": "2119054230302431427"
+      },
+      {
+        "file": "stop-dev.sh",
+        "hash": "9220305637708287569"
+      },
+      {
+        "file": "docs/stories/1.2b.story.md",
+        "hash": "6705309767292124504"
+      },
+      {
+        "file": "start-api.sh",
+        "hash": "8598695847688681142"
+      },
+      {
+        "file": "docs/stories/1.2.story.md",
+        "hash": "12410707003969021033"
+      },
+      {
+        "file": "docs/brief.md",
+        "hash": "4276483156240388749"
+      },
+      {
+        "file": "start-mobile.sh",
+        "hash": "17110128880448368019"
+      },
+      {
+        "file": "mobile.pid",
+        "hash": "5586745211040110070"
       }
     ],
     "projectFileMap": {
@@ -362,7 +382,7 @@
         },
         {
           "file": "apps/api/src/main.py",
-          "hash": "4492019223926666253"
+          "hash": "9994456106320008694"
         },
         {
           "file": "apps/api/src/middleware/__init__.py",
@@ -418,7 +438,7 @@
         },
         {
           "file": "apps/api/src/routes/voice.py",
-          "hash": "755497218228284451"
+          "hash": "1360885064817089594"
         },
         {
           "file": "apps/api/src/schemas/__init__.py",
@@ -557,6 +577,10 @@
           "hash": "14311310116828327497"
         },
         {
+          "file": "apps/mobile/METRO_BUNDLER_FIX.md",
+          "hash": "14519352435070421861"
+        },
+        {
           "file": "apps/mobile/PROJECT_SUMMARY.md",
           "hash": "18380131043687554963"
         },
@@ -589,47 +613,47 @@
           "hash": "11608753683327412269"
         },
         {
-          "file": "apps/mobile/metro.config.js",
-          "hash": "16036450126948379402"
+          "file": "apps/mobile/index.js",
+          "hash": "17324549781234698751"
         },
         {
-          "file": "apps/mobile/package-lock.json",
-          "hash": "17456392585153071616"
+          "file": "apps/mobile/metro.config.js",
+          "hash": "5926509800842509911"
         },
         {
           "file": "apps/mobile/package.json",
-          "hash": "8877851514972058456",
+          "hash": "11209180183945621189",
           "deps": [
             "npm:@babel/core",
             "npm:@types/react@19.1.17",
             "npm:typescript",
             "npm:@babel/runtime",
-            "npm:@expo/vector-icons@15.0.2",
+            "npm:@expo/vector-icons",
             "npm:@react-native-async-storage/async-storage@2.2.0",
             "npm:@react-navigation/bottom-tabs@6.6.1",
-            "npm:@react-navigation/native@6.1.18",
+            "npm:@react-navigation/native",
             "npm:@react-navigation/native-stack@6.11.0",
             "npm:@react-navigation/stack@6.4.1",
             "npm:axios",
-            "npm:expo@54.0.13",
+            "npm:expo",
             "npm:expo-av@16.0.7",
-            "npm:expo-font@14.0.9",
+            "npm:expo-font",
             "npm:expo-haptics@15.0.7",
             "npm:expo-linear-gradient@15.0.7",
             "npm:expo-status-bar@3.0.8",
             "npm:lottie-react-native@7.3.4",
-            "npm:react@19.1.0",
-            "npm:react-dom@19.1.0",
+            "npm:react@18.2.0",
+            "npm:react-dom@18.2.0",
             "npm:react-native@0.81.4",
             "npm:react-native-gesture-handler@2.28.0",
             "npm:react-native-linear-gradient@2.8.3",
-            "npm:react-native-safe-area-context@5.6.1",
+            "npm:react-native-safe-area-context",
             "npm:react-native-screens@4.16.0",
             "npm:react-native-svg@15.12.1",
-            "npm:react-native-vector-icons@10.3.0",
+            "npm:react-native-vector-icons",
             "npm:react-native-web@0.21.1",
             "npm:react-refresh@0.18.0",
-            "npm:zustand"
+            "npm:zustand@4.5.0"
           ]
         },
         {
@@ -762,7 +786,7 @@
         },
         {
           "file": "apps/mobile/src/services/audio.ts",
-          "hash": "15843068017204419508"
+          "hash": "5369359661400399755"
         },
         {
           "file": "apps/mobile/src/services/conversation-api.ts",
@@ -782,7 +806,7 @@
         },
         {
           "file": "apps/mobile/src/services/speech-to-text.ts",
-          "hash": "7349923173150105790"
+          "hash": "7730491924919526528"
         },
         {
           "file": "apps/mobile/src/services/text-to-speech.ts",
@@ -794,7 +818,7 @@
         },
         {
           "file": "apps/mobile/src/store/authStore.ts",
-          "hash": "12172589889730167280"
+          "hash": "10948968580956403710"
         },
         {
           "file": "apps/mobile/src/store/conversationStore.ts",
@@ -827,6 +851,10 @@
         {
           "file": "apps/mobile/tsconfig.json",
           "hash": "18110150382427267721"
+        },
+        {
+          "file": "apps/mobile/verify-bundler.sh",
+          "hash": "5241561980138559483"
         }
       ],
       "shared": [

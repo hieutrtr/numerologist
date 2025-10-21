@@ -38,6 +38,7 @@ def create_app() -> FastAPI:
         allow_origins=[
             "http://localhost:19006",  # Expo dev
             "http://localhost:3000",   # Web dev
+            "http://localhost:8081",   # Metro bundler dev (React Native web)
             "https://numeroly.app",
             "https://staging.numeroly.app",
         ] if settings.environment == "development" else [

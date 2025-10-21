@@ -68,7 +68,17 @@ export class SpeechToTextClient {
       await audioRecorder.startRecording(onMeter);
       this.isRecording = true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      let message = error instanceof Error ? error.message : 'Unknown error';
+
+      // Handle common web microphone errors
+      if (message.includes('NotAllowedError') || message.includes('Permission denied')) {
+        message = 'Quyền truy cập microphone bị từ chối. Vui lòng cấp quyền trong cài đặt trình duyệt.';
+      } else if (message.includes('NotFoundError') || message.includes('No microphone')) {
+        message = 'Không tìm thấy microphone. Vui lòng kiểm tra thiết bị.';
+      } else if (message.includes('Request interrupted')) {
+        message = 'Yêu cầu truy cập microphone bị gián đoạn. Vui lòng thử lại.';
+      }
+
       this.handleError({
         code: 'RECORDING_FAILED',
         message: `Không thể bắt đầu ghi âm: ${message}`,
