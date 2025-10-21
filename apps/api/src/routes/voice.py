@@ -180,13 +180,23 @@ async def create_transcription(
         )
 
     except Exception as exc:  # noqa: BLE001
+        error_str = str(exc)
         logger.error(
             "Transcription failed",
-            extra={"request_id": req_id, "error": str(exc)},
+            extra={"request_id": req_id, "error": error_str, "error_type": type(exc).__name__},
+            exc_info=True,
         )
+
+        # Provide more specific error message for debugging
+        message = "Không thể xử lý âm thanh. Vui lòng thử lại sau."
+        if "DeploymentNotFound" in error_str:
+            message = "Dịch vụ Azure OpenAI chưa được cấu hình đúng. Vui lòng liên hệ hỗ trợ."
+        elif "Authentication" in error_str or "Unauthorized" in error_str:
+            message = "Lỗi xác thực Azure OpenAI. Vui lòng kiểm tra cấu hình."
+
         error = _build_error(
             error_code="TRANSCRIPTION_FAILED",
-            message="Không thể xử lý âm thanh. Vui lòng thử lại sau.",
+            message=message,
             request_id=req_id,
         )
         return JSONResponse(

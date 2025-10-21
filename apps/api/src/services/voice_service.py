@@ -155,14 +155,15 @@ class AzureOpenAISpeechToTextService:
                 # - Response parsing
                 
                 logger.info(f"Processing {len(audio_buffer)} bytes of audio")
-                
+
                 # Use Azure OpenAI SDK for audio transcription
                 # SDK method: client.audio.transcriptions.create()
                 from io import BytesIO
-                
+
                 audio_file = BytesIO(audio_buffer)
                 audio_file.name = "audio.wav"
-                
+                audio_file.seek(0)  # Reset to beginning for reading
+
                 transcription = await self.client.audio.transcriptions.create(
                     file=(audio_file.name, audio_file, "audio/wav"),
                     model=self.deployment_name,
@@ -196,8 +197,10 @@ class AzureOpenAISpeechToTextService:
 
             except Exception as e:
                 retry_count += 1
+                error_str = str(e)
                 logger.error(
-                    f"Transcription error (attempt {retry_count}/{self.max_retries}): {e}"
+                    f"Transcription error (attempt {retry_count}/{self.max_retries}): {e}",
+                    exc_info=True
                 )
 
                 if retry_count < self.max_retries:
@@ -205,7 +208,8 @@ class AzureOpenAISpeechToTextService:
                     continue
                 else:
                     # Convert to WebSocketException for frontend
-                    error_msg = self._map_error_to_vietnamese(str(e))
+                    error_msg = self._map_error_to_vietnamese(error_str)
+                    logger.error(f"Final error message to client: {error_msg}")
                     raise WebSocketException(code=1011, reason=error_msg)
 
         # If we exhausted retries
@@ -225,13 +229,16 @@ class AzureOpenAISpeechToTextService:
         Returns:
             Vietnamese error message
         """
-        if "timeout" in error_message.lower():
+        error_lower = error_message.lower()
+        if "deploymentnotfound" in error_lower or "deployment" in error_lower:
+            return "Dịch vụ chưa được cấu hình. Vui lòng liên hệ hỗ trợ."
+        elif "timeout" in error_lower:
             return "Yêu cầu hết thời gian chờ. Vui lòng thử lại."
-        elif "connection" in error_message.lower():
+        elif "connection" in error_lower:
             return "Lỗi kết nối. Vui lòng kiểm tra internet."
-        elif "authentication" in error_message.lower():
+        elif "authentication" in error_lower or "unauthorized" in error_lower:
             return "Lỗi xác thực. Vui lòng liên hệ hỗ trợ."
-        elif "invalid" in error_message.lower():
+        elif "invalid" in error_lower:
             return "Dữ liệu không hợp lệ. Vui lòng thử lại."
         else:
             return "Lỗi xảy ra. Vui lòng thử lại."
