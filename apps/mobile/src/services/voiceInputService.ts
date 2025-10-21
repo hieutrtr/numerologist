@@ -59,7 +59,7 @@ export function useVoiceInputService(
   changeMicrophone: (deviceId: string) => Promise<void>;
 } {
   const daily = useDaily();
-  const { microphones } = useDevices();
+  const { mics: microphones } = useDevices();
 
   const [state, setState] = useState<VoiceInputState>({
     isRecording: false,
