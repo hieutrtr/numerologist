@@ -27,7 +27,7 @@ ALLOWED_AUDIO_TYPES = {
     "audio/flac",
 }
 
-router = APIRouter(prefix="/voice", tags=["voice"])
+router = APIRouter(prefix="/v1/voice", tags=["voice"])
 
 
 def _estimate_duration_ms(audio_bytes: bytes, sample_rate: int = 16000) -> float:

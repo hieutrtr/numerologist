@@ -16,7 +16,7 @@ from ..schemas.conversation import (
 )
 from ..dependencies import get_db
 
-router = APIRouter(prefix='/conversations', tags=['conversations'])
+router = APIRouter(prefix='/api/v1/conversations', tags=['conversations'])
 
 
 @router.post('', response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
