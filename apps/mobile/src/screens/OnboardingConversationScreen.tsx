@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { useAppMessage } from '@daily-co/daily-react';
 import { useUserStore } from '../stores/userStore';
+import { useConversationStore } from '../store/conversationStore';
 import { fetchNumerologyProfile } from '../services/numerology';
-import { speakText, recordAndTranscribe } from '../services/voice-orchestration';
+import { speakText } from '../services/voice-orchestration';
 import { generatePersonalInsight } from '../services/insight-generator';
 import { saveConversation } from '../services/conversation-api';
 import { ConversationProgress } from '../components/conversation/ConversationProgress';
 import { WaveformVisualizer } from '../components/conversation/WaveformVisualizer';
+import { MicrophoneSelector } from '../components/voice/MicrophoneSelector';
+import { useVoiceInputService } from '../services/voiceInputService';
 import {
   ConversationFlowController,
   ConversationStep,
@@ -30,11 +34,44 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [meterValue, setMeterValue] = useState(-160);
-  const [isRecording, setIsRecording] = useState(false);
-  
+  const [currentTranscript, setCurrentTranscript] = useState<string>('');
+  const [isWaitingForTranscription, setIsWaitingForTranscription] = useState(false);
+
   const flowControllerRef = useRef<ConversationFlowController>(new ConversationFlowController());
   const { setNumerologyProfile, setLoadingProfile, setProfileError, user } = useUserStore();
-  
+  const { startConversation: createDailyRoom, activeConversationId } = useConversationStore();
+
+  // Initialize Daily.co voice input service
+  const voiceInput = useVoiceInputService({
+    autoSelectFirst: true,
+    onRecordingStart: () => {
+      console.log('[Daily.co] Microphone recording started');
+      setMeterValue(0);
+    },
+    onRecordingStop: () => {
+      console.log('[Daily.co] Microphone recording stopped');
+      setMeterValue(-160);
+    },
+    onError: (error) => {
+      console.error('[Daily.co] Voice input error:', error);
+      handleError('Lỗi khi ghi âm. Vui lòng thử lại.');
+    },
+  });
+
+  // Listen for transcription updates from backend via Daily.co app messages
+  useAppMessage({
+    onAppMessage: useCallback((event) => {
+      const data = event.data;
+      console.log('[Daily.co] App message received:', data);
+
+      if (data?.type === 'transcription_update') {
+        console.log('[Daily.co] Transcription update:', data.text);
+        setCurrentTranscript(data.text);
+        setIsWaitingForTranscription(false);
+      }
+    }, []),
+  });
+
   // Note: Auth token should come from authentication service
   // For now, we'll use a placeholder that should be replaced with actual auth
   const getAuthToken = () => {
@@ -42,15 +79,77 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     return 'placeholder-token';
   };
 
-  // Initialize conversation on mount
+  /**
+   * Record voice using Daily.co WebRTC streaming and wait for transcription
+   * Replaces the old recordAndTranscribe() REST API approach
+   */
+  const recordAndTranscribeViaDaily = useCallback(async (): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log('[Daily.co] Starting voice recording...');
+        setCurrentTranscript('');
+        setIsWaitingForTranscription(true);
+
+        // Start recording via Daily.co
+        await voiceInput.startRecording();
+
+        // Wait for user to finish speaking (simulate user finishing after 5 seconds)
+        // In production, this should be triggered by VAD or user action
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        console.log('[Daily.co] Stopping voice recording...');
+        await voiceInput.stopRecording();
+
+        // Wait for transcription to arrive via useAppMessage hook
+        // Poll currentTranscript for up to 10 seconds
+        const maxWaitTime = 10000;
+        const pollInterval = 100;
+        let elapsed = 0;
+
+        while (elapsed < maxWaitTime) {
+          if (currentTranscript && currentTranscript.trim().length > 0) {
+            console.log('[Daily.co] Transcription received:', currentTranscript);
+            setIsWaitingForTranscription(false);
+            resolve(currentTranscript);
+            return;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, pollInterval));
+          elapsed += pollInterval;
+        }
+
+        // Timeout - no transcription received
+        throw new Error('Không nhận được phiên âm từ máy chủ');
+      } catch (error) {
+        console.error('[Daily.co] Recording error:', error);
+        setIsWaitingForTranscription(false);
+        reject(error);
+      }
+    });
+  }, [voiceInput, currentTranscript]);
+
+  // Initialize conversation on mount - create Daily.co room
   useEffect(() => {
-    const flowController = flowControllerRef.current;
-    flowController.start();
-    setConversationState(flowController.getState());
-    executeCurrentStep();
+    const initializeConversation = async () => {
+      try {
+        console.log('[Daily.co] Creating Daily.co room for conversation...');
+        await createDailyRoom();
+        console.log('[Daily.co] Daily.co room created successfully');
+
+        const flowController = flowControllerRef.current;
+        flowController.start();
+        setConversationState(flowController.getState());
+        executeCurrentStep();
+      } catch (error) {
+        console.error('[Daily.co] Failed to create Daily.co room:', error);
+        handleError('Không thể kết nối. Vui lòng thử lại.');
+      }
+    };
+
+    initializeConversation();
 
     return () => {
-      flowController.destroy();
+      flowControllerRef.current.destroy();
     };
   }, []);
 
@@ -124,7 +223,7 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     setIsProcessing(true);
 
     try {
-      const transcript = await recordAndTranscribe();
+      const transcript = await recordAndTranscribeViaDaily();
       const result = flowControllerRef.current.processNameInput(transcript);
 
       if (!result.valid) {
@@ -172,7 +271,7 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     setIsProcessing(true);
 
     try {
-      const transcript = await recordAndTranscribe();
+      const transcript = await recordAndTranscribeViaDaily();
       const result = flowControllerRef.current.processDateInput(transcript);
 
       if (!result.valid) {
@@ -221,7 +320,7 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
     setIsProcessing(true);
 
     try {
-      const transcript = await recordAndTranscribe();
+      const transcript = await recordAndTranscribeViaDaily();
       const result = flowControllerRef.current.processConcernInput(transcript);
 
       if (!result.valid) {
@@ -300,7 +399,7 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
 
     try {
       await speakText(feedbackPrompt);
-      const transcript = await recordAndTranscribe();
+      const transcript = await recordAndTranscribeViaDaily();
       const result = flowControllerRef.current.processFeedback(transcript);
 
       if (!result.valid) {
@@ -376,17 +475,25 @@ export const OnboardingConversationScreen: React.FC<OnboardingConversationScreen
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Numeroly</Text>
-      
+
       {conversationState && (
         <ConversationProgress currentStep={conversationState.currentStep} />
       )}
-      
+
+      {/* Microphone Selection - Allow user to select device before recording */}
+      <MicrophoneSelector
+        availableMics={voiceInput.availableMics}
+        selectedMicId={voiceInput.selectedMicId}
+        onMicrophoneChange={voiceInput.changeMicrophone}
+        isLoading={voiceInput.isLoading}
+      />
+
       <View style={styles.displayBox}>
         <Text style={styles.displayText}>{displayText}</Text>
       </View>
 
-      {isRecording && (
-        <WaveformVisualizer isActive={isRecording} meterValue={meterValue} />
+      {(voiceInput.isRecording || isWaitingForTranscription) && (
+        <WaveformVisualizer isActive={voiceInput.isRecording} meterValue={meterValue} />
       )}
 
       {isProcessing && (

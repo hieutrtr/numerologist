@@ -288,17 +288,33 @@ class ConversationService:
             await self.db.commit()
             await self.db.refresh(conversation)
 
+            logger.info(f"========================================")
+            logger.info(f"DATABASE COMMITTED - Conversation ID: {conversation.id}")
+            logger.info(f"Room URL: {room_url}")
+            logger.info(f"Bot token exists: {bot_token is not None}")
+            logger.info(f"========================================")
+
             # Step 5: Start Pipecat bot pipeline (Story 1.2d)
             # Bot will join room as separate participant and handle voice conversation
             try:
-                logger.info(f"Starting bot pipeline for conversation {conversation.id}")
+                logger.info(f"****************************************")
+                logger.info(f"ATTEMPTING TO START BOT PIPELINE for conversation {conversation.id}")
+                logger.info(f"****************************************")
+
                 bot_service = PipecatBotService()
+                logger.info("Bot service instance created")
+
                 await bot_service.create_pipeline(
                     room_url=room_url,
                     conversation_id=str(conversation.id),
                     token=bot_token,
                     user_id=user_id
                 )
+
+                logger.info(f"++++++++++++++++++++++++++++++++++++++++")
+                logger.info(f"BOT PIPELINE STARTED SUCCESSFULLY for conversation {conversation.id}")
+                logger.info(f"++++++++++++++++++++++++++++++++++++++++")
+
                 logger.info(f"Bot pipeline started successfully for conversation {conversation.id}")
             except Exception as bot_error:
                 # Log error but don't fail the conversation creation

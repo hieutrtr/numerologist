@@ -1219,18 +1219,18 @@
       "type": "npm",
       "name": "npm:@daily-co/daily-js",
       "data": {
-        "version": "0.50.0",
+        "version": "0.85.0",
         "packageName": "@daily-co/daily-js",
-        "hash": "sha512-PG/1KX8GWBdZbtGW0UJyz69OkiumCsPUKuQbOFM2N18jabFmkSYgofgUXHEIHvR7M4/xGgIfSseM8rHouwdWTg=="
+        "hash": "sha512-lpl111ZWNTUWDnwYcPuNi9PGJPbLCeCw6LzmEY40nG0hv1jg5JLVW8Rq3Cj/+lOCP6W6h4PXm211ss0FFnxITQ=="
       }
     },
     "npm:@daily-co/daily-react": {
       "type": "npm",
       "name": "npm:@daily-co/daily-react",
       "data": {
-        "version": "0.10.0",
+        "version": "0.23.2",
         "packageName": "@daily-co/daily-react",
-        "hash": "sha512-Gu5axHHuptiJO/qLtrUVCctymZzWCUDcVFJ9xG6D0hR3VLC+S4VbfwCYpGvUvvYlCDweLOkD8UJf3NyRZtc4OA=="
+        "hash": "sha512-LDmAfgEYTGoPJYZYBtWfMoXLl6MJJq1Rf4kukPW1NgFO443om99mHEcw33seV8PRXUl+JUmcpXnSmkX2pqEB9g=="
       }
     },
     "npm:@egjs/hammerjs": {
@@ -3150,6 +3150,60 @@
         "hash": "sha512-upMEHOKMtuMu4c9gmoPlO/JqI6mDlSqwXg1aXKOTQLXAF8H5koOLRfrmi7AkdiE9A7lDXWUAZoGuD9O88cYvDQ=="
       }
     },
+    "npm:@sentry-internal/browser-utils": {
+      "type": "npm",
+      "name": "npm:@sentry-internal/browser-utils",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry-internal/browser-utils",
+        "hash": "sha512-ROgqtQfpH/82AQIpESPqPQe0UyWywKJsmVIqi3c5Fh+zkds5LUxnssTj3yNd1x+kxaPDVB023jAP+3ibNgeNDw=="
+      }
+    },
+    "npm:@sentry-internal/feedback": {
+      "type": "npm",
+      "name": "npm:@sentry-internal/feedback",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry-internal/feedback",
+        "hash": "sha512-cP3BD/Q6pquVQ+YL+rwCnorKuTXiS9KXW8HNKu4nmmBAyf7urjs+F6Hr1k9MXP5yQ8W3yK7jRWd09Yu6DHWOiw=="
+      }
+    },
+    "npm:@sentry-internal/replay": {
+      "type": "npm",
+      "name": "npm:@sentry-internal/replay",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry-internal/replay",
+        "hash": "sha512-roCDEGkORwolxBn8xAKedybY+Jlefq3xYmgN2fr3BTnsXjSYOPC7D1/mYqINBat99nDtvgFvNfRcZPiwwZ1hSw=="
+      }
+    },
+    "npm:@sentry-internal/replay-canvas": {
+      "type": "npm",
+      "name": "npm:@sentry-internal/replay-canvas",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry-internal/replay-canvas",
+        "hash": "sha512-nIkfgRWk1091zHdu4NbocQsxZF1rv1f7bbp3tTIlZYbrH62XVZosx5iHAuZG0Zc48AETLE7K4AX9VGjvQj8i9w=="
+      }
+    },
+    "npm:@sentry/browser": {
+      "type": "npm",
+      "name": "npm:@sentry/browser",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry/browser",
+        "hash": "sha512-1A31mCEWCjaMxJt6qGUK+aDnLDcK6AwLAZnqpSchNysGni1pSn1RWSmk9TBF8qyTds5FH8B31H480uxMPUJ7Cw=="
+      }
+    },
+    "npm:@sentry/core": {
+      "type": "npm",
+      "name": "npm:@sentry/core",
+      "data": {
+        "version": "8.55.0",
+        "packageName": "@sentry/core",
+        "hash": "sha512-6g7jpbefjHYs821Z+EBJ8r4Z7LT5h80YSWRJaylGS4nW5W5Z2KXzpdnyFarv37O7QjauzVC2E+PABmpkw5/JGA=="
+      }
+    },
     "npm:@sideway/address": {
       "type": "npm",
       "name": "npm:@sideway/address",
@@ -4876,15 +4930,6 @@
         "version": "3.1.3",
         "packageName": "fast-deep-equal",
         "hash": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q=="
-      }
-    },
-    "npm:fast-equals": {
-      "type": "npm",
-      "name": "npm:fast-equals",
-      "data": {
-        "version": "1.6.3",
-        "packageName": "fast-equals",
-        "hash": "sha512-4WKW0AL5+WEqO0zWavAfYGY1qwLsBgE//DN4TTcVEN2UlINgkv9b3vm2iHicoenWKSX9mKWmGOsU/iI5IST7pQ=="
       }
     },
     "npm:fast-json-stable-stringify": {
@@ -10230,6 +10275,11 @@
     },
     {
       "source": "npm:@daily-co/daily-js",
+      "target": "npm:@sentry/browser",
+      "type": "static"
+    },
+    {
+      "source": "npm:@daily-co/daily-js",
       "target": "npm:bowser",
       "type": "static"
     },
@@ -10244,18 +10294,13 @@
       "type": "static"
     },
     {
-      "source": "npm:@daily-co/daily-js",
-      "target": "npm:fast-equals",
-      "type": "static"
-    },
-    {
-      "source": "npm:@daily-co/daily-js",
-      "target": "npm:lodash",
+      "source": "npm:@daily-co/daily-react",
+      "target": "npm:@daily-co/daily-js",
       "type": "static"
     },
     {
       "source": "npm:@daily-co/daily-react",
-      "target": "npm:@daily-co/daily-js",
+      "target": "npm:jotai",
       "type": "static"
     },
     {
@@ -10265,7 +10310,7 @@
     },
     {
       "source": "npm:@daily-co/daily-react",
-      "target": "npm:recoil",
+      "target": "npm:react-dom",
       "type": "static"
     },
     {
@@ -13986,6 +14031,61 @@
     {
       "source": "npm:@react-navigation/stack",
       "target": "npm:warn-once",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/browser-utils",
+      "target": "npm:@sentry/core",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/feedback",
+      "target": "npm:@sentry/core",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/replay",
+      "target": "npm:@sentry-internal/browser-utils",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/replay",
+      "target": "npm:@sentry/core",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/replay-canvas",
+      "target": "npm:@sentry-internal/replay",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry-internal/replay-canvas",
+      "target": "npm:@sentry/core",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry/browser",
+      "target": "npm:@sentry-internal/browser-utils",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry/browser",
+      "target": "npm:@sentry-internal/feedback",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry/browser",
+      "target": "npm:@sentry-internal/replay",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry/browser",
+      "target": "npm:@sentry-internal/replay-canvas",
+      "type": "static"
+    },
+    {
+      "source": "npm:@sentry/browser",
+      "target": "npm:@sentry/core",
       "type": "static"
     },
     {

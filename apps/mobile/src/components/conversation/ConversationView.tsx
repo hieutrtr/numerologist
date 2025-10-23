@@ -16,6 +16,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useDaily, useAppMessage } from '@daily-co/daily-react';
+import { MicrophoneSelector } from '../voice/MicrophoneSelector';
 import { useVoiceInputService } from '../../services/voiceInputService';
 import { useVoiceOutputService } from '../../services/voiceOutputService';
 
@@ -328,37 +329,17 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
         </Text>
       </View>
 
-      {/* Device Selection */}
-      <View style={styles.deviceSelectionContainer}>
-        {voiceInput.availableMics.length > 1 && (
-          <View style={styles.deviceSelector}>
-            <Text style={styles.deviceLabel}>Microphone:</Text>
-            <View style={styles.deviceOptions}>
-              {voiceInput.availableMics.map((mic) => (
-                <TouchableOpacity
-                  key={mic.id}
-                  style={[
-                    styles.deviceOption,
-                    voiceInput.selectedMicId === mic.id && styles.deviceOptionSelected,
-                  ]}
-                  onPress={() => voiceInput.changeMicrophone(mic.id)}
-                >
-                  <Text
-                    style={[
-                      styles.deviceOptionText,
-                      voiceInput.selectedMicId === mic.id &&
-                      styles.deviceOptionTextSelected,
-                    ]}
-                  >
-                    {mic.label.substring(0, 15)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
+      {/* Device Selection - Using dedicated MicrophoneSelector component */}
+      <MicrophoneSelector
+        availableMics={voiceInput.availableMics}
+        selectedMicId={voiceInput.selectedMicId}
+        onMicrophoneChange={voiceInput.changeMicrophone}
+        isLoading={voiceInput.isLoading}
+      />
 
-        {voiceOutput.availableSpeakers.length > 1 && (
+      {/* Speaker Selection (inline implementation for now) */}
+      {voiceOutput.availableSpeakers.length > 1 && (
+        <View style={styles.deviceSelectionContainer}>
           <View style={styles.deviceSelector}>
             <Text style={styles.deviceLabel}>Speaker:</Text>
             <View style={styles.deviceOptions}>
@@ -385,8 +366,8 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
               ))}
             </View>
           </View>
-        )}
-      </View>
+        </View>
+      )}
 
       {/* Controls */}
       <View style={styles.controlsContainer}>

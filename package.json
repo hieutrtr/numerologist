@@ -26,7 +26,10 @@
     "env:setup": "cp .env.example .env && echo 'Created .env - please fill in your settings'",
     "db:start": "docker-compose up -d postgres redis",
     "db:stop": "docker-compose down",
-    "db:reset": "docker-compose down -v && docker-compose up -d postgres redis"
+    "db:reset": "docker-compose down -v && docker-compose up -d postgres redis",
+    "bmad:refresh": "bmad-method install -f -i codex",
+    "bmad:list": "bmad-method list:agents",
+    "bmad:validate": "bmad-method validate"
   },
   "dependencies": {
     "expo-secure-store": "^15.0.7",

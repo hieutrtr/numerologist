@@ -43,6 +43,12 @@ class SimpleEchoProcessor(RTVIProcessor):
 
     async def process_frame(self, frame: Frame, direction):
         """Process frames through the pipeline."""
+        # DEBUG: Log frame flow at debug level to avoid flooding production logs
+        logger.debug(
+            "🔍 Echo processor received frame",  # type and direction included in extras
+            extra={"frame_type": type(frame).__name__, "direction": str(direction)}
+        )
+
         await super().process_frame(frame, direction)
 
         # Log transcriptions
