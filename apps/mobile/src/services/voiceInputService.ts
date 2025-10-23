@@ -188,6 +188,9 @@ export function useVoiceInputService(
         });
       }
 
+      // Enable publishing of the local audio track so the SFU receives microphone audio
+      await daily.setLocalAudio(true);
+
       setState((prevState) => ({
         ...prevState,
         isRecording: true,
@@ -228,6 +231,9 @@ export function useVoiceInputService(
         isLoading: true,
         error: null,
       }));
+
+      // Disable the local audio track to stop streaming audio upstream
+      await daily.setLocalAudio(false, { forceDiscardTrack: false });
 
       // Disable audio with proper input settings format
       // Daily.co requires specific processor format even for disabling
