@@ -75,7 +75,11 @@ class DailyClientWrapper:
             return response.json()
 
     async def create_meeting_token(
-        self, room_url: str, expires_in_seconds: int = 3600
+        self,
+        room_url: str,
+        expires_in_seconds: int = 3600,
+        user_name: Optional[str] = None,
+        is_owner: bool = False,
     ) -> str:
         """
         Generate a meeting token for a room via REST API.
@@ -100,6 +104,10 @@ class DailyClientWrapper:
                 "room_name": room_name,
             }
         }
+        if user_name:
+            token_payload["properties"]["user_name"] = user_name
+        if is_owner:
+            token_payload["properties"]["is_owner"] = True
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{self.base_url}/meeting-tokens",
@@ -237,7 +245,7 @@ class ConversationService:
             # For now, create a basic room and configure properties later if needed
             room_config = {
                 "properties": {
-                    "max_participants": 2,            # user + bot
+                    "max_participants": 3,            # user + bot
                     "enable_recording": "cloud",      # auto cloud recording
                     "lang": "vi",                     # Vietnamese UI
                 }
@@ -251,7 +259,9 @@ class ConversationService:
             # Step 2: Generate meeting token with 1-hour expiry
             logger.info(f"Generating user token for room {room_url}")
             token = await self.daily_client.create_meeting_token(
-                room_url, expires_in_seconds=3600
+                room_url,
+                expires_in_seconds=3600,
+                user_name=user_uuid.hex,
             )
             logger.info("User meeting token generated successfully")
 
@@ -259,7 +269,9 @@ class ConversationService:
             logger.info(f"Generating bot token for room {room_url}")
             bot_token = await self.daily_client.create_meeting_token(
                 room_url,
-                expires_in_seconds=3600
+                expires_in_seconds=3600,
+                user_name="Numeroly Assistant",
+                is_owner=True,
             )
             logger.info("Bot token generated successfully")
 
