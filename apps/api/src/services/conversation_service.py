@@ -240,7 +240,6 @@ class ConversationService:
                     "max_participants": 2,            # user + bot
                     "enable_recording": "cloud",      # auto cloud recording
                     "lang": "vi",                     # Vietnamese UI
-                    "exp": int((datetime.utcnow() + timedelta(hours=6)).timestamp()),
                 }
             }
 
