@@ -104,8 +104,14 @@ export const HomeScreen: React.FC = () => {
     return `${greeting}, ${name}!`;
   };
 
+  const [preinitAttempted, setPreinitAttempted] = useState(false);
+
   // Ensure Daily session is primed so microphone list populates before recording
   useEffect(() => {
+    if (preinitAttempted || activeConversationId) {
+      return;
+    }
+
     const ensureDailySession = async () => {
       try {
         if (!activeConversationId && voiceInput.availableMics.length === 0) {
@@ -114,12 +120,14 @@ export const HomeScreen: React.FC = () => {
         }
       } catch (error) {
         console.warn('[Daily.co] Failed to pre-initialize conversation:', error);
+      } finally {
+        setPreinitAttempted(true);
       }
     };
 
     ensureDailySession();
     // Only re-run when conversation id changes or mic list remains empty
-  }, [activeConversationId, voiceInput.availableMics.length, startConversation]);
+  }, [activeConversationId, voiceInput.availableMics.length, startConversation, preinitAttempted]);
 
   const handleVoicePress = useCallback(async () => {
     // Story 1.2c: Daily.co voice streaming
