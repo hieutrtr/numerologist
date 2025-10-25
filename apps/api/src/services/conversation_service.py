@@ -235,7 +235,14 @@ class ConversationService:
             # Step 1: Create Daily.co room
             # Note: max_participants, recording, and language can be configured after room creation
             # For now, create a basic room and configure properties later if needed
-            room_config = {}
+            room_config = {
+                "properties": {
+                    "max_participants": 2,            # user + bot
+                    "enable_recording": "cloud",      # auto cloud recording
+                    "lang": "vi",                     # Vietnamese UI
+                    "exp": int((datetime.utcnow() + timedelta(hours=6)).timestamp()),
+                }
+            }
 
             logger.info(f"Creating Daily.co room for user {user_id}")
             room = await self.daily_client.create_room(room_config)
