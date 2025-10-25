@@ -73,6 +73,46 @@ export function useVoiceInputService(
 
   const callbacksRef = useRef(options);
 
+  const selectAudioDevice = useCallback(
+    async (deviceId: string) => {
+      if (!daily) {
+        throw new Error('Daily instance not available');
+      }
+
+      if (!deviceId) {
+        return;
+      }
+
+      const callObject: any = daily;
+
+      if (typeof callObject.setInputDevices === 'function') {
+        await Promise.resolve(
+          callObject.setInputDevices({
+            audioDeviceId: deviceId,
+          })
+        );
+        return;
+      }
+
+      if (typeof callObject.setInputDevicesAsync === 'function') {
+        await callObject.setInputDevicesAsync({
+          audioDeviceId: deviceId,
+        });
+        return;
+      }
+
+      if (typeof callObject.updateInputSettings === 'function') {
+        await callObject.updateInputSettings({
+          audio: { deviceId },
+        });
+        return;
+      }
+
+      throw new Error('Daily SDK does not support switching input devices on this platform');
+    },
+    [daily]
+  );
+
   // Update callbacks ref on options change
   useEffect(() => {
     callbacksRef.current = options;
@@ -203,9 +243,7 @@ export function useVoiceInputService(
 
       // Select specific microphone if one is chosen
       if (state.selectedMicId) {
-        await daily.setInputDevices({
-          audioDeviceId: state.selectedMicId,
-        });
+        await selectAudioDevice(state.selectedMicId);
       }
 
       // Enable publishing of the local audio track so the SFU receives microphone audio
@@ -233,7 +271,7 @@ export function useVoiceInputService(
       callbacksRef.current.onError?.(errorMessage);
       throw error;
     }
-  }, [daily, state.selectedMicId]);
+  }, [daily, selectAudioDevice, state.selectedMicId]);
 
   /**
    * Disable microphone and stop recording
@@ -304,9 +342,7 @@ export function useVoiceInputService(
         }));
 
         // Switch microphone device
-        await daily.setInputDevices({
-          audioDeviceId: deviceId,
-        });
+        await selectAudioDevice(deviceId);
 
         setState((prevState) => ({
           ...prevState,
@@ -329,7 +365,7 @@ export function useVoiceInputService(
         throw error;
       }
     },
-    [daily]
+    [daily, selectAudioDevice]
   );
 
   return {
