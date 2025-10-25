@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppMessage, useDailyEvent } from '@daily-co/daily-react';
@@ -104,6 +104,23 @@ export const HomeScreen: React.FC = () => {
     return `${greeting}, ${name}!`;
   };
 
+  // Ensure Daily session is primed so microphone list populates before recording
+  useEffect(() => {
+    const ensureDailySession = async () => {
+      try {
+        if (!activeConversationId && voiceInput.availableMics.length === 0) {
+          console.log('[Daily.co] Pre-initializing conversation for device enumeration');
+          await startConversation();
+        }
+      } catch (error) {
+        console.warn('[Daily.co] Failed to pre-initialize conversation:', error);
+      }
+    };
+
+    ensureDailySession();
+    // Only re-run when conversation id changes or mic list remains empty
+  }, [activeConversationId, voiceInput.availableMics.length, startConversation]);
+
   const handleVoicePress = useCallback(async () => {
     // Story 1.2c: Daily.co voice streaming
     if (voiceState === 'listening') {
@@ -114,6 +131,7 @@ export const HomeScreen: React.FC = () => {
 
         // Send user_input_ended message to backend via Daily.co app message
         console.log('[Daily.co] Sending user_input_ended to backend');
+        setVoiceState('idle');
       } catch (error) {
         console.error('[Daily.co] Stop recording failed', error);
         setVoiceState('error');
