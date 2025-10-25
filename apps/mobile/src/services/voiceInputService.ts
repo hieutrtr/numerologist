@@ -24,6 +24,7 @@ interface VoiceInputState {
   availableMics: Array<{ id: string; label: string }>;
   selectedMicId: string | null;
   error: string | null;
+  audioLevel: number;
   isLoading: boolean;
 }
 
@@ -66,6 +67,7 @@ export function useVoiceInputService(
     availableMics: [],
     selectedMicId: null,
     error: null,
+    audioLevel: -160,
     isLoading: false,
   });
 
@@ -90,6 +92,24 @@ export function useVoiceInputService(
         });
       }
     }, [daily])
+  );
+
+  // Listen for input-level updates to derive real-time audio level (linear 0-1 → dB scale)
+  useDailyEvent(
+    'input-level',
+    useCallback((event: any) => {
+      const level = typeof event?.level === 'number' ? event.level : null;
+      if (level === null) return;
+
+      // Convert to decibels (clamp to avoid log(0))
+      const safeLevel = Math.max(level, 1e-8);
+      const dbLevel = Math.max(-160, Math.min(0, 20 * Math.log10(safeLevel)));
+
+      setState((prevState) => ({
+        ...prevState,
+        audioLevel: dbLevel,
+      }));
+    }, [])
   );
 
   // Listen for device updates - this fires when devices become available

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppMessage, useDailyEvent } from '@daily-co/daily-react';
@@ -16,7 +16,6 @@ import { useVoiceOutputService } from '../services/voiceOutputService';
 
 export const HomeScreen: React.FC = () => {
   const [voiceState, setVoiceState] = useState<VoiceButtonState>('idle');
-  const [audioLevel, setAudioLevel] = useState<number>(-160);
   const [roomJoined, setRoomJoined] = useState(false);
   const { user } = useAuthStore();
   const {
@@ -38,39 +37,6 @@ export const HomeScreen: React.FC = () => {
       setRoomJoined(true);
     }, [])
   );
-
-  // Listen for active speaker events to get audio level (simplified)
-  useDailyEvent(
-    'active-speaker-change',
-    useCallback(() => {
-      // Audio level updates will happen during recording
-      // For now, we use a simple animation in WaveformVisualizer
-      console.log('[HomeScreen] Speaker activity detected');
-    }, [])
-  );
-
-  // Simulate audio level updates during recording
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-
-    if (voiceState === 'listening') {
-      // Generate smooth audio level updates while recording
-      interval = setInterval(() => {
-        setAudioLevel((prev) => {
-          // Simulate audio level fluctuation between -80 and -30 dB
-          const change = (Math.random() - 0.5) * 20;
-          const newLevel = Math.max(-80, Math.min(-30, prev + change));
-          return newLevel;
-        });
-      }, 100);
-    } else {
-      setAudioLevel(-160);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [voiceState]);
 
   // Story 1.2c: Daily.co voice services
   const voiceInput = useVoiceInputService({
@@ -165,8 +131,6 @@ export const HomeScreen: React.FC = () => {
       setRecording(true);
       setProcessing(false);
       setTranscription('');
-      setAudioLevel(-160);
-
       // Ensure conversation exists
       const conversationId =
         activeConversationId ?? (await startConversation());
@@ -236,7 +200,7 @@ export const HomeScreen: React.FC = () => {
         {voiceState === 'listening' && (
           <WaveformVisualizer
             isActive={voiceState === 'listening'}
-            audioLevel={audioLevel}
+            audioLevel={voiceInput.audioLevel}
             height={80}
           />
         )}
