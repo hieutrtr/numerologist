@@ -7,7 +7,7 @@
  * Handles device enumeration via preAuth() and startCamera()
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DailyProvider as DailyProviderBase, useDaily } from '@daily-co/daily-react';
 
 /**
@@ -29,9 +29,12 @@ const DailyDeviceInitializer: React.FC<{ roomUrl: string; token?: string }> = ({
   token,
 }) => {
   const daily = useDaily();
+  const joinedRef = useRef(false);
 
   useEffect(() => {
     if (!daily || !roomUrl || roomUrl === 'about:blank') return;
+
+    joinedRef.current = false;
 
     const initializeDevices = async () => {
       try {
@@ -42,6 +45,12 @@ const DailyDeviceInitializer: React.FC<{ roomUrl: string; token?: string }> = ({
         console.log('[Daily.co] Calling startCamera for device enumeration');
         // startCamera triggers browser permission prompts and device enumeration
         await daily.startCamera();
+
+        if (!joinedRef.current) {
+          console.log('[Daily.co] Joining Daily room after device init');
+          await daily.join({ url: roomUrl, token });
+          joinedRef.current = true;
+        }
 
         console.log('[Daily.co] Devices initialized successfully');
       } catch (error) {
