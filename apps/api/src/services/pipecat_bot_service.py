@@ -11,6 +11,7 @@ Each conversation gets its own pipeline instance with:
 Story 1.2d: Daily.co Bot Participant with Pipecat Framework
 """
 
+import asyncio
 import logging
 from typing import Dict, Optional
 
@@ -81,8 +82,10 @@ class PipecatBotService:
     """
 
     _instance: Optional['PipecatBotService'] = None
+    _runner: Optional[PipelineRunner] = None
     _pipelines: Dict[str, PipelineTask] = {}
     _transports: Dict[str, DailyTransport] = {}
+    _runner_tasks: Dict[str, asyncio.Task] = {}
 
     def __new__(cls):
         """Implement singleton pattern."""
@@ -90,6 +93,8 @@ class PipecatBotService:
             cls._instance = super().__new__(cls)
             cls._pipelines = {}
             cls._transports = {}
+            cls._runner_tasks = {}
+            cls._runner = PipelineRunner()
             logger.info("PipecatBotService singleton instance created")
         return cls._instance
 
@@ -211,9 +216,15 @@ class PipecatBotService:
             ])
 
             # Create and store pipeline task
+            if self._runner is None:
+                self._runner = PipelineRunner()
+
             task = PipelineTask(pipeline)
+            runner_task = asyncio.create_task(self._runner.run(task))
+
             self._pipelines[conversation_id] = task
             self._transports[conversation_id] = daily_transport
+            self._runner_tasks[conversation_id] = runner_task
 
             logger.info(
                 f"Pipeline created and started for conversation {conversation_id}",
@@ -251,6 +262,7 @@ class PipecatBotService:
         try:
             task = self._pipelines[conversation_id]
             transport = self._transports.get(conversation_id)
+            runner_task = self._runner_tasks.get(conversation_id)
 
             # Cleanup transport (leave Daily.co room, release resources)
             if transport:
@@ -266,7 +278,18 @@ class PipecatBotService:
                         extra={"conversation_id": conversation_id}
                     )
 
-            # Cancel the task (async operation)
+            # Cancel the runner task (async operation)
+            if runner_task:
+                runner_task.cancel()
+                try:
+                    await runner_task
+                except asyncio.CancelledError:
+                    logger.debug(
+                        "Pipeline runner task cancelled",
+                        extra={"conversation_id": conversation_id}
+                    )
+
+            # Cancel the pipeline task (ensure underlying cancellation)
             if hasattr(task, 'cancel'):
                 cancel_result = task.cancel()
                 if hasattr(cancel_result, '__await__'):
@@ -274,6 +297,8 @@ class PipecatBotService:
 
             # Remove from tracking
             del self._pipelines[conversation_id]
+            if conversation_id in self._runner_tasks:
+                del self._runner_tasks[conversation_id]
             if conversation_id in self._transports:
                 del self._transports[conversation_id]
 
