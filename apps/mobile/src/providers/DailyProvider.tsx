@@ -9,6 +9,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { DailyProvider as DailyProviderBase, useDaily } from '@daily-co/daily-react';
+import { useAuthStore } from '../store/authStore';
 
 /**
  * Props for DailyProvider wrapper
@@ -30,6 +31,7 @@ const DailyDeviceInitializer: React.FC<{ roomUrl: string; token?: string }> = ({
 }) => {
   const daily = useDaily();
   const joinedRef = useRef(false);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     if (!daily || !roomUrl || roomUrl === 'about:blank') return;
@@ -50,6 +52,15 @@ const DailyDeviceInitializer: React.FC<{ roomUrl: string; token?: string }> = ({
           console.log('[Daily.co] Joining Daily room after device init');
           await daily.join({ url: roomUrl, token });
           joinedRef.current = true;
+
+          if (user?.fullName && typeof daily.setUserName === 'function') {
+            try {
+              await Promise.resolve(daily.setUserName(user.fullName));
+              console.log('[Daily.co] Updated participant name to', user.fullName);
+            } catch (setNameError) {
+              console.warn('[Daily.co] Failed to set participant name:', setNameError);
+            }
+          }
         }
 
         console.log('[Daily.co] Devices initialized successfully');
